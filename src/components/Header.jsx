@@ -21,7 +21,7 @@ const Header = ({ navState, setNavState }) => {
       <div className="flex items-center w-max gap-1 md:gap-4">
         <button
           type="button"
-          className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 transition ease-in-out"
+          className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition ease-in-out"
           onClick={handleNavToggle}
         >
           {!navState ? <RiMenu2Fill size="25" /> : <VscChromeClose size="25" />}
@@ -37,7 +37,7 @@ const Header = ({ navState, setNavState }) => {
       <div className="flex items-center gap-4">
         <Link
           to="/test-series/add"
-          className="hidden md:flex items-center gap-1 p-2 rounded-lg hover:bg-slate-100 active:bg-slate-200 transition ease-in-out"
+          className="hidden md:flex items-center gap-1 p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition ease-in-out"
         >
           <IoAdd size={20} />
           Test Series
@@ -45,7 +45,7 @@ const Header = ({ navState, setNavState }) => {
         <button
           type="button"
           onClick={handleNotificationClick}
-          className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 transition ease-in-out"
+          className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition ease-in-out"
         >
           {msg ? <LuBellDot size={25} /> : <LuBell size={25} />}
         </button>
