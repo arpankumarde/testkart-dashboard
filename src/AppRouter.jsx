@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import { Dashboard } from "./screens";
+import { Dashboard, Login } from "./screens";
 
 const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/test-series" element={<Dashboard />} />
       <Route path="/earnings/overview" element={<Dashboard />} />
       <Route path="/earnings/withdraw" element={<Dashboard />} />
