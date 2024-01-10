@@ -12,7 +12,8 @@ import {
 } from "react-icons/io5";
 
 const Sidebar = ({ navState, setNavState }) => {
-  const { user, logout } = useAuth();
+  let { user, logout } = useAuth();
+  user = JSON.parse(user);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -34,6 +35,10 @@ const Sidebar = ({ navState, setNavState }) => {
         }
       >
         <div className="w-full [&>h2]:text-gray-800 [&>h2]:px-4 [&>h2]:pb-2 [&>h2]:mt-4">
+          <h2 className="capitalize">
+            Hi {user?.first_name} {user?.last_name}!
+          </h2>
+          <hr className="my-2" />
           <h2>Studio</h2>
           <div className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2">
             <NavLink

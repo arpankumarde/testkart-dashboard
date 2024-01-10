@@ -5,5 +5,7 @@ import Footer from "./Footer";
 export { Header, Sidebar, Footer };
 
 import DashboardOverviewCard from "./DashboardOverviewCard";
+import DashboardLineChart from "./DashboardLineChart";
+import DashboardTopTestCard from "./DashboardTopTestCard";
 
-export { DashboardOverviewCard };
+export { DashboardOverviewCard, DashboardLineChart, DashboardTopTestCard };
