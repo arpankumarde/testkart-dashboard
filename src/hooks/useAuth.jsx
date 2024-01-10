@@ -18,30 +18,53 @@ export const useAuth = () => {
 
 // Provider hook that creates auth object and handles state
 function useProvideAuth() {
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   // Check if user info is in local storage to keep user logged in after page refresh
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setUser(true);
+    const token = localStorage.getItem("access_token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      // Set Auth Header for future requests
+      server.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      server.defaults.headers.common["user_type"] = "TEACHER";
+
+      setUser(user);
       navigate("/");
     }
   }, []);
 
   const login = async (email, password, type) => {
     try {
+      email = email.toLowerCase();
+      type = type.toUpperCase();
+
+      // Send login request to server
       const response = await server.post("/api/v1/auth/login", {
         email,
         password,
         type,
       });
+
       if (response.data.success) {
-        console.log(response.data.message);
-        localStorage.setItem("token", response.data.data.token);
-        setUser(true);
+        // Store token and user info in local storage
+        const token = response.data.data.token;
+        const user = JSON.stringify(response.data.data.user);
+
+        localStorage.setItem("access_token", token);
+        localStorage.setItem("user", user);
+
+        // Set Auth Header for future requests
+        server.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        server.defaults.headers.common["user_type"] = "TEACHER";
+
+        setUser(user);
         navigate("/");
+      } else {
+        alert(response.data.error);
+        console.log(response.data.error);
       }
     } catch (error) {
       console.error("Failed to login", error);
@@ -51,10 +74,19 @@ function useProvideAuth() {
 
   const logout = async () => {
     try {
+      // Send logout request to server
       const response = await server.get("/auth/logout");
+
       if (response.data.success) {
-        localStorage.removeItem("token");
-        setUser(false);
+        // Remove token and user info from local storage
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+
+        // Remove Auth Header from future requests
+        delete server.defaults.headers.common["Authorization"];
+        delete server.defaults.headers.common["user_type"];
+
+        setUser(null);
         console.log(response.data.message);
         navigate("/login");
       }
