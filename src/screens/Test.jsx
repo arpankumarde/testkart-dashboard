@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { server } from "../api";
 import { Button, Loader } from "../components";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import AddQuestion from "../components/AddQuestion";
 
 const Test = () => {
   const [test, setTest] = useState([]);
@@ -12,6 +13,7 @@ const Test = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [questions, setQuestions] = useState({});
+  const [currentQuestion, setCurrentQuestion] = useState("");
 
   const getTestInfo = async () => {
     setIsLoading(true);
@@ -70,10 +72,23 @@ const Test = () => {
     getAllQuestions();
   }, [test]);
 
-  console.log(questions ,"questions")
+  // console.log(questions ,"questions")
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
       {isLoading && <Loader />}
+      <AddQuestion
+        title={`${
+          !!questions[activeSubject]?.find(
+            ({ index }) => index === currentQuestion
+          )
+            ? "Edit Question"
+            : "Add Question"
+        } ${currentQuestion + 1} in ${currentSubjectInfo.label}`}
+        isAddQuestion={!!currentQuestion}
+        currentQuestion={currentQuestion}
+        subject_id={activeSubject}
+        setIsAddQuestion={() => setCurrentQuestion("")}
+      />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
           <div className="relative">
@@ -119,8 +134,11 @@ const Test = () => {
               ?.fill(null)
               .map((_, i) => (
                 <Button
-                  activeTab={!!questions[activeSubject]?.find(({index})=> index ===i)}
+                  activeTab={
+                    !!questions[activeSubject]?.find(({ index }) => index === i)
+                  }
                   buttonText={i + 1}
+                  onClick={() => setCurrentQuestion(i)}
                   className="min-w-[100px] h-[28px] flex justify-center items-center rounded-[5px]"
                 />
               ))}

@@ -1,8 +1,18 @@
 import React, { useState } from "react";
 import Button from "./Button";
 
-const Modal = ({ isModalOpen, setIsModalOpen , title, children, onAccept, onDecline , isDelete , isShare }) => {
-
+const Modal = ({
+  isModalOpen,
+  setIsModalOpen,
+  title,
+  children,
+  onAccept,
+  onDecline,
+  isDelete,
+  isShare,
+  isAddQuestion,
+  className,
+}) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -23,7 +33,7 @@ const Modal = ({ isModalOpen, setIsModalOpen , title, children, onAccept, onDecl
         isModalOpen ? "fixed" : "hidden"
       } overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 justify-center items-center flex w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50`}
     >
-      <div className="relative p-4 w-full max-w-2xl max-h-full">
+      <div className={`relative p-4 w-full max-w-2xl max-h-full ${className}`}>
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -53,20 +63,36 @@ const Modal = ({ isModalOpen, setIsModalOpen , title, children, onAccept, onDecl
             </button>
           </div>
 
-          <div className="p-4 md:p-5 space-y-4">{children}</div>
+          <div className="p-2  space-y-4">{children}</div>
 
-          <div className="flex items-center justify-between p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-           <Button  buttonText={'Cancel'} onClick={handleDecline}/>
+          <div className={`flex items-center p-4  border-t border-gray-200 rounded-b dark:border-gray-600 gap-4 ${isAddQuestion? 'justify-end' :'justify-between '}`}>
+            {/* cancel */}
+            {isAddQuestion ? (
+              <button className="px-3 py-2 text-white bg-[#596780]" onClick={handleDecline}>
+                Close
+              </button>
+            ) : (
+              <Button buttonText={"Cancel"} onClick={handleDecline} />
+            )}
 
-            {isDelete && <button
-              onClick={handleAccept}
-              type="button"
-              className="bg-red-500 text-white px-3 py-2 flex justify-center items-center "
-            >
-              Delete
-            </button>}
-            {isShare &&  <Button buttonText={'Share'} activeTab={true}/>}
+            {/* Accept */}
+            { isDelete && (
+              <button
+                onClick={handleAccept}
+                type="button"
+                className="bg-red-500 text-white px-3 py-2 flex justify-center items-center "
+              >
+                Delete
+              </button>
+            )}
+            {(isShare || isAddQuestion) && (
+              <Button
+                buttonText={isShare ? "Share" : "Save changes"}
+                activeTab={true}
+                onClick={handleAccept}
 
+              />
+            )}
           </div>
         </div>
       </div>
