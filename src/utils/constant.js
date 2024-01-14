@@ -5,9 +5,9 @@ export const STATUS_MEANINGS_BY_CODE = {
 };
 
 export const STATUS_COLOR_BY_STATUS_CODE = {
-  0: "#545b62", // Draft
-  1: "#30d530", // Live
-  2: "#6d45a4", // Unlisted
+  0: "bg-[#545b62]", // Draft
+  1: "bg-[#30d530]", // Live
+  2: "bg-[#6d45a4]", // Unlisted
 };
 
 export const VIEW_TESTS = "View Tests";

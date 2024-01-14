@@ -188,7 +188,7 @@ const TestSeries = () => {
                   <td>2021</td>
                   <td>
                     <span
-                      className={`rounded-full px-4 py-1 text-white bg-[${STATUS_COLOR_BY_STATUS_CODE[status]}]`}
+                      className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
                     >
                       {STATUS_MEANINGS_BY_CODE[status] ?? ""}{" "}
                     </span>
