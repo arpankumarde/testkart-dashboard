@@ -80,9 +80,9 @@ const ViewTestSeries = () => {
           </button>
         </Link>
       </div>
-      <div className="p-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
+      <div className="px-6 pb-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
         <table className="table-auto w-full relative">
-          <thead className="border-y border-y-[#e9ecef] ">
+          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0">
             <tr className="text-left  [&>th]:py-[15px] [&>th]:px-3 [&>th]:font-medium">
               <th>#</th>
               <th>Test title</th>

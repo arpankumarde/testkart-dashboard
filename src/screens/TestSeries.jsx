@@ -155,10 +155,11 @@ const TestSeries = () => {
           </button>
         </Link>
       </div>
-      <div className="p-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
+      <div className="px-6 pb-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
         <table className="table-auto w-full">
-          <thead className="border-y border-y-[#e9ecef] ">
+          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0">
             <tr className="text-left  [&>th]:py-[15px] [&>th]:px-3 [&>th]:font-medium">
+              <th>#</th>
               <th>Test series</th>
               <th>No. of tests</th>
               <th>Price</th>
@@ -177,6 +178,7 @@ const TestSeries = () => {
                   key={index}
                   className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3"
                 >
+                  <td>{index + 1}.</td>
                   <td
                     className="cursor-pointer"
                     onClick={() => navigate(`/test-series/${test_series_id}`)}

@@ -2,7 +2,7 @@ import React from 'react'
 
 const ImportantTipForCreators = () => {
   return (
-    <div className="md:w-[50%] bg-white shadow-card p-5 text-[text-[#596780] flex flex-col gap-4">
+    <div className="md:w-[50%] bg-white shadow-card p-5 text-[text-[#596780] flex flex-col gap-4 h-[80vh] overflow-scroll custom-scroll-bar">
     <h1 className="text-center text-xl font-semibold leading-6 text-[#596780] py-2">
       Important Tips for Creators
     </h1>
