@@ -16,3 +16,7 @@ import Modal from "./Modal";
 
 
 export { DashboardOverviewCard, DashboardLineChart, DashboardTopTestCard , Dropdown , TestSeriesForm  , ImportantTipForCreators , Loader , ButtonLoader , Modal};
+
+import SupportAccordion from "./SupportAccordion";
+
+export { SupportAccordion };

@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { AddTestSeries, Dashboard, EditTestSeries, Login, Test, TestSeries, ViewTestSeries } from "./screens";
+import { AddTestSeries, Dashboard, EditTestSeries, Login, Profile, Support, Test, TestSeries, ViewTestSeries } from "./screens";
 
 const AppRouter = () => {
   return (
@@ -17,7 +17,8 @@ const AppRouter = () => {
       <Route path="/earnings/request-statement" element={<Dashboard />} />
       <Route path="/earnings/settings" element={<Dashboard />} />
       <Route path="/update-settings" element={<Dashboard />} />
-      <Route path="/support" element={<Dashboard />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/support" element={<Support />} />
     </Routes>
   );
 };
