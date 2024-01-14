@@ -30,7 +30,7 @@ const Sidebar = ({ navState, setNavState }) => {
       <nav
         className={
           navState
-            ? `w-full h-[calc(100dvh-4rem)] md:w-64 bg-green-10 absolute md:static left-0 text-gray-600 bg-white`
+            ? `w-full h-[calc(100dvh-4rem)] z-50 md:w-64 bg-green-10 absolute md:static left-0 text-gray-600 bg-white`
             : `hidden`
         }
       >

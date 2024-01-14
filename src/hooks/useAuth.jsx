@@ -32,7 +32,7 @@ function useProvideAuth() {
       server.defaults.headers.common["user_type"] = "TEACHER";
 
       setUser(user);
-      navigate("/");
+      // navigate("/");
     }
   }, []);
 

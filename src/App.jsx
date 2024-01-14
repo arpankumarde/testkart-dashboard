@@ -14,7 +14,8 @@ const App = () => {
         <div className="flex">
           <Sidebar {...{ navState, setNavState }} />
           <div className="bg-gray-200 h-[calc(100dvh-4rem)] w-full overflow-auto">
-            {isMobile ? navState ? null : <AppRouter /> : <AppRouter />}
+            {/* {isMobile ? navState ? null : <AppRouter /> : <AppRouter />} */}
+            <AppRouter />
             <Footer />
           </div>
         </div>
