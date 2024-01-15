@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import ReactQuillComponet from "./ReactQuill";
 import Modal from "./Modal";
@@ -12,12 +12,13 @@ const AddQuestion = ({
   currentQuestion,
   subject_id,
   title,
+  question_id,
 }) => {
   const [question_type, setQuestionType] = useState("MCQ-S");
   const [question, setQuestion] = useState("");
   const [solution, setSolution] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
-  const [isLoading , setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const params = useParams();
   const [options, setOptions] = useState([
@@ -65,18 +66,55 @@ const AddQuestion = ({
       test_id: params.test_id,
     };
     try {
-      setIsLoading(true)
-      const { data } = await server.post(
-        "/api/v1/test-series/test/question",
-        formData
-      );
-      console.log(data, "response");
+      setIsLoading(true);
+
+      if(question_id) {
+        const { data } = await server.put(
+          `/api/v1/test-series/test/question/${question_id}`,
+          formData
+        );
+        console.log(data ,'data')
+      }else{
+        const { data } = await server.post(
+          "/api/v1/test-series/test/question",
+          formData
+        );
+        console.log(data, "response");
+      }
+
     } catch (error) {
       console.log(error, "error while adding test");
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const getQuestionInfo = async () => {
+    try {
+      console.log(question_id ,"quu")
+      if (question_id) {
+        setIsLoading(true);
+        const { data } = await server.get(
+          `/api/v1/test-series/test/question/${question_id}`
+        );
+        if (data.data) {
+          const currentQuestion = data?.data?.question;
+          console.log(currentQuestion)
+          setQuestion(currentQuestion.question);
+          setQuestionType(currentQuestion.question_type);
+          setOptions(JSON.parse(currentQuestion.options));
+          setSolution(currentQuestion.solution);
+        }
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getQuestionInfo();
+  }, [question_id]);
 
   return (
     <Modal
@@ -88,7 +126,7 @@ const AddQuestion = ({
       onDecline={() => setIsAddQuestion()}
       isAddQuestion={true}
     >
-      {isLoading &&  <Loader />}
+      {isLoading && <Loader />}
       <div className="flex w-full bg-white ">
         <div className="w-[50%] p-5 overflow-scroll h-[75vh] lg:h-[80vh] custom-scroll-bar">
           <div className="flex flex-col gap-3">
@@ -113,7 +151,7 @@ const AddQuestion = ({
               value={question}
               setValue={(e) => setQuestion(e)}
             />
-            {options.map((item, index) => (
+            {options?.map((item, index) => (
               <div className="flex flex-col gap-4" key={index}>
                 <div className="flex justify-between">
                   <h1 className="text-lg font-medium">Option {index + 1}</h1>
@@ -148,7 +186,6 @@ const AddQuestion = ({
                 setOptions((prev) => [
                   ...prev,
                   {
-                    index: prev.length + 1,
                     option: "",
                     is_correct: false,
                   },

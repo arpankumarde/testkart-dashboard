@@ -14,6 +14,7 @@ const Test = () => {
   const params = useParams();
   const [questions, setQuestions] = useState({});
   const [currentQuestion, setCurrentQuestion] = useState("");
+  const [question_id, setQuestionId] = useState("");
 
   const getTestInfo = async () => {
     setIsLoading(true);
@@ -72,7 +73,17 @@ const Test = () => {
     getAllQuestions();
   }, [test]);
 
-  // console.log(questions ,"questions")
+  const getQuestionId = () =>{
+   const res = questions[activeSubject]?.find(({ index }) => index === currentQuestion)
+   setQuestionId(res?.question_id)
+    return res?.question_id ?? null
+  }
+
+  useEffect(() => {
+    getQuestionId()
+  }, [questions , currentQuestion])
+  
+
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
       {isLoading && <Loader />}
@@ -88,6 +99,7 @@ const Test = () => {
         currentQuestion={currentQuestion}
         subject_id={activeSubject}
         setIsAddQuestion={() => setCurrentQuestion("")}
+        question_id = {question_id}
       />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
