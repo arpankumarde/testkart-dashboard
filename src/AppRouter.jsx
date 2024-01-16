@@ -11,12 +11,15 @@ const AppRouter = () => {
       <Route path="/test-series/edit/:id" element={<EditTestSeries />} />
       <Route path="/test-series/:series_id" element={<ViewTestSeries />} />
       <Route path="/test-series/:series_id/test/:test_id/questions" element={<Test />} />
+      <Route path="/test-reports" element={<Dashboard />} />
+      <Route path="/students" element={<Dashboard />} />
       <Route path="/earnings/overview" element={<Dashboard />} />
       <Route path="/earnings/withdraw" element={<Dashboard />} />
       <Route path="/earnings/transactions" element={<Dashboard />} />
       <Route path="/earnings/request-statement" element={<Dashboard />} />
       <Route path="/earnings/settings" element={<Dashboard />} />
-      <Route path="/update-settings" element={<Dashboard />} />
+      <Route path="/settings" element={<Dashboard />} />
+      <Route path="/settings" element={<Dashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/support" element={<Support />} />
     </Routes>

@@ -1,6 +1,7 @@
 import { SupportAccordion } from "../components";
 import { GoQuestion } from "react-icons/go";
 import { IoTicketOutline } from "react-icons/io5";
+import { MdOutlineReportProblem } from "react-icons/md";
 
 const Support = () => {
   return (
@@ -45,6 +46,23 @@ const Support = () => {
             View More
           </button>
         </div>
+      </div>
+      <div className="bg-white md:rounded-md p-4 w-full md:mt-4 lg:mt-8">
+        <h2 className="text-xl mb-4 flex items-center gap-2">
+          <i className="-mb-0.5">
+            <MdOutlineReportProblem size={25} />
+          </i>
+          <span>Problems</span>
+        </h2>
+        <div className="overflow-y-auto h-80">
+          <SupportAccordion />
+        </div>
+        <button
+          type="button"
+          className="text-center w-full bg-gray-100 hover:bg-gray-200 mt-4 px-4 py-2 rounded-md"
+        >
+          View More
+        </button>
       </div>
     </section>
   );

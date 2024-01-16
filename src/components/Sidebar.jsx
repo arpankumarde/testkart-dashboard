@@ -2,10 +2,12 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { isMobile } from "react-device-detect";
 import { LuLayoutDashboard } from "react-icons/lu";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 import { HiOutlineDocumentText } from "react-icons/hi2";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { PiUserCircle } from "react-icons/pi";
 import {
+  IoPeopleOutline,
   IoLogOutOutline,
   IoSettingsOutline,
   IoTicketOutline,
@@ -35,11 +37,10 @@ const Sidebar = ({ navState, setNavState }) => {
         }
       >
         <div className="w-full [&>h2]:text-gray-800 [&>h2]:px-4 [&>h2]:pb-2 [&>h2]:mt-4">
-          <h2 className="capitalize">
-            Hi {user?.first_name} {user?.last_name}!
+          <h2 className="capitalize font-semibold">
+            Hi {user?.academy.academy_name}!
           </h2>
           <hr className="my-2" />
-          <h2>Studio</h2>
           <div className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2">
             <NavLink
               to="/"
@@ -58,6 +59,22 @@ const Sidebar = ({ navState, setNavState }) => {
               Test Series
             </NavLink>
             <NavLink
+              to="/test-reports"
+              onClick={handleMobileNavCollapse}
+              className="hover:bg-gray-100 hover:text-gray-950"
+            >
+              <HiOutlineDocumentReport size={20} />
+              Test Reports
+            </NavLink>
+            <NavLink
+              to="/students"
+              onClick={handleMobileNavCollapse}
+              className="hover:bg-gray-100 hover:text-gray-950"
+            >
+              <IoPeopleOutline size={20} />
+              Students
+            </NavLink>
+            <NavLink
               to="/earnings/overview"
               onClick={handleMobileNavCollapse}
               className="hover:bg-gray-100 hover:text-gray-950"
@@ -65,9 +82,6 @@ const Sidebar = ({ navState, setNavState }) => {
               <MdOutlineCurrencyRupee size={20} />
               Earnings
             </NavLink>
-          </div>
-          <h2>Settings</h2>
-          <div className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2">
             <NavLink
               to="/profile"
               onClick={handleMobileNavCollapse}
