@@ -28,6 +28,20 @@ export {
   ReactQuillComponet,
 };
 
+import EarningsOverview from "./EarningsOverview";
+import EarningsWithdraw from "./EarningsWithdraw";
+import EarningsTransactions from "./EarningsTransactions";
+import EarningsStatement from "./EarningsStatement";
+import EarningsBankSettings from "./EarningsBankSettings";
+
+export {
+  EarningsOverview,
+  EarningsWithdraw,
+  EarningsTransactions,
+  EarningsStatement,
+  EarningsBankSettings,
+};
+
 import SupportAccordion from "./SupportAccordion";
 
 export { SupportAccordion };
