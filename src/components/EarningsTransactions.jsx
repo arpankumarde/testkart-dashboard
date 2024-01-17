@@ -32,7 +32,7 @@ const EarningsTransactions = () => {
         </div>
       </div>
       <hr />
-      <div className="">
+      <div>
         <div className="flex justify-between items-center gap-2 py-4 md:gap-4 [&>*]:rounded-md [&>*]:py-2 [&>*]:w-1/3 [&>*]:text-center [&>*]:cursor-pointer">
           <span
             onClick={() => setTab("all")}
@@ -53,7 +53,7 @@ const EarningsTransactions = () => {
             Debit
           </span>
         </div>
-        <div className="h-96 overflow-auto">
+        <div className="h-72 overflow-auto">
           <table className="w-full">
             <thead className="sticky top-0 bg-white">
               <tr className="text-center">

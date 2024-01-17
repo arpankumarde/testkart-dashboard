@@ -3,7 +3,6 @@ import {
   EarningsOverview,
   EarningsWithdraw,
   EarningsTransactions,
-  EarningsStatement,
   EarningsBankSettings,
 } from "../components";
 import { IoIosArrowForward, IoMdWallet } from "react-icons/io";
@@ -22,8 +21,6 @@ const Earnings = () => {
         return <EarningsWithdraw balance={balance} />;
       case "transactions":
         return <EarningsTransactions />;
-      case "statement":
-        return <EarningsStatement />;
       case "settings":
         return <EarningsBankSettings />;
       default:
@@ -52,7 +49,7 @@ const Earnings = () => {
             </span>
           </div>
           <hr />
-          <div className="flex flex-col items-stretch py-2 [&>*]:p-4 [&>*]:rounded-md [&>*]:inline-flex [&>*]:items-center [&>*]:justify-between [&>i]:-mb-0.5 hover:[&>*]:bg-gray-100 [&>*]:text-gray-600 hover:[&>*]:text-gray-950 active:[&>*]:bg-gray-200">
+          <div className="flex flex-col items-stretch pt-4 [&>*]:p-4 [&>*]:rounded-md [&>*]:inline-flex [&>*]:items-center [&>*]:justify-between [&>i]:-mb-0.5 hover:[&>*]:bg-gray-100 [&>*]:text-gray-600 hover:[&>*]:text-gray-950 active:[&>*]:bg-gray-200">
             <Link to="/earnings/overview">
               <span>Overview</span>
               <i>
@@ -67,12 +64,6 @@ const Earnings = () => {
             </Link>
             <Link to="/earnings/transactions">
               <span>View Transactions</span>
-              <i>
-                <IoIosArrowForward />
-              </i>
-            </Link>
-            <Link to="/earnings/statement">
-              <span>Request Statement</span>
               <i>
                 <IoIosArrowForward />
               </i>

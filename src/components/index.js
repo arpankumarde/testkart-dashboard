@@ -1,9 +1,8 @@
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Footer from "./Footer";
 import Button from "./Button";
 
-export { Header, Sidebar, Footer, Button };
+export { Header, Sidebar, Button };
 
 import DashboardOverviewCard from "./DashboardOverviewCard";
 import DashboardLineChart from "./DashboardLineChart";
@@ -31,14 +30,12 @@ export {
 import EarningsOverview from "./EarningsOverview";
 import EarningsWithdraw from "./EarningsWithdraw";
 import EarningsTransactions from "./EarningsTransactions";
-import EarningsStatement from "./EarningsStatement";
 import EarningsBankSettings from "./EarningsBankSettings";
 
 export {
   EarningsOverview,
   EarningsWithdraw,
   EarningsTransactions,
-  EarningsStatement,
   EarningsBankSettings,
 };
 

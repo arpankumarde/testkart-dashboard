@@ -7,6 +7,7 @@ import ViewTestSeries from "./ViewTestSeries";
 import Test from "./Test";
 import Earnings from "./Earnings";
 import Profile from "./Profile";
+import Settings from "./Settings";
 import Support from "./Support";
 
-export { Login, Dashboard  ,TestSeries , AddTestSeries  , EditTestSeries , ViewTestSeries , Test, Earnings, Profile, Support};
+export { Login, Dashboard  ,TestSeries , AddTestSeries  , EditTestSeries , ViewTestSeries , Test, Earnings, Settings, Profile, Support};

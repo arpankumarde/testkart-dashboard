@@ -28,6 +28,8 @@ const EarningsWithdraw = ({ balance }) => {
       <hr />
       <form
         onSubmit={handleWithdrawRequest}
+        autoComplete="off"
+        autoCorrect="off"
         className="flex flex-col justify-center items-center gap-2 py-4"
       >
         <label htmlFor="withdraw">Enter Amount to withdraw</label>
@@ -52,7 +54,7 @@ const EarningsWithdraw = ({ balance }) => {
         </button>
       </form>
       <hr />
-      <p className="text-center py-4">
+      <p className="text-center pt-4">
         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam nobis
         est, sequi odit similique rem?
       </p>
