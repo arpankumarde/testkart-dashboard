@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { AddTestSeries, Dashboard, Earnings, EditTestSeries, Login, Profile, Settings, Students, Support, Test, TestReports, TestSeries, ViewTestSeries } from "./screens";
+import { AddTestSeries, Dashboard, Earnings, EditTestSeries, Login, Profile, Settings, Students, Support, Test, TestReports, TestReportsDetails, TestSeries, ViewTestSeries } from "./screens";
 
 const AppRouter = () => {
   return (
@@ -12,6 +12,7 @@ const AppRouter = () => {
       <Route path="/test-series/:series_id" element={<ViewTestSeries />} />
       <Route path="/test-series/:series_id/test/:test_id/questions" element={<Test />} />
       <Route path="/test-reports" element={<TestReports />} />
+      <Route path="/test-reports/:seriesid" element={<TestReportsDetails />} />
       <Route path="/students" element={<Students />} />
       <Route path="/earnings" element={<Earnings />} />
       <Route path="/earnings/:earnid" element={<Earnings />} />
