@@ -7,9 +7,11 @@ import ViewTestSeries from "./ViewTestSeries";
 import Test from "./Test";
 import TestReports from "./TestReports";
 import TestReportsDetails from "./TestReportsDetails";
+import Students from "./Students";
+import StudentsDetails from "./StudentsDetails";
 import Earnings from "./Earnings";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import Support from "./Support";
 
-export { Login, Dashboard  ,TestSeries , AddTestSeries  , EditTestSeries , ViewTestSeries , Test, TestReports, TestReportsDetails, Earnings, Settings, Profile, Support};
+export { Login, Dashboard  ,TestSeries , AddTestSeries  , EditTestSeries , ViewTestSeries , Test, TestReports, TestReportsDetails, Students, StudentsDetails, Earnings, Settings, Profile, Support};
