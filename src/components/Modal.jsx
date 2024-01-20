@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "./Button";
+import { DELETE } from "../utils/constant";
 
 const Modal = ({
   isModalOpen,
@@ -12,6 +13,8 @@ const Modal = ({
   isShare,
   isAddQuestion,
   className,
+  showDelete,
+  onDelete
 }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -21,6 +24,10 @@ const Modal = ({
     // setIsModalOpen(false);
     onAccept();
   };
+
+  const handleDelete = () =>{
+    onDelete()
+  }
 
   const handleDecline = () => {
     setIsModalOpen(false);
@@ -83,9 +90,15 @@ const Modal = ({
             )}
 
             {/* Accept */}
-            {isDelete && (
+            {(showDelete || isDelete) && (
               <button
-                onClick={handleAccept}
+                onClick={() => {
+                  if (showDelete) {
+                    handleDelete()
+                  } else {
+                    handleAccept();
+                  }
+                }}
                 type="button"
                 className="bg-red-500 text-white px-3 py-2 flex justify-center items-center "
               >

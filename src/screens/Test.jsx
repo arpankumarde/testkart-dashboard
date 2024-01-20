@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { server } from "../api";
-import { Button, Loader } from "../components";
+import { Button, Loader, Modal } from "../components";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AddQuestion from "../components/AddQuestion";
+import { DELETE } from "../utils/constant";
 
 const Test = () => {
   const [test, setTest] = useState([]);
@@ -15,6 +16,7 @@ const Test = () => {
   const [questions, setQuestions] = useState({});
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [question_id, setQuestionId] = useState("");
+  const [modal, setModal] = useState("");
 
   const getTestInfo = async () => {
     setIsLoading(true);
@@ -27,9 +29,11 @@ const Test = () => {
         const currentTest = data.data?.[0];
         setTest(currentTest ?? {});
         if (currentTest) {
-          const includedSubjects = currentTest.subjects.filter(({inclued})=>inclued)
+          const includedSubjects = currentTest.subjects.filter(
+            ({ inclued }) => inclued
+          );
 
-          setActiveSubject(includedSubjects[0]?.subject_id ?? '');
+          setActiveSubject(includedSubjects[0]?.subject_id ?? "");
           setCurrentSubjectInfo(currentTest.subjects[0]);
           await getAllQuestions();
         }
@@ -43,19 +47,20 @@ const Test = () => {
 
   const getAllQuestions = async () => {
     try {
-      console.log(test, "testtt");
-      const allQuestions = test?.subjects.filter(({inclued})=>inclued).map(async ({ subject_id }) => {
-        const { data } = await server.get(
-          `api/v1/test-series/test/question?test_id=${params.test_id}&subject_id=${subject_id}`
-        );
+      const allQuestions = test?.subjects
+        .filter(({ inclued }) => inclued)
+        .map(async ({ subject_id }) => {
+          const { data } = await server.get(
+            `api/v1/test-series/test/question?test_id=${params.test_id}&subject_id=${subject_id}`
+          );
 
-        if (data.data) {
-          console.log(data.data.question ?? []);
-          const response = data.data.questions ?? [];
-          return { [subject_id]: response };
-        }
-        return { [subject_id]: [] };
-      });
+          if (data.data) {
+            console.log(data.data.question ?? []);
+            const response = data.data.questions ?? [];
+            return { [subject_id]: response };
+          }
+          return { [subject_id]: [] };
+        });
 
       const data = await Promise.all(allQuestions);
 
@@ -73,20 +78,41 @@ const Test = () => {
 
   useEffect(() => {
     getAllQuestions();
-  }, [test ]);
+  }, [test]);
 
-  const getQuestionId = () =>{
-   const res = questions[activeSubject]?.find(({ index }) => index === currentQuestion)
-   setQuestionId(res?.question_id)
-    return res?.question_id ?? null
-  }
+  const getQuestionId = () => {
+    const res = questions[activeSubject]?.find(
+      ({ index }) => index === currentQuestion - 1
+    );
+    console.log(res, "ress");
+    setQuestionId(res?.question_id);
+    return res?.question_id ?? null;
+  };
 
   useEffect(() => {
-    getQuestionId()
-  }, [questions , currentQuestion])
-  
-  console.log(questions ,"cuurenn")
+    getQuestionId();
+  }, [questions, currentQuestion]);
 
+  const deleteQuestionFromtest = async ( ) => {
+    setIsLoading(true);
+    try {
+      await server.delete(`api/v1/test-series/test/question/${question_id}`);
+      setQuestions((prev) => ({
+        ...prev,
+        [activeSubject]: questions[activeSubject]?.filter(
+          ({ index }) => index != currentQuestion - 1
+        ),
+      }));
+      setModal("");
+    } catch (error) {
+      console.log(`Error: deleteTestFromTestSeries --- ${error}}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  //
+
+  console.log(questions ,"okk")
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
       {isLoading && <Loader />}
@@ -102,8 +128,15 @@ const Test = () => {
         currentQuestion={currentQuestion}
         subject_id={activeSubject}
         setIsAddQuestion={() => setCurrentQuestion("")}
-        question_id = {question_id}
-        onChange = {()=>getAllQuestions()}
+        question_id={question_id}
+        onChange={(type , fn) => {
+          if (type === DELETE) {
+            deleteQuestionFromtest();
+            fn(false)
+          } else {
+            getAllQuestions();
+          }
+        }}
       />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
@@ -125,8 +158,9 @@ const Test = () => {
           </button>
         </div>
         <div className="flex gap-4 justify-start items-center py-4 flex-wrap">
-          {test?.subjects?.filter(({inclued})=>inclued).map(
-            ({ label, total_questions, question_count, subject_id }) => (
+          {test?.subjects
+            ?.filter(({ inclued }) => inclued)
+            .map(({ label, total_questions, question_count, subject_id }) => (
               <Button
                 activeTab={activeSubject === subject_id}
                 buttonText={`${label} (${question_count}/${total_questions})`}
@@ -138,15 +172,14 @@ const Test = () => {
                   setCurrentSubjectInfo(currentSubject);
                 }}
               />
-            )
-          )}
+            ))}
         </div>
       </div>
 
       <div className="p-6 bg-white w-full md:min-h-[120px]">
         <div className="flex gap-4 justify-start flex-wrap">
           {!!currentSubjectInfo.total_questions &&
-            new Array(currentSubjectInfo.total_questions)
+            new Array(parseInt(currentSubjectInfo.total_questions))
               ?.fill(null)
               .map((_, i) => (
                 <Button
@@ -154,7 +187,7 @@ const Test = () => {
                     !!questions[activeSubject]?.find(({ index }) => index === i)
                   }
                   buttonText={i + 1}
-                  onClick={() => setCurrentQuestion(i+1)}
+                  onClick={() => setCurrentQuestion(i + 1)}
                   className="min-w-[100px] h-[28px] flex justify-center items-center rounded-[5px]"
                 />
               ))}

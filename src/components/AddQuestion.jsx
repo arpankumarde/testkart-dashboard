@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import { useParams } from "react-router-dom";
 import { server } from "../api";
 import Loader from "./Loader";
+import { DELETE } from "../utils/constant";
 
 const optionInitialState = [
   {
@@ -27,6 +28,8 @@ const AddQuestion = ({
   const [solution, setSolution] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [modal, setModal] = useState("");
+
 
   const params = useParams();
 
@@ -86,8 +89,8 @@ const AddQuestion = ({
       } else {
         await server.post("/api/v1/test-series/test/question", formData);
       }
-      await  onChange()
       setIsAddQuestion('')
+      onChange()
       clearState()
     } catch (error) {
       console.log(error, "error while adding Question:" ,error);
@@ -121,18 +124,32 @@ const AddQuestion = ({
   useEffect(() => {
     getQuestionInfo();
   }, [question_id]);
-
+  
+  console.log(modal ,"moo")
   return (
     <Modal
       title={title}
       isModalOpen={isAddQuestion}
       setIsModalOpen={setIsAddQuestion}
-      className={"max-w-full !p-0"}
+      className={"max-w-full !p-0 [&>div]:!h-screen !overflow-hidden"}
       onAccept={() => addQuestionRequest()}
       onDecline={() => setIsAddQuestion()}
+      onDelete={()=>setModal(DELETE)}
+      showDelete={!!question_id}
       isAddQuestion={true}
     >
       {isLoading && <Loader />}
+      <Modal
+        title="Are  you sure ?"
+        isModalOpen={modal === DELETE}
+        setIsModalOpen={setModal}
+        isDelete={true}
+        onAccept={() => onChange(DELETE , setModal)}
+      >
+        <div className="flex justify-center items-center flex-col gap-2 ">
+          <p>Are you sure to delete this test?</p>
+        </div>
+      </Modal>
       <div className="flex w-full bg-white ">
         <div className="w-[50%] p-5 overflow-scroll h-[75vh] lg:h-[80vh] custom-scroll-bar">
           <div className="flex flex-col gap-3">
