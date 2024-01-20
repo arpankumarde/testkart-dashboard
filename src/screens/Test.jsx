@@ -4,7 +4,8 @@ import { server } from "../api";
 import { Button, Loader, Modal } from "../components";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AddQuestion from "../components/AddQuestion";
-import { DELETE } from "../utils/constant";
+import { ADD_QUESTION, DELETE } from "../utils/constant";
+import UploadQuestion from "../components/UploadQuestion";
 
 const Test = () => {
   const [test, setTest] = useState([]);
@@ -93,7 +94,7 @@ const Test = () => {
     getQuestionId();
   }, [questions, currentQuestion]);
 
-  const deleteQuestionFromtest = async ( ) => {
+  const deleteQuestionFromtest = async () => {
     setIsLoading(true);
     try {
       await server.delete(`api/v1/test-series/test/question/${question_id}`);
@@ -112,7 +113,7 @@ const Test = () => {
   };
   //
 
-  console.log(questions ,"okk")
+  console.log(questions, "okk");
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
       {isLoading && <Loader />}
@@ -129,15 +130,16 @@ const Test = () => {
         subject_id={activeSubject}
         setIsAddQuestion={() => setCurrentQuestion("")}
         question_id={question_id}
-        onChange={(type , fn) => {
+        onChange={(type, fn) => {
           if (type === DELETE) {
             deleteQuestionFromtest();
-            fn(false)
+            fn(false);
           } else {
             getAllQuestions();
           }
         }}
       />
+      <UploadQuestion isModalOpen={modal==='upload'} setIsModalOpen={setModal} />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
           <div className="relative">
@@ -151,6 +153,7 @@ const Test = () => {
             </p>
           </div>
           <button
+            onClick={() => setModal("upload")}
             type="button"
             className="bg-[#6c757d]  text-white border border-[#6c757d] rounded-[3px] text-base px-2 py-1 leading-6 delay-100 ease-in-out"
           >
