@@ -1,9 +1,17 @@
-import React, { useState, useEffect, useRef , memo} from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 
-const Dropdown = ({ items, buttonText, handleChange, className, children , hideAfterClick=false}) => {
+const Dropdown = ({
+  items,
+  buttonText,
+  handleChange,
+  className,
+  children,
+  hideAfterClick = false,
+  selectedValue,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const dropdownRef = useRef(null); 
+  const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -23,7 +31,7 @@ const Dropdown = ({ items, buttonText, handleChange, className, children , hideA
     };
   }, []);
 
-  console.log(hideAfterClick ,"Hii")
+  console.log(hideAfterClick, "Hii");
   return (
     <div className="dropdown" ref={dropdownRef}>
       {buttonText && (
@@ -59,11 +67,13 @@ const Dropdown = ({ items, buttonText, handleChange, className, children , hideA
               <>
                 <li
                   key={`${item.label - index}`}
-                  className={`dropdown-item py-2 px-6 w-full hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer whitespace-nowrap ${item.label ==='Unlist' ? '!text-red-600' :''}`}
+                  className={`dropdown-item py-2 px-6 w-full hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer whitespace-nowrap ${
+                    item.label === "Unlist" ? "!text-red-600" : ""
+                  } ${selectedValue === item.label && "text-[#833ee4]"}`}
                   onClick={() => {
-                    handleChange(item.label)
-                    if(hideAfterClick){
-                      setIsOpen(false)
+                    handleChange(item.label);
+                    if (hideAfterClick) {
+                      setIsOpen(false);
                     }
                   }}
                 >
@@ -82,4 +92,4 @@ const Dropdown = ({ items, buttonText, handleChange, className, children , hideA
   );
 };
 
-export default  Dropdown;
+export default Dropdown;

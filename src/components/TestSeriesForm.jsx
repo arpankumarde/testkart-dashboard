@@ -174,6 +174,7 @@ const TestSeriesForm = ({
                 onChange={(e) => handleChange(e)}
               />
               <Dropdown
+                selectedValue={discountType}
                 items={Object.values(DISCOUNT_TYPE).map((label) => ({ label }))}
                 className="absolute -bottom-28"
                 hideAfterClick={true}
