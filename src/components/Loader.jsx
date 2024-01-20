@@ -2,7 +2,7 @@ import React from "react";
 
 const Loader = () => {
   return (
-    <div className="fixed z-50 top-[35%] left-[52%]">
+    <div className="fixed z-[999] top-[35%] left-[52%]">
       <div className="flex">
         <div className="relative">
           <div className="w-12 h-12 rounded-full absolute border-8 border-solid border-gray-200"></div>

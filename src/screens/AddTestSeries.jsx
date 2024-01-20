@@ -7,6 +7,7 @@ import {
   Loader,
   TestSeriesForm,
 } from "../components";
+import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
 
 const AddTestSeries = () => {
   const [step, setStep] = useState(1);
@@ -24,9 +25,27 @@ const AddTestSeries = () => {
     total_tests: "",
     exam_id: "",
     academy_id: 1,
+    difficultyLevel: "easy",
+    testSeriesType: TEST_SERIES_TYPE.Free,
+    price: 0,
+    discount: 0,
+    finalPrice: 0,
+    discountType: "percentage",
   });
 
-  const { title, description, total_tests, language, exam_id } = formData;
+  const {
+    title,
+    description,
+    total_tests,
+    language,
+    exam_id,
+    difficultyLevel,
+    testSeriesType,
+    price,
+    discount,
+    finalPrice,
+    discountType,
+  } = formData;
 
   const getAllExams = async () => {
     setIsLoading(true);
@@ -63,6 +82,16 @@ const AddTestSeries = () => {
     addTestSeries();
   };
 
+  const calculateFinalPrice = () => {
+    setFormData((prev) => {
+      const discountPrice =
+        prev.discountType === DISCOUNT_TYPE.PERCENTAGE
+          ? (prev.price * (100 - prev.discount)) / 100
+          : prev.price - prev.discount;
+      return { ...prev, finalPrice: discountPrice };
+    });
+  };
+
   const handleChange = ({ target }) => {
     try {
       const { name, value } = target;
@@ -74,6 +103,10 @@ const AddTestSeries = () => {
         setCurrentExamInfo(currentExam);
       }
       setFormData((prev) => ({ ...prev, [name]: value }));
+
+      if (['discount','price'].includes) {
+        calculateFinalPrice();
+      }
     } catch (error) {
       console.log(error, "error");
     }
@@ -122,7 +155,17 @@ const AddTestSeries = () => {
               description={description}
               language={language}
               total_tests={total_tests}
+              difficultyLevel={difficultyLevel}
+              testSeriesType={testSeriesType}
+              price={price}
+              finalPrice={finalPrice}
+              discount={discount}
+              discountType={discountType}
               handleChange={(e) => handleChange(e)}
+              handleDiscountType={(value) => {
+                setFormData((prev) => ({ ...prev, discountType: value }));
+                return calculateFinalPrice();
+              }}
             />
           )}
           <div className="flex justify-between w-full py-2">
@@ -132,6 +175,7 @@ const AddTestSeries = () => {
                 if (step === 1) {
                   return navigate("/test-series");
                 } else {
+                  getAllExams();
                   return setStep(1);
                 }
               }}

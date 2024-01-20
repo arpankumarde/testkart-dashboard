@@ -27,7 +27,9 @@ const Test = () => {
         const currentTest = data.data?.[0];
         setTest(currentTest ?? {});
         if (currentTest) {
-          setActiveSubject(currentTest.subjects[0]?.subject_id);
+          const includedSubjects = currentTest.subjects.filter(({inclued})=>inclued)
+
+          setActiveSubject(includedSubjects[0]?.subject_id ?? '');
           setCurrentSubjectInfo(currentTest.subjects[0]);
           await getAllQuestions();
         }
@@ -71,7 +73,7 @@ const Test = () => {
 
   useEffect(() => {
     getAllQuestions();
-  }, [test]);
+  }, [test ]);
 
   const getQuestionId = () =>{
    const res = questions[activeSubject]?.find(({ index }) => index === currentQuestion)
@@ -83,6 +85,7 @@ const Test = () => {
     getQuestionId()
   }, [questions , currentQuestion])
   
+  console.log(questions ,"cuurenn")
 
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
@@ -94,12 +97,13 @@ const Test = () => {
           )
             ? "Edit Question"
             : "Add Question"
-        } ${currentQuestion + 1} in ${currentSubjectInfo.label}`}
+        } ${currentQuestion} in ${currentSubjectInfo.label}`}
         isAddQuestion={!!currentQuestion}
         currentQuestion={currentQuestion}
         subject_id={activeSubject}
         setIsAddQuestion={() => setCurrentQuestion("")}
         question_id = {question_id}
+        onChange = {()=>getAllQuestions()}
       />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
@@ -150,7 +154,7 @@ const Test = () => {
                     !!questions[activeSubject]?.find(({ index }) => index === i)
                   }
                   buttonText={i + 1}
-                  onClick={() => setCurrentQuestion(i)}
+                  onClick={() => setCurrentQuestion(i+1)}
                   className="min-w-[100px] h-[28px] flex justify-center items-center rounded-[5px]"
                 />
               ))}

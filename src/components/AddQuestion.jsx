@@ -6,6 +6,13 @@ import { useParams } from "react-router-dom";
 import { server } from "../api";
 import Loader from "./Loader";
 
+const optionInitialState = [
+  {
+    option: "",
+    is_correct: false,
+  },
+]
+
 const AddQuestion = ({
   isAddQuestion,
   setIsAddQuestion,
@@ -13,6 +20,7 @@ const AddQuestion = ({
   subject_id,
   title,
   question_id,
+  onChange
 }) => {
   const [question_type, setQuestionType] = useState("MCQ-S");
   const [question, setQuestion] = useState("");
@@ -21,12 +29,8 @@ const AddQuestion = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const params = useParams();
-  const [options, setOptions] = useState([
-    {
-      option: "",
-      is_correct: false,
-    },
-  ]);
+
+  const [options, setOptions] = useState(optionInitialState);
   const handleChange = (index) => {
     const isCorrectOptionExist = options.find((item) => item.is_correct);
 
@@ -43,6 +47,12 @@ const AddQuestion = ({
     return setOptions(newOptions);
   };
 
+  const clearState = () => {
+    setOptions([])
+    setQuestion('')
+    setSolution('')
+  }
+
   const handleValueChange = (value, index) => {
     const newOptions = [...options];
     newOptions[index].option = value;
@@ -57,7 +67,7 @@ const AddQuestion = ({
 
   const addQuestionRequest = async () => {
     const formData = {
-      index: currentQuestion,
+      index: currentQuestion - 1,
       options,
       question,
       question_type,
@@ -68,22 +78,19 @@ const AddQuestion = ({
     try {
       setIsLoading(true);
 
-      if(question_id) {
-        const { data } = await server.put(
+      if (question_id) {
+        await server.put(
           `/api/v1/test-series/test/question/${question_id}`,
           formData
         );
-        console.log(data ,'data')
-      }else{
-        const { data } = await server.post(
-          "/api/v1/test-series/test/question",
-          formData
-        );
-        console.log(data, "response");
+      } else {
+        await server.post("/api/v1/test-series/test/question", formData);
       }
-
+      await  onChange()
+      setIsAddQuestion('')
+      clearState()
     } catch (error) {
-      console.log(error, "error while adding test");
+      console.log(error, "error while adding Question:" ,error);
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +98,7 @@ const AddQuestion = ({
 
   const getQuestionInfo = async () => {
     try {
-      console.log(question_id ,"quu")
+      console.log(question_id, "quu");
       if (question_id) {
         setIsLoading(true);
         const { data } = await server.get(
@@ -99,7 +106,6 @@ const AddQuestion = ({
         );
         if (data.data) {
           const currentQuestion = data?.data?.question;
-          console.log(currentQuestion)
           setQuestion(currentQuestion.question);
           setQuestionType(currentQuestion.question_type);
           setOptions(JSON.parse(currentQuestion.options));
@@ -222,7 +228,7 @@ const AddQuestion = ({
                       type="radio"
                       value={option}
                       checked={selectedOption === option}
-                      onChange={(val) => setSelectedOption(option)}
+                      onChange={() => setSelectedOption(option)}
                     />
                     <p dangerouslySetInnerHTML={{ __html: option }}></p>
                   </label>

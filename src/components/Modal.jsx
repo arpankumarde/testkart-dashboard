@@ -18,7 +18,7 @@ const Modal = ({
   };
 
   const handleAccept = () => {
-    setIsModalOpen(false);
+    // setIsModalOpen(false);
     onAccept();
   };
 
@@ -65,10 +65,17 @@ const Modal = ({
 
           <div className="p-2  space-y-4">{children}</div>
 
-          <div className={`flex items-center p-4  border-t border-gray-200 rounded-b dark:border-gray-600 gap-4 ${isAddQuestion? 'justify-end' :'justify-between '}`}>
+          <div
+            className={`flex items-center p-4  border-t border-gray-200 rounded-b dark:border-gray-600 gap-4 ${
+              isAddQuestion ? "justify-end" : "justify-between "
+            }`}
+          >
             {/* cancel */}
             {isAddQuestion ? (
-              <button className="px-3 py-2 text-white bg-[#596780]" onClick={handleDecline}>
+              <button
+                className="px-3 py-2 text-white bg-[#596780]"
+                onClick={handleDecline}
+              >
                 Close
               </button>
             ) : (
@@ -76,7 +83,7 @@ const Modal = ({
             )}
 
             {/* Accept */}
-            { isDelete && (
+            {isDelete && (
               <button
                 onClick={handleAccept}
                 type="button"
@@ -85,12 +92,12 @@ const Modal = ({
                 Delete
               </button>
             )}
-            {(isShare || isAddQuestion) && (
+
+            {!isDelete && (
               <Button
                 buttonText={isShare ? "Share" : "Save changes"}
                 activeTab={true}
                 onClick={handleAccept}
-
               />
             )}
           </div>
