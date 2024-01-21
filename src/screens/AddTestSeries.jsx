@@ -22,14 +22,14 @@ const AddTestSeries = () => {
     title: "",
     description: "",
     language: "",
-    total_tests: "",
+    // total_tests: "",
     exam_id: "",
     academy_id: 1,
-    difficultyLevel: "easy",
-    testSeriesType: TEST_SERIES_TYPE.Free,
-    price: 0,
+    difficulty_level: "Easy",
+    is_paid: TEST_SERIES_TYPE.Free,
+    price_before_discount: 0,
     discount: 0,
-    finalPrice: 0,
+    price: 0,
     discountType: "percentage",
   });
 
@@ -39,11 +39,11 @@ const AddTestSeries = () => {
     total_tests,
     language,
     exam_id,
-    difficultyLevel,
-    testSeriesType,
+    difficulty_level,
+    is_paid,
     price,
     discount,
-    finalPrice,
+    price_before_discount,
     discountType,
   } = formData;
 
@@ -86,9 +86,9 @@ const AddTestSeries = () => {
     setFormData((prev) => {
       const discountPrice =
         prev.discountType === DISCOUNT_TYPE.PERCENTAGE
-          ? (prev.price * (100 - prev.discount)) / 100
-          : prev.price - prev.discount;
-      return { ...prev, finalPrice: discountPrice };
+          ? (prev.price_before_discount * (100 - prev.discount)) / 100
+          : prev.price_before_discount - prev.discount;
+      return { ...prev, price: discountPrice };
     });
   };
 
@@ -111,6 +111,9 @@ const AddTestSeries = () => {
       console.log(error, "error");
     }
   };
+
+
+  console.log(formData ,"formDat")
 
   return (
     <section className="flex md:flex-row flex-col pt-2 gap-4">
@@ -154,10 +157,10 @@ const AddTestSeries = () => {
               description={description}
               language={language}
               total_tests={total_tests}
-              difficultyLevel={difficultyLevel}
-              testSeriesType={testSeriesType}
-              price={price}
-              finalPrice={finalPrice}
+              difficultyLevel={difficulty_level}
+              testSeriesType={is_paid}
+              price={price_before_discount}
+              finalPrice={price}
               discount={discount}
               discountType={discountType}
               handleChange={(e) => handleChange(e)}

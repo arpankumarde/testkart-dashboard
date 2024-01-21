@@ -17,6 +17,7 @@ import { getOptions } from "../utils/common";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 const ViewTestSeries = () => {
+  const [title , setTitle] = useState('')
   const [tests, setTests] = useState([]);
   const [testDetails, setTestDetails] = useState({});
   const [isLoading, setIsLoading] = useState();
@@ -46,6 +47,7 @@ const ViewTestSeries = () => {
       );
       if (data) {
         const updatedTestDetails = data.data.exam ?? {};
+        setTitle(data.data.title)
         setTestDetails(updatedTestDetails);
         setTestData((prevTestData) => ({
           ...prevTestData,
@@ -156,8 +158,10 @@ const ViewTestSeries = () => {
   }, []);
 
   const handleDropdownClick = (value, id, title) => {
+    console.log(value ,"vaa")
     switch (value) {
       case EDIT_DETAILS: {
+        return;
       }
       case DELETE: {
         setIsModalContent((prev) => ({ ...prev, title, id }));
@@ -279,7 +283,7 @@ const ViewTestSeries = () => {
               onClick={() => navigate("/test-series")}
               className="cursor-pointer"
             />
-            <h1 className="font-medium text-lg">{testDetails.exam}</h1>
+            <h1 className="font-medium text-lg">{title}</h1>
           </p>
         </div>
         <div className="flex gap-3">

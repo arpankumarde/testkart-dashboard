@@ -9,8 +9,8 @@ export const STATUS_MEANINGS_BY_CODE = {
 };
 
 export const TEST_SERIES_TYPE = {
-  Free :'free',
-  Paid:'paid'
+  Free :0,
+  Paid:1
 }
 
 export const DISCOUNT_TYPE = {

@@ -7,6 +7,7 @@ import {
   Loader,
   TestSeriesForm,
 } from "../components";
+import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
 
 const EditTestSeries = () => {
   const [testinfo, setTestinfo] = useState({});
@@ -21,10 +22,28 @@ const EditTestSeries = () => {
     language: "",
     total_tests: "",
     exam_id: "",
-    academy_id: 1, 
+    academy_id: 1,
+    difficulty_level: "Easy",
+    is_paid: TEST_SERIES_TYPE.Free,
+    price_before_discount: 0,
+    discount: 0,
+    price: 0,
+    discountType: "percentage",
   });
 
-  const { title, description, total_tests, language} = formData;
+  const {
+    title,
+    description,
+    total_tests,
+    language,
+    exam_id,
+    difficulty_level,
+    is_paid,
+    price,
+    discount,
+    price_before_discount,
+    discountType,
+  } = formData;
 
   const params = useParams();
 
@@ -43,6 +62,11 @@ const EditTestSeries = () => {
           total_tests: currentTest.total_tests,
           exam_id: currentTest.exam_id,
           academy_id: currentTest.academy_id,
+          is_paid : currentTest.is_paid,
+          price_before_discount: currentTest.price_before_discount,
+          price:currentTest.price_before_discount,
+          difficulty_level:currentTest.difficulty_level,
+          discount : currentTest.discount
         }));
       }
     } catch (error) {
@@ -70,9 +94,22 @@ const EditTestSeries = () => {
     getTestInfo();
   }, []);
 
+  const calculateFinalPrice = () => {
+    setFormData((prev) => {
+      const discountPrice =
+        prev.discountType === DISCOUNT_TYPE.PERCENTAGE
+          ? (prev.price_before_discount * (100 - prev.discount)) / 100
+          : prev.price_before_discount - prev.discount;
+      return { ...prev, price: discountPrice };
+    });
+  };
+
   const handleChange = ({ target }) => {
     const { name, value } = target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (['discount','price'].includes) {
+      calculateFinalPrice();
+    }
   };
 
   return (
@@ -89,6 +126,16 @@ const EditTestSeries = () => {
             language={language}
             total_tests={total_tests}
             handleChange={(e) => handleChange(e)}
+            difficultyLevel={difficulty_level}
+            testSeriesType={is_paid}
+            price={price_before_discount}
+            finalPrice={price}
+            discount={discount}
+            discountType={discountType}
+            handleDiscountType={(value) => {
+              setFormData((prev) => ({ ...prev, discountType: value }));
+              return calculateFinalPrice();
+            }}
           />
           <div className="flex justify-between w-full py-2">
             <button

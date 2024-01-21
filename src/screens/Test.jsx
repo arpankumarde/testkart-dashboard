@@ -139,7 +139,7 @@ const Test = () => {
           }
         }}
       />
-      <UploadQuestion isModalOpen={modal==='upload'} setIsModalOpen={setModal} />
+      <UploadQuestion isModalOpen={modal==='upload'} setIsModalOpen={setModal} subject_id={activeSubject} />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
           <div className="relative">

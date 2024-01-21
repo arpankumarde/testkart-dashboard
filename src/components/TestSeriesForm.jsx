@@ -32,8 +32,7 @@ const TestSeriesForm = ({
                 <span key={currentSubject}>
                   {currentSubject}
                   {index + 1 !==
-                    currentExamInfo?.default_pattern?.subjects.length &&
-                    ","}
+                    currentExamInfo?.default_pattern?.subjects.length && ","}
                 </span>
               )
             )}
@@ -41,18 +40,41 @@ const TestSeriesForm = ({
         </div>
       )}
       <div className="h-0 my-2 w-full  border-t border-t-[#e9ecef]"></div>
-      <div className="flex flex-col w-full gap-2">
-        <label htmlFor="title" className="text-[#596780] font-medium text-lg">
-          Write a title for your test series
-        </label>
-        <input
-          name="title"
-          id="title"
-          value={title}
-          placeholder="title for test"
-          className="w-full outline-none border border-[#ced4da] bg-white px-2 py-2"
-          onChange={(e) => handleChange(e)}
-        />
+      <div className="flex  w-full gap-2 justify-center items-center  flex-wrap">
+        <div className="flex flex-col gap-2 flex-[2]">
+          <label htmlFor="title" className="text-[#596780] font-medium text-lg">
+            Write a title for your test series
+          </label>
+          <input
+            name="title"
+            id="title"
+            value={title}
+            placeholder="title for test"
+            className="w-full outline-none border border-[#ced4da] bg-white px-2 py-2"
+            onChange={(e) => handleChange(e)}
+          />
+        </div>
+        <div className="flex flex-col gap-2 flex-1 text-[#596780]">
+          <label
+            htmlFor="difficulty"
+            className=" dark:text-white  font-medium text-lg"
+          >
+            Difficulty level
+          </label>
+          <select
+            onChange={(e) => handleChange(e)}
+            id="difficultyLevel"
+            name="difficulty_level"
+            value={difficultyLevel}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
+          >
+            {["Easy", "Medium", "Hard"].map((level) => (
+              <option value={level} className="" key={level}>
+                {level}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="flex flex-col w-full gap-2">
@@ -85,7 +107,7 @@ const TestSeriesForm = ({
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
           >
             {languages.map((_language) => (
-              <option value={_language} key={_language} >
+              <option value={_language} key={_language}>
                 {_language}
               </option>
             ))}
@@ -93,24 +115,20 @@ const TestSeriesForm = ({
         </div>
         <div className="flex flex-col w-[30%] gap-2">
           <label
-            htmlFor="difficulty"
-            className=" dark:text-white  font-medium text-lg"
+            htmlFor="testscount"
+            className=" font-medium text-lg text-[#596780]"
           >
-            Difficulty level
+            Total number of tests in this series
           </label>
-          <select
+          <input
+            type="number"
+            name="total_tests"
+            id="testscount"
+            value={total_tests}
+            placeholder="6"
+            className="px-2 py-2  border border-[#ced4da] outline-none"
             onChange={(e) => handleChange(e)}
-            id="difficultyLevel"
-            name="difficultyLevel"
-            value={difficultyLevel}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
-          >
-            {["Easy", "Medium", "Hard"].map((level) => (
-              <option value={level.toLowerCase()} className="" key={level}>
-                {level}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
       <div className="flex justify-center items-center gap-4 text-[#596780] [&>div]:flex-1">
@@ -118,9 +136,9 @@ const TestSeriesForm = ({
           <input
             type="radio"
             id="free"
-            name="testSeriesType"
-            value="free"
-            checked={testSeriesType === "free"}
+            name="is_paid"
+            value={TEST_SERIES_TYPE.Free}
+            checked={testSeriesType == TEST_SERIES_TYPE.Free}
             onChange={(e) => handleChange(e)}
           />
           <label htmlFor="free">Free</label>
@@ -129,16 +147,16 @@ const TestSeriesForm = ({
         <div className="flex gap-2 p-2">
           <input
             type="radio"
-            name="testSeriesType"
+            name="is_paid"
             id="paid"
-            value="paid"
-            checked={testSeriesType === "paid"}
+            value={TEST_SERIES_TYPE.Paid}
+            checked={testSeriesType == TEST_SERIES_TYPE.Paid}
             onChange={(e) => handleChange(e)}
           />
           <label htmlFor="paid">Paid</label>
         </div>
       </div>
-      {testSeriesType === TEST_SERIES_TYPE.Paid && (
+      {testSeriesType == TEST_SERIES_TYPE.Paid && (
         <div className="flex justify-center items-center gap-4 text-[#596780] [&>div]:flex-1 flex-wrap">
           <div className="flex flex-col  gap-2">
             <label
@@ -150,7 +168,7 @@ const TestSeriesForm = ({
             <input
               type="number"
               id="price"
-              name="price"
+              name="price_before_discount"
               value={price}
               placeholder="price for test series"
               className="w-full outline-none border border-[#ced4da] bg-white px-2 py-2"
@@ -197,7 +215,7 @@ const TestSeriesForm = ({
             <input
               type="number"
               id="finalPrice"
-              name="finalPrice"
+              name="price"
               value={finalPrice}
               placeholder=""
               className="w-full outline-none border border-[#ced4da] bg-white px-2 py-2"
