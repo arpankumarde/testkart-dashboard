@@ -35,7 +35,7 @@ const Test = () => {
           );
 
           setActiveSubject(includedSubjects[0]?.subject_id ?? "");
-          setCurrentSubjectInfo(currentTest.subjects[0]);
+          setCurrentSubjectInfo(includedSubjects[0]);
           await getAllQuestions();
         }
       }
