@@ -1,6 +1,7 @@
 import React from "react";
 import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
 import Dropdown from "./Dropdown";
+import { languages } from "../utils/common";
 
 const TestSeriesForm = ({
   currentExamInfo,
@@ -15,25 +16,24 @@ const TestSeriesForm = ({
   finalPrice,
   discount,
   discountType,
-  handleDiscountType
+  handleDiscountType,
 }) => {
   return (
     <div className="w-full flex flex-col gap-3">
       {currentExamInfo && (
         <div className="flex flex-col gap-1">
           <h1>
-            {" "}
             EXAM : <span className="ml-1">{currentExamInfo.exam} </span>{" "}
           </h1>
           <p>
             <span className="mr-1"> SUBJECTS : </span>
             {currentExamInfo?.default_pattern?.subjects.map(
               ({ subject: currentSubject }, index) => (
-                <span>
-                  {currentSubject}{" "}
+                <span key={currentSubject}>
+                  {currentSubject}
                   {index + 1 !==
                     currentExamInfo?.default_pattern?.subjects.length &&
-                    ","}{" "}
+                    ","}
                 </span>
               )
             )}
@@ -72,7 +72,7 @@ const TestSeriesForm = ({
       <div className="flex justify-center items-center gap-4 text-[#596780] [&>div]:flex-1">
         <div className="flex flex-col w-[30%] gap-2">
           <label
-            for="language"
+            htmlFor="language"
             className=" dark:text-white  font-medium text-lg"
           >
             Language
@@ -82,17 +82,18 @@ const TestSeriesForm = ({
             id="language"
             name="language"
             value={language}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
           >
-            <option value="en" className="">
-              English
-            </option>
-            <option value="hi">Hindi</option>
+            {languages.map((_language) => (
+              <option value={_language} key={_language} >
+                {_language}
+              </option>
+            ))}
           </select>
         </div>
         <div className="flex flex-col w-[30%] gap-2">
           <label
-            for="difficulty"
+            htmlFor="difficulty"
             className=" dark:text-white  font-medium text-lg"
           >
             Difficulty level
@@ -102,10 +103,10 @@ const TestSeriesForm = ({
             id="difficultyLevel"
             name="difficultyLevel"
             value={difficultyLevel}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
           >
             {["Easy", "Medium", "Hard"].map((level) => (
-              <option value={level.toLowerCase()} className="">
+              <option value={level.toLowerCase()} className="" key={level}>
                 {level}
               </option>
             ))}
@@ -178,11 +179,11 @@ const TestSeriesForm = ({
                 items={Object.values(DISCOUNT_TYPE).map((label) => ({ label }))}
                 className="absolute -bottom-28"
                 hideAfterClick={true}
-                handleChange={(value)=>handleDiscountType(value)}
+                handleChange={(value) => handleDiscountType(value)}
               >
                 <button className="border px-2 py-2  border-[#ced4da] bg-white">
                   {discountType === "percentage" ? "%" : "rs"}
-                </button> 
+                </button>
               </Dropdown>
             </div>
           </div>

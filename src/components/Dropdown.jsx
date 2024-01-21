@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef, memo, Fragment } from "react";
 
 const Dropdown = ({
   items,
@@ -64,7 +64,7 @@ const Dropdown = ({
         <div className={`dropdown-menu bg-white  shadow-card p-1 ${className}`}>
           <ul className="dropdown-list">
             {items.map((item, index) => (
-              <>
+              <Fragment key={item.label}>
                 <li
                   key={`${item.label - index}`}
                   className={`dropdown-item py-2 px-6 w-full hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer whitespace-nowrap ${
@@ -83,7 +83,7 @@ const Dropdown = ({
                 {index + 1 !== items.length && (
                   <div className="h-0 my-2 w-full  border-t border-t-[#e9ecef]"></div>
                 )}
-              </>
+              </Fragment>
             ))}
           </ul>
         </div>

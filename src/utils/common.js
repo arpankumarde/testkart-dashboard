@@ -33,3 +33,33 @@ export const copyToClipboard = async (value) => {
     console.error("Unable to copy text to clipboard:", error);
   }
 };
+
+export const languages = [
+  'English',
+  'Hindi',
+  'Bengali',
+  'Marathi',
+  'Telugu',
+  'Tamil',
+  'Gujarati',
+  'Urdu',
+  'Kannada',
+  'Odia',
+  'Malayalam',
+  'Punjabi',
+  'Assamese',
+  'Maithili',
+  'Meitei',
+  'Sanskrit',
+  'French',
+  'German',
+  'Mandarin',
+  'Spanish',
+  'Arabic',
+  'Russian',
+  'Portuguese',
+  'Indonesian',
+  'Japanese',
+  'Turkish',
+  'Vietnamese'
+];
