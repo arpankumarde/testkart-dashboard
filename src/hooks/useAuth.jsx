@@ -28,8 +28,8 @@ function useProvideAuth() {
 
     if (token && user) {
       // Set Auth Header for future requests
-      server.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      server.defaults.headers.common["user_type"] = "TEACHER";
+      // server.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // server.defaults.headers.common["user_type"] = "TEACHER";
 
       setUser(user);
       // navigate("/");
