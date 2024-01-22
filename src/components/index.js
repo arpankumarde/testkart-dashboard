@@ -38,7 +38,3 @@ export {
   EarningsTransactions,
   EarningsBankSettings,
 };
-
-import SupportAccordion from "./SupportAccordion";
-
-export { SupportAccordion };

@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { AddTestSeries, Dashboard, Earnings, EditTestSeries, Login, Profile, Settings, Students, StudentsDetails, Support, Test, TestReports, TestReportsDetails, TestSeries, ViewTestSeries } from "./screens";
+import { AddTestSeries, Dashboard, Earnings, EditTestSeries, Login, Profile, Settings, Students, StudentsDetails, Test, TestReports, TestReportsDetails, TestSeries, ViewTestSeries } from "./screens";
 
 const AppRouter = () => {
   return (
@@ -19,7 +19,6 @@ const AppRouter = () => {
       <Route path="/earnings/:earnid" element={<Earnings />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/profile" element={<Profile />} />
-      <Route path="/support" element={<Support />} />
     </Routes>
   );
 };

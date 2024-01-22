@@ -25,6 +25,14 @@ const Sidebar = ({ navState, setNavState }) => {
 
   const handleMobileNavCollapse = () => {
     isMobile ? setNavState(false) : null;
+    FreshworksWidget("close");
+  };
+
+  const handleSupportRequest = (e) => {
+    e.preventDefault();
+    handleMobileNavCollapse();
+    FreshworksWidget("show");
+    FreshworksWidget("open");
   };
 
   return (
@@ -103,20 +111,20 @@ const Sidebar = ({ navState, setNavState }) => {
           <div className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2">
             <button
               type="button"
-              className="hover:bg-red-100 text-red-600 hover:text-red-700"
               onClick={handleLogout}
+              className="hover:bg-red-100 text-red-600 hover:text-red-700"
             >
               <IoLogOutOutline size={20} />
               Logout
             </button>
-            <NavLink
-              to="/support"
-              onClick={handleMobileNavCollapse}
+            <button
+              type="button"
+              onClick={handleSupportRequest}
               className="hover:bg-gray-100 hover:text-gray-950"
             >
               <IoTicketOutline size={20} />
               Support
-            </NavLink>
+            </button>
           </div>
         </div>
       </nav>
