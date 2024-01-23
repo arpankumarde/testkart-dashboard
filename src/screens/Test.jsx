@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { server } from "../api";
 import { Button, Loader, Modal } from "../components";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -19,6 +19,8 @@ const Test = () => {
   const [question_id, setQuestionId] = useState("");
   const [modal, setModal] = useState("");
 
+  const searchParams = useSearchParams()[0];
+
   const getTestInfo = async () => {
     setIsLoading(true);
     try {
@@ -33,7 +35,6 @@ const Test = () => {
           const includedSubjects = currentTest.subjects.filter(
             ({ inclued }) => inclued
           );
-
           setActiveSubject(includedSubjects[0]?.subject_id ?? "");
           setCurrentSubjectInfo(includedSubjects[0]);
           await getAllQuestions();
@@ -75,7 +76,7 @@ const Test = () => {
 
   useEffect(() => {
     getTestInfo();
-  }, []);
+  }, [modal]);
 
   useEffect(() => {
     getAllQuestions();
@@ -112,8 +113,12 @@ const Test = () => {
     }
   };
   //
-
-  console.log(questions, "okk");
+  useEffect(() => {
+   if(searchParams.get('subject_id')){
+    setModal('upload')
+   }
+  }, [searchParams])
+  
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
       {isLoading && <Loader />}
@@ -139,7 +144,11 @@ const Test = () => {
           }
         }}
       />
-      <UploadQuestion isModalOpen={modal==='upload'} setIsModalOpen={setModal} subject_id={activeSubject} />
+      <UploadQuestion
+        isModalOpen={modal === "upload"}
+        setIsModalOpen={setModal}
+        subject_id={searchParams?.get('subject_id')?? activeSubject}
+      />
       <div className="w-full flex-col p-5 shadow-card bg-white">
         <div className="flex justify-between">
           <div className="relative">
@@ -153,7 +162,11 @@ const Test = () => {
             </p>
           </div>
           <button
-            onClick={() => setModal("upload")}
+            onClick={() => {
+              navigate(
+                `/test-series/${params.series_id}/test/${params.test_id}/questions?subject_id=${activeSubject}`
+              );
+            }}
             type="button"
             className="bg-[#6c757d]  text-white border border-[#6c757d] rounded-[3px] text-base px-2 py-1 leading-6 delay-100 ease-in-out"
           >

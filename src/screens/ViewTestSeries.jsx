@@ -17,7 +17,7 @@ import { getOptions } from "../utils/common";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 const ViewTestSeries = () => {
-  const [title , setTitle] = useState('')
+  const [title, setTitle] = useState("");
   const [tests, setTests] = useState([]);
   const [testDetails, setTestDetails] = useState({});
   const [isLoading, setIsLoading] = useState();
@@ -26,6 +26,7 @@ const ViewTestSeries = () => {
     title: "",
     id: "",
   });
+  const [isPublish, setIsPublish] = useState(false);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -47,7 +48,7 @@ const ViewTestSeries = () => {
       );
       if (data) {
         const updatedTestDetails = data.data.exam ?? {};
-        setTitle(data.data.title)
+        setTitle(data.data.title);
         setTestDetails(updatedTestDetails);
         setTestData((prevTestData) => ({
           ...prevTestData,
@@ -158,7 +159,7 @@ const ViewTestSeries = () => {
   }, []);
 
   const handleDropdownClick = (value, id, title) => {
-    console.log(value ,"vaa")
+    console.log(value, "vaa");
     switch (value) {
       case EDIT_DETAILS: {
         return;
@@ -186,6 +187,19 @@ const ViewTestSeries = () => {
       setIsLoading(false);
     }
   };
+
+  const checkTestSeriesIsReadyForPublish = () => {
+    const data = tests.find(
+      (item) => item.meta.questions_count >= item.meta.total_questions
+    );
+    setIsPublish(!!data);
+  };
+
+  useEffect(() => {
+    if (tests.length) {
+      checkTestSeriesIsReadyForPublish();
+    }
+  }, [tests]);
 
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
@@ -289,9 +303,15 @@ const ViewTestSeries = () => {
         <div className="flex gap-3">
           <Button
             activeTab={true}
-            buttonText={"Add new Test"}
-            className={"h-9 flex justify-center items-center"}
-            onClick={() => setModal(ADD_QUESTION)}
+            buttonText={`${isPublish ? "Publish" : "Add"} new Test`}
+            className={`h-9 flex justify-center items-center ${
+              isPublish ? "!bg-[#30d530]" : ""
+            }`}
+            onClick={() =>
+              isPublish
+                ? navigate(`/test-series/${params.series_id}/publish`)
+                : setModal(ADD_QUESTION)
+            }
           />
 
           {/* <Link to="/test-series/add">
@@ -357,9 +377,9 @@ const ViewTestSeries = () => {
                   </td> */}
                   <td>
                     <span
-                      className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
+                      className={`rounded-full px-4 py-1 text-white ${ meta.questions_count >= meta.total_questions  ?'bg-[#30d530]' :'bg-[#545b62]'}`}
                     >
-                      {STATUS_MEANINGS_BY_CODE[status] ?? ""}
+                      {meta.questions_count >= meta.total_questions ? 'Completed':'Incompleted'}
                     </span>
                   </td>
                   <td>

@@ -104,7 +104,7 @@ const AddTestSeries = () => {
       }
       setFormData((prev) => ({ ...prev, [name]: value }));
 
-      if (['discount','price'].includes) {
+      if (['discount','price_before_discount'].includes) {
         calculateFinalPrice();
       }
     } catch (error) {

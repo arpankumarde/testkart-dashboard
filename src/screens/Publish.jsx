@@ -1,0 +1,209 @@
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { server } from "../api";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, ButtonLoader, Loader } from "../components";
+import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
+
+const Publish = () => {
+  const params = useParams();
+  const [isLoading, setIsLoading] = useState();
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    language: "",
+    exam_id: "",
+    academy_id: 1,
+    difficulty_level: "Easy",
+    is_paid: TEST_SERIES_TYPE.Free,
+    price_before_discount: 0,
+    discount: 0,
+    price: 0,
+    discountType: "percentage",
+    cover_photo: undefined,
+  });
+  const [isSubmitting, setIsSubmmiting] = useState(false);
+
+  const { title, price, discount, cover_photo } = formData;
+
+  const navigate = useNavigate();
+
+  const verifyTestSeries = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await server.get(
+        `/api/v1/test-series/${params.series_id}/verify`
+      );
+      if (!data.success) {
+        alert('test series is not verified for listing')
+        navigate(`/test-series/${params.series_id}`);
+      }
+      setFormData({ ...data.data.test_series[0], discountType: "percentage" });
+      console.log(data, "dataa");
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useLayoutEffect(() => {
+    verifyTestSeries();
+  }, []);
+
+  const calculateFinalPrice = () => {
+    setFormData((prev) => {
+      const discountPrice =
+        prev.discountType === DISCOUNT_TYPE.PERCENTAGE
+          ? (prev.price_before_discount * (100 - prev.discount)) / 100
+          : prev.price_before_discount - prev.discount;
+
+      console.log(discountPrice, "okk");
+      return { ...prev, price: discountPrice };
+    });
+  };
+
+  const handleChange = async ({ target }) => {
+    try {
+      const { name, value, files } = target;
+      console.log(name, value, "ookk");
+      setFormData((prev) => ({
+        ...prev,
+        [name]: name === "cover_photo" ? files[0] : value,
+      }));
+
+      if (["discount", "price_before_discount"].includes(name)) {
+        calculateFinalPrice();
+      }
+    } catch (error) {
+      console.log(error, "error");
+    }
+  };
+
+  const handlePublishSeries = async () => {
+    try {
+      setIsSubmmiting(true);
+      const newFormData = new FormData();
+      newFormData.append("free_tests", 1);
+      newFormData.append("price", price);
+      newFormData.append("discount", discount);
+      newFormData.append("file", cover_photo);
+
+      const { data } = await server.post(
+        `/api/v1/test-series/${params.series_id}/publish`,
+        newFormData
+      );
+    } catch (error) {
+      console.log(`error::`, error.message);
+    } finally {
+      setIsSubmmiting(false);
+    }
+  };
+  console.log(formData, "formm");
+  return (
+    <div className="flex flex-col md:flex-row [&>div]:flex-1 p-5">
+      {isLoading && <Loader />}
+      <div className="shadow-card bg-white border p-5 flex flex-col gap-2 text-[#596780]">
+        <div className="py-4 border-b border-b-[#596780]">
+          <h1>{title}</h1>
+        </div>
+        <div className="flex items-center justify-center gap-4 w-full border-b border-b-[#596780] py-4">
+          <div className="flex flex-col gap-2 flex-[2]">
+            <p>Cover Image</p>
+            <p>Please add a attractive cover image</p>
+          </div>
+          <div className="p-2 border border-[#596780] flex-1 w-[200px] rounded-md overflow-hidden">
+            <input
+              type="file"
+              name="cover_photo"
+              onChange={(e) => handleChange(e)}
+              className="overflow-hidden"
+            />
+          </div>
+        </div>
+        <div className="py-4 border-b border-b-[#596780] flex flex-col gap-4">
+          <div className="flex gap-2 justify-between w-full">
+            <p className="text-lg font-medium leading-6">
+              Selling Price for your test series
+            </p>
+            <div className="flex h-10 ">
+              <p className="bg-[#e9ecef] border border-[#ced4da] flex justify-center items-center px-2 w-8">
+                ₹
+              </p>
+              <input
+                type="number"
+                name="price"
+                value={price}
+                className="outline-none p-4 bg-white border w-32"
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-between w-full">
+            <p className="text-lg font-medium leading-6">Any Discount</p>
+            <div className="flex h-10 ">
+              <p className="bg-[#e9ecef] border border-[#ced4da] flex justify-center items-center px-2">
+                %
+              </p>
+              <input
+                type="number"
+                name="discount"
+                value={discount}
+                className="outline-none p-4 bg-white border w-32"
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-between w-full">
+            <p className="text-lg font-medium leading-6">Display Price</p>
+            <p className="flex gap-2">
+              <span>Rs</span> <p>{Math.round(price / 1.09).toFixed(2)}</p>
+            </p>
+          </div>
+          <div className="flex gap-2 justify-between w-full">
+            <p className="text-lg font-medium leading-6">Platform Fee</p>
+            <p className="flex gap-2">
+              <span className="font-semibold text-lg">₹</span>{" "}
+              <p>{price / 5}</p>
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 justify-between w-full py-2">
+          <p className="text-lg font-medium leading-6">You will Receive</p>
+          <p className="flex gap-2">
+            <span className="font-semibold text-lg">₹</span>{" "}
+            <p>{Math.round(price / 1.09).toFixed(2) - price / 5}</p>
+          </p>
+        </div>
+        <div className="flex gap-2 justify-between w-full py-2">
+          <Button
+            buttonText="Cancel"
+            className={"rounded-md"}
+            onClick={() => navigate(`/test-series/${params.series_id}`)}
+          />
+          <button
+            type="button"
+            onClick={() => handlePublishSeries()}
+            className="bg-[#30d530] px-4 py-2 flex justify-center items-center text-white rounded-md"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <ButtonLoader /> : "List on TestKart"}
+          </button>
+        </div>
+      </div>
+      <div className="flex justify-center items-center py-4">
+        {cover_photo && (
+          <img
+            src={
+              cover_photo.startsWith("https")
+                ? cover_photo
+                : URL.createObjectURL(cover_photo)
+            }
+            alt="cover-photo"
+            className="object-cover h-[200px] w-[400px]"
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Publish;

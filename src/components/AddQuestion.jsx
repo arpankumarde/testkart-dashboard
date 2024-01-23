@@ -12,7 +12,7 @@ const optionInitialState = [
     option: "",
     is_correct: false,
   },
-]
+];
 
 const AddQuestion = ({
   isAddQuestion,
@@ -21,7 +21,7 @@ const AddQuestion = ({
   subject_id,
   title,
   question_id,
-  onChange
+  onChange,
 }) => {
   const [question_type, setQuestionType] = useState("MCQ-S");
   const [question, setQuestion] = useState("");
@@ -29,7 +29,6 @@ const AddQuestion = ({
   const [selectedOption, setSelectedOption] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [modal, setModal] = useState("");
-
 
   const params = useParams();
 
@@ -51,10 +50,10 @@ const AddQuestion = ({
   };
 
   const clearState = () => {
-    setOptions([])
-    setQuestion('')
-    setSolution('')
-  }
+    setOptions([]);
+    setQuestion("");
+    setSolution("");
+  };
 
   const handleValueChange = (value, index) => {
     const newOptions = [...options];
@@ -89,11 +88,11 @@ const AddQuestion = ({
       } else {
         await server.post("/api/v1/test-series/test/question", formData);
       }
-      setIsAddQuestion('')
-      onChange()
-      clearState()
+      setIsAddQuestion("");
+      onChange();
+      clearState();
     } catch (error) {
-      console.log(error, "error while adding Question:" ,error);
+      console.log(error, "error while adding Question:", error);
     } finally {
       setIsLoading(false);
     }
@@ -123,9 +122,14 @@ const AddQuestion = ({
 
   useEffect(() => {
     getQuestionInfo();
+
+    return () => {
+      clearState()
+    };
+
   }, [question_id]);
-  
-  console.log(modal ,"moo")
+
+  console.log(subject_id, "moo");
   return (
     <Modal
       title={title}
@@ -134,7 +138,7 @@ const AddQuestion = ({
       className={"max-w-full !p-0 [&>div]:!h-screen !overflow-hidden"}
       onAccept={() => addQuestionRequest()}
       onDecline={() => setIsAddQuestion()}
-      onDelete={()=>setModal(DELETE)}
+      onDelete={() => setModal(DELETE)}
       showDelete={!!question_id}
       isAddQuestion={true}
     >
@@ -144,14 +148,14 @@ const AddQuestion = ({
         isModalOpen={modal === DELETE}
         setIsModalOpen={setModal}
         isDelete={true}
-        onAccept={() => onChange(DELETE , setModal)}
+        onAccept={() => onChange(DELETE, setModal)}
       >
         <div className="flex justify-center items-center flex-col gap-2 ">
           <p>Are you sure to delete this test?</p>
         </div>
       </Modal>
-      <div className="flex w-full bg-white ">
-        <div className="w-[50%] p-5 overflow-scroll h-[75vh] lg:h-[80vh] custom-scroll-bar">
+      <div className="flex w-full bg-white flex-col md:flex-row ">
+        <div className="w-full md:w-[50%] p-5 overflow-scroll h-[400px] md:h-[75vh] custom-scroll-bar">
           <div className="flex flex-col gap-3">
             <div className="flex gap-4 items-center">
               <p className="whitespace-nowrap text-lg font-medium">
@@ -226,12 +230,12 @@ const AddQuestion = ({
             </div>
           </div>
         </div>
-        <div className="w-[50%] p-5">
-          <div className="min-h-[200px]">
+        <div className="w-full md:w-[50%] p-5 h-[calc(100vh-600px)] md:h- md:h-[75vh] overflow-scroll custom-scroll-bar">
+          <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Question:</h1>
             <p dangerouslySetInnerHTML={{ __html: question }}></p>
           </div>
-          <div className="min-h-[200px]">
+          <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Options:</h1>
             <div className="flex gap-2 flex-wrap">
               {options
@@ -252,7 +256,7 @@ const AddQuestion = ({
                 ))}
             </div>
           </div>
-          <div className="min-h-[200px]">
+          <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Solution:</h1>
             <p dangerouslySetInnerHTML={{ __html: solution }}></p>
           </div>

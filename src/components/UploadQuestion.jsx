@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import { server } from "../api";
 import { useParams } from "react-router-dom";
+import ProgressBar from "./ProgressBar";
 
 const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
   const [questionFile, setQuestionFile] = useState(null);
-  const [isLoading , setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
 
   const params = useParams();
   console.log(params, "paramss");
@@ -15,32 +17,31 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
   };
 
   const handleUploadFileToServer = async () => {
-    setIsLoading(true)
-      try {
+    setIsLoading(true);
+    try {
+      if (questionFile) {
+        const formData = new FormData();
+        formData.append("file", questionFile);
 
-        if (questionFile) {
-          const formData = new FormData();
-          formData.append("file", questionFile);
-    
-          const uploadQuestionUrl = `/api/v1/test-series/test/question/import/${params.test_id}?subject_id=${subject_id}`;
-          const { data } = await server.post(uploadQuestionUrl, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data', 
-            },
-          });
-          if(data.success){
-            window.alert(data.message)
-            setIsModalOpen(false)
-          }
-        }else{
-          window.alert(`please select file to upload`)
+        const uploadQuestionUrl = `/api/v1/test-series/test/question/import/${params.test_id}?subject_id=${subject_id}`;
+        const { data } = await server.post(uploadQuestionUrl, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (data.success) {
+          // window.alert(data.message);
+          setShowLoader(true);
+          // setIsModalOpen(false);
         }
-      } catch (error) {
-        console.log(`Error handleUploadFileToServer::` ,error)
-      }finally{
-        setIsLoading(false)
-
+      } else {
+        window.alert(`please select file to upload`);
       }
+    } catch (error) {
+      console.log(`Error handleUploadFileToServer::`, error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,8 +51,10 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
       isModalOpen={isModalOpen}
       setIsModalOpen={setIsModalOpen}
       onAccept={() => handleUploadFileToServer()}
+      saveButtonText={"upload Questions"}
+      isLoading={isLoading}
     >
-      <div className="text-[#4e4a4a] flex flex-col items-center h-[78vh]">
+      <div className="text-[#4e4a4a] flex flex-col items-center h-[76vh]">
         <div className="text-[#4e4a4a] text-center py-10 px-10 border-b border-b-[#4e4a4a] flex flex-col gap-3">
           <h1 className="leading-6 text-xl font-semibold">
             Download the bulk upload template file
@@ -74,6 +77,7 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
             name="questionfile"
             onChange={handleFileChange}
           />
+          {showLoader && <ProgressBar />}
         </div>
       </div>
     </Modal>

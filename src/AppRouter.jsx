@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { AddTestSeries, Dashboard, Earnings, EditTestSeries, Login, Profile, Settings, Students, StudentsDetails, Test, TestReports, TestReportsDetails, TestSeries, ViewTestSeries } from "./screens";
+import Publish from "./screens/Publish";
 
 const AppRouter = () => {
   return (
@@ -10,6 +11,7 @@ const AppRouter = () => {
       <Route path="/test-series/add" element={<AddTestSeries />} />
       <Route path="/test-series/edit/:id" element={<EditTestSeries />} />
       <Route path="/test-series/:series_id" element={<ViewTestSeries />} />
+      <Route path="/test-series/:series_id/publish" element={<Publish />} />
       <Route path="/test-series/:series_id/test/:test_id/questions" element={<Test />} />
       <Route path="/test-reports" element={<TestReports />} />
       <Route path="/test-reports/:seriesid" element={<TestReportsDetails />} />
@@ -19,6 +21,8 @@ const AppRouter = () => {
       <Route path="/earnings/:earnid" element={<Earnings />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/test-series/:series_id/publish" element={<Publish />} />
+
     </Routes>
   );
 };

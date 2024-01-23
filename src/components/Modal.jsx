@@ -14,7 +14,9 @@ const Modal = ({
   isAddQuestion,
   className,
   showDelete,
-  onDelete
+  onDelete,
+  saveButtonText='Save changes',
+  isLoading
 }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -108,7 +110,8 @@ const Modal = ({
 
             {!isDelete && (
               <Button
-                buttonText={isShare ? "Share" : "Save changes"}
+              isLoading={isLoading}
+                buttonText={isShare ? "Share" : saveButtonText}
                 activeTab={true}
                 onClick={handleAccept}
               />
