@@ -23,6 +23,7 @@ const Profile = () => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
+    console.log(profile);
     try {
       await server
         .post(
@@ -116,8 +117,6 @@ const Profile = () => {
                 }
               />
             </div>
-          </div>
-          <div className="bg-white flex-1 flex flex-col gap-4 md:rounded-md p-4 max-md:pt-0 md:mb-4 lg:mb-8 [&>*>label]:w-64">
             <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
               <label htmlFor="logo">Academy Logo</label>
               <input
@@ -143,6 +142,134 @@ const Profile = () => {
                     academy: {
                       ...prevProfile.academy,
                       about: e.target.value.slice(0, 150),
+                    },
+                  }))
+                }
+              />
+            </div>
+          </div>
+          <div className="bg-white flex-1 flex flex-col gap-4 md:rounded-md p-4 max-md:pt-0 md:mb-4 lg:mb-8 [&>*>label]:w-64">
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="website">Website</label>
+              <input
+                type="url"
+                id="website"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.website}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      website: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="yt">Youtube</label>
+              <input
+                type="url"
+                id="yt"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.yt}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      yt: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="fb">Facebook</label>
+              <input
+                type="url"
+                id="fb"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.fb}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      fb: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="tw">Twitter</label>
+              <input
+                type="url"
+                id="tw"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.tw}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      tw: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="ig">Instagram</label>
+              <input
+                type="url"
+                id="ig"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.ig}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      ig: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="wp">WhatsApp</label>
+              <input
+                type="url"
+                id="wp"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.wp}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      wp: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
+              <label htmlFor="tg">Telegram</label>
+              <input
+                type="url"
+                id="tg"
+                className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
+                value={profile?.academy?.tg}
+                onChange={(e) =>
+                  setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    academy: {
+                      ...prevProfile.academy,
+                      tg: e.target.value,
                     },
                   }))
                 }
