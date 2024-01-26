@@ -8,7 +8,9 @@ import {
   DELETE,
   EDIT_DETAILS,
   LIST_ON_TESTKART,
+  MODIFY_LISTING,
   SHARE,
+  STATUS_CODE_BY_STATUS,
   STATUS_COLOR_BY_STATUS_CODE,
   STATUS_MEANINGS_BY_CODE,
   UNLIST,
@@ -63,7 +65,7 @@ const TestSeries = () => {
     setIsLoading(true);
     try {
       await server.get(`/api/v1/test-series/${id}/unlist`);
-      await getAllTest()
+      await getAllTest();
     } catch (error) {
       console.log(`Error: getAllTests --- ${error}}`);
     } finally {
@@ -76,7 +78,6 @@ const TestSeries = () => {
   }, []);
 
   const handleDropdownClick = (value, id, title) => {
-    console.log(value, "valu");
     switch (value) {
       case VIEW_TESTS: {
         return navigate(`/test-series/${id}`);
@@ -96,11 +97,17 @@ const TestSeries = () => {
       }
 
       case UNLIST: {
-        return UnlistTestSeries(id);
+        setIsModalContent((prev) => ({ ...prev, title, id }));
+        return setIsModal(UNLIST);
       }
 
       case LIST_ON_TESTKART: {
         return navigate(`/test-series/${id}/publish`);
+      }
+
+      case MODIFY_LISTING:{
+        return navigate(`/test-series/${id}/publish`);
+
       }
 
       // Add more cases if needed
@@ -117,6 +124,16 @@ const TestSeries = () => {
     return `https://testkart.in/test-series/${currentTest?.hash}`;
   };
 
+  const filteredTestSeries = () => {
+    if (STATUS_CODE_BY_STATUS[selectedOption] !== undefined) {
+      return tests.filter(
+        ({ status }) => status === STATUS_CODE_BY_STATUS[selectedOption]
+      );
+    } else {
+      return tests;
+    }
+  };
+
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3 relative">
       {isLoading && <Loader />}
@@ -127,12 +144,30 @@ const TestSeries = () => {
         setIsModalOpen={setIsModal}
         isDelete={true}
         onAccept={() => deleteTestSeries(modalContent.id)}
+        onDecline={()=>{}}
       >
         <div className="flex justify-center items-center flex-col gap-2 ">
           <h1 className="text-lg font-medium leading-6">
             {modalContent.title}
           </h1>
           <p>Are you sure to delete this test series?</p>
+        </div>
+      </Modal>
+
+      <Modal
+        isLoading={isLoading}
+        title="Are  you sure ?"
+        isModalOpen={isModal == UNLIST}
+        setIsModalOpen={setIsModal}
+        onAccept={() => UnlistTestSeries(modalContent.id)}
+        saveButtonText="Unlist"
+        onDecline={()=>{}}
+      >
+        <div className="flex justify-center items-center flex-col gap-2 ">
+          <h1 className="text-lg font-medium leading-6">
+            {modalContent.title}
+          </h1>
+          <p>Are you sure to Unlist this test series?</p>
         </div>
       </Modal>
 
@@ -169,9 +204,9 @@ const TestSeries = () => {
       <div className="flex justify-between p-5 shadow-card bg-white">
         <div className="relative">
           <Dropdown
-            className="absolute top-0 left-0 text-base min-w-[10rem] translate-y-8 z-10"
+            className="absolute top-0 left-0 text-base min-w-[10rem] translate-y-8 z-40"
             buttonText={selectedOption}
-            items={["All series", "Live", "Draft", "Listed"]
+            items={["All series", "Live", "Draft", "Unlisted"]
               .filter((item) => item !== selectedOption)
               .map((label) => ({ label }))}
             handleChange={(val) => setSelectedOption(val)}
@@ -200,50 +235,51 @@ const TestSeries = () => {
             </tr>
           </thead>
           <tbody>
-            {tests.map(
-              (
-                { title, total_tests, price, status, test_series_id },
-                index
-              ) => (
-                <tr
-                  key={index}
-                  className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 mobile:relative"
-                >
-                  <td>{index + 1}.</td>
-                  <td
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/test-series/${test_series_id}`)}
+            {!!tests.length &&
+              filteredTestSeries()?.map(
+                (
+                  { title, total_tests, price, status, test_series_id },
+                  index
+                ) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 mobile:relative"
                   >
-                    {title}
-                  </td>
-                  <td>{total_tests}</td>
-                  <td>{price ?? 0}</td>
-                  <td>2021</td>
-                  <td>
-                    <span
-                      className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
+                    <td>{index + 1}.</td>
+                    <td
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/test-series/${test_series_id}`)}
                     >
-                      {STATUS_MEANINGS_BY_CODE[status] ?? ""}{" "}
-                    </span>
-                  </td>
-                  <td>
-                    <Dropdown
-                      items={getOptions(status)?.map((label) => ({ label }))}
-                      className={`absolute z-20 -transalate-y-12 bg-white  ${
-                        getOptions(status).length > 3
-                          ? "top-[25%] right-[25px]"
-                          : "top-[40%] right-[15px]"
-                      }`}
-                      handleChange={(val) =>
-                        handleDropdownClick(val, test_series_id, title)
-                      }
-                    >
-                      <BsThreeDotsVertical className="cursor-pointer" />
-                    </Dropdown>
-                  </td>
-                </tr>
-              )
-            )}
+                      {title}
+                    </td>
+                    <td>{total_tests}</td>
+                    <td>{price ?? 0}</td>
+                    <td>2021</td>
+                    <td>
+                      <span
+                        className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
+                      >
+                        {STATUS_MEANINGS_BY_CODE[status] ?? ""}{" "}
+                      </span>
+                    </td>
+                    <td>
+                      <Dropdown
+                        items={getOptions(status)?.map((label) => ({ label }))}
+                        className={`absolute z-20 -transalate-y-12 bg-white  ${
+                          getOptions(status).length > 3
+                            ? "top-[25%] right-[25px]"
+                            : "top-[40%] right-[15px]"
+                        }`}
+                        handleChange={(val) =>
+                          handleDropdownClick(val, test_series_id, title)
+                        }
+                      >
+                        <BsThreeDotsVertical className="cursor-pointer" />
+                      </Dropdown>
+                    </td>
+                  </tr>
+                )
+              )}
 
             {!isLoading && !tests.length && (
               <p className="w-full py-4 text-base px-2 font-medium">

@@ -31,7 +31,6 @@ const Dropdown = ({
     };
   }, []);
 
-  console.log(hideAfterClick, "Hii");
   return (
     <div className="dropdown" ref={dropdownRef}>
       {buttonText && (

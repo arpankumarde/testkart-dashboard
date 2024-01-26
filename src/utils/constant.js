@@ -1,6 +1,6 @@
-export const Draft = 'Draft'
-export const Live = 'Live'
-export const Unlisted = 'Unlisted'
+export const Draft = "Draft";
+export const Live = "Live";
+export const Unlisted = "Unlisted";
 
 export const STATUS_MEANINGS_BY_CODE = {
   0: Draft,
@@ -8,15 +8,21 @@ export const STATUS_MEANINGS_BY_CODE = {
   2: Unlisted,
 };
 
+export const STATUS_CODE_BY_STATUS = {
+  Draft: 0,
+  Live: 1,
+  Unlisted: 2,
+};
+
 export const TEST_SERIES_TYPE = {
-  Free :0,
-  Paid:1
-}
+  Free: 0,
+  Paid: 1,
+};
 
 export const DISCOUNT_TYPE = {
-  PERCENTAGE :'percentage',
-  AMOUNT:'amount'
-}
+  PERCENTAGE: "percentage",
+  AMOUNT: "amount",
+};
 
 export const STATUS_COLOR_BY_STATUS_CODE = {
   0: "bg-[#545b62]", // Draft
@@ -30,7 +36,7 @@ export const MODIFY_LISTING = "Modify Listing";
 export const UNLIST = "Unlist";
 export const SHARE = "Share";
 export const DELETE = "Delete";
-export const ADD_QUESTION="Add Questions"
+export const ADD_QUESTION = "Add Questions";
 export const LIST_ON_TESTKART = "List On TestKart";
 
 export const LiveOptionsList = [
