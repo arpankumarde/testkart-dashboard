@@ -86,7 +86,6 @@ const Test = () => {
     const res = questions[activeSubject]?.find(
       ({ index }) => index === currentQuestion - 1
     );
-    console.log(res, "ress");
     setQuestionId(res?.question_id);
     return res?.question_id ?? null;
   };
@@ -112,7 +111,7 @@ const Test = () => {
       setIsLoading(false);
     }
   };
-  //
+
   useEffect(() => {
    if(searchParams.get('subject_id')){
     setModal('upload')
@@ -140,6 +139,7 @@ const Test = () => {
             deleteQuestionFromtest();
             fn(false);
           } else {
+            getTestInfo()
             getAllQuestions();
           }
         }}

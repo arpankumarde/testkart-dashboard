@@ -7,9 +7,12 @@ import { server } from "../api";
 import {
   DELETE,
   EDIT_DETAILS,
+  LIST_ON_TESTKART,
   SHARE,
   STATUS_COLOR_BY_STATUS_CODE,
   STATUS_MEANINGS_BY_CODE,
+  UNLIST,
+  Unlisted,
   VIEW_TESTS,
 } from "../utils/constant";
 import { copyToClipboard, getOptions } from "../utils/common";
@@ -46,7 +49,7 @@ const TestSeries = () => {
     try {
       const { data } = await server.delete(`/api/v1/test-series/${id}`);
       if (data) {
-        setTests((prev)=> prev.filter((item)=>item.test_series_id !== id))
+        setTests((prev) => prev.filter((item) => item.test_series_id !== id));
         setIsModal("");
       }
     } catch (error) {
@@ -55,6 +58,19 @@ const TestSeries = () => {
       setIsLoading(false);
     }
   };
+
+  const UnlistTestSeries = async (id) => {
+    setIsLoading(true);
+    try {
+      await server.get(`/api/v1/test-series/${id}/unlist`);
+      await getAllTest()
+    } catch (error) {
+      console.log(`Error: getAllTests --- ${error}}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     getAllTest();
   }, []);
@@ -79,13 +95,28 @@ const TestSeries = () => {
         return setIsModal(SHARE);
       }
 
+      case UNLIST: {
+        return UnlistTestSeries(id);
+      }
+
+      case LIST_ON_TESTKART: {
+        return navigate(`/test-series/${id}/publish`);
+      }
+
       // Add more cases if needed
       default: {
         return;
       }
     }
   };
-  console.log(DELETE, "okk", isModal);
+
+  const getLiveUrlOfTestSeries = (test_series_id) => {
+    const currentTest = tests.find(
+      (item) => item?.test_series_id?.toString() === test_series_id?.toString()
+    );
+    return `https://testkart.in/test-series/${currentTest?.hash}`;
+  };
+
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3 relative">
       {isLoading && <Loader />}
@@ -121,12 +152,12 @@ const TestSeries = () => {
               type="text"
               disabled={true}
               className="outline-none bg-[#e9ecef] flex-1 px-3 py-2"
-              value={`${window.location.href}/${modalContent.id}`}
+              value={getLiveUrlOfTestSeries(modalContent.id)}
             />
             <p
               className="flex justify-center items-center bg-white px-3 py-[10px] border shadow-card cursor-pointer"
               onClick={() =>
-                copyToClipboard(`${window.location.href}/${modalContent.id}`)
+                copyToClipboard(getLiveUrlOfTestSeries(modalContent.id))
               }
             >
               <BsClipboard />
@@ -156,8 +187,8 @@ const TestSeries = () => {
         </Link>
       </div>
       <div className="px-6 pb-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
-        <table className="table-auto w-full">
-          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0">
+        <table className="table-auto w-full bg-white">
+          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0 z-20">
             <tr className="text-left  [&>th]:py-[15px] [&>th]:px-3 [&>th]:font-medium">
               <th>#</th>
               <th>Test series</th>
@@ -176,7 +207,7 @@ const TestSeries = () => {
               ) => (
                 <tr
                   key={index}
-                  className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3"
+                  className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 mobile:relative"
                 >
                   <td>{index + 1}.</td>
                   <td
@@ -198,7 +229,11 @@ const TestSeries = () => {
                   <td>
                     <Dropdown
                       items={getOptions(status)?.map((label) => ({ label }))}
-                      className="absolute right-[25px] top-[25%] z-4 -transalate-y-12 bg-white z-10"
+                      className={`absolute z-20 -transalate-y-12 bg-white  ${
+                        getOptions(status).length > 3
+                          ? "top-[25%] right-[25px]"
+                          : "top-[40%] right-[15px]"
+                      }`}
                       handleChange={(val) =>
                         handleDropdownClick(val, test_series_id, title)
                       }

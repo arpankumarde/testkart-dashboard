@@ -22,7 +22,6 @@ const AddTestSeries = () => {
     title: "",
     description: "",
     language: "",
-    // total_tests: "",
     exam_id: "",
     academy_id: 1,
     difficulty_level: "Easy",
@@ -36,7 +35,6 @@ const AddTestSeries = () => {
   const {
     title,
     description,
-    total_tests,
     language,
     exam_id,
     difficulty_level,
@@ -68,7 +66,10 @@ const AddTestSeries = () => {
   const addTestSeries = async () => {
     try {
       setIsUpdating(true);
-      await server.post(`/api/v1/test-series`, formData);
+      const {data} = await server.post(`/api/v1/test-series`, formData);
+      if(data?.data?.test_series_id){
+        return navigate(`/test-series${data?.data?.test_series_id}`)
+      }
       navigate("/test-series");
     } catch (error) {
       console.log(`Error while adding test-series ${error}`);
@@ -104,7 +105,7 @@ const AddTestSeries = () => {
       }
       setFormData((prev) => ({ ...prev, [name]: value }));
 
-      if (['discount','price_before_discount'].includes) {
+      if (["discount", "price_before_discount"].includes) {
         calculateFinalPrice();
       }
     } catch (error) {
@@ -112,8 +113,6 @@ const AddTestSeries = () => {
     }
   };
 
-
-  console.log(formData ,"formDat")
 
   return (
     <section className="flex md:flex-row flex-col pt-2 gap-4">
@@ -156,7 +155,6 @@ const AddTestSeries = () => {
               title={title}
               description={description}
               language={language}
-              total_tests={total_tests}
               difficultyLevel={difficulty_level}
               testSeriesType={is_paid}
               price={price_before_discount}
@@ -186,7 +184,7 @@ const AddTestSeries = () => {
             </button>
             <button
               onClick={() => handleNextClick()}
-              disabled={step === 1 ? !formData.exam_id : false}
+              disabled={step === 1 ? !exam_id : step === 2 ? (!title || !description) : false}
               className="bg-[#6d45a4] border-transparent flex justify-center items-center  rounded-[3px] text-base text-white px-3 py-1 leading-6 whitespace-nowrap min-w-[100px] h-[30px]"
             >
               {isUpdating ? (

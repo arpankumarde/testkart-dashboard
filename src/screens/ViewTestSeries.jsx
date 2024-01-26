@@ -210,7 +210,7 @@ const ViewTestSeries = () => {
         setIsModalOpen={setModal}
         className={""}
         onAccept={handleOnAccept}
-        isAddQuestion={ADD_QUESTION}
+        saveButtonDisable={!testData.title}
       >
         <div className="flex flex-col gap-3 px-4">
           <label className="flex flex-col gap-3 text-sm">
@@ -289,7 +289,7 @@ const ViewTestSeries = () => {
           <p>Are you sure to delete this test?</p>
         </div>
       </Modal>
-      <div className="flex justify-between p-5 shadow-card bg-white">
+      <div className="flex justify-between p-5 shadow-card bg-white flex-wrap">
         <div className="relative">
           <p className="flex gap-2 items-center justify-center">
             <IoMdArrowRoundBack
@@ -300,19 +300,18 @@ const ViewTestSeries = () => {
             <h1 className="font-medium text-lg">{title}</h1>
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button
+        <div className="flex gap-3 justify-end flex-1">
+         <Button
             activeTab={true}
-            buttonText={`${isPublish ? "Publish" : "Add"} new Test`}
-            className={`h-9 flex justify-center items-center ${
-              isPublish ? "!bg-[#30d530]" : ""
-            }`}
-            onClick={() =>
-              isPublish
-                ? navigate(`/test-series/${params.series_id}/publish`)
-                : setModal(ADD_QUESTION)
-            }
+            buttonText={`Add new Test`}
+            className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center`}
+            onClick={() => setModal(ADD_QUESTION)}
           />
+          {isPublish && <Button
+            buttonText={`Publish new Test`}
+            className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
+            onClick={() =>navigate(`/test-series/${params.series_id}/publish`)}
+          />}
 
           {/* <Link to="/test-series/add">
             <button
@@ -325,14 +324,15 @@ const ViewTestSeries = () => {
         </div>
       </div>
       <div className="px-6 pb-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
-        <table className="table-auto w-full relative">
-          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0">
+        <table className="table-auto w-full ">
+          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0 z-20">
             <tr className="text-left  [&>th]:py-[15px] [&>th]:px-3 [&>th]:font-medium">
               <th>#</th>
               <th>Test title</th>
               <th>Subjects</th>
               <th>Questions</th>
               <th>Duration</th>
+              <th>Free/Paid</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -340,14 +340,14 @@ const ViewTestSeries = () => {
             {tests.map(
               (
                 {
-                  data: { title, duration, status, test_series_id, test_id },
+                  data: { title, duration, status, test_series_id, test_id , is_paid},
                   meta,
                 },
                 index
               ) => (
                 <tr
                   key={index}
-                  className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3"
+                  className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 relative"
                 >
                   <td> {index + 1}</td>
                   <td
@@ -375,17 +375,35 @@ const ViewTestSeries = () => {
                       View Test
                     </span>
                   </td> */}
+                  <td className="flex justify-center items-center w-20">
+                    <input
+                      id="helper-checkbox"
+                      aria-describedby="helper-checkbox-text"
+                      type="checkbox"
+                      checked={is_paid}
+                      // disabled={true}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                    />
+                  </td>
                   <td>
                     <span
-                      className={`rounded-full px-4 py-1 text-white ${ meta.questions_count >= meta.total_questions  ?'bg-[#30d530]' :'bg-[#545b62]'}`}
+                      className={`rounded-full px-4 py-1 text-white ${
+                        meta.questions_count >= meta.total_questions
+                          ? "bg-[#30d530]"
+                          : "bg-[#545b62]"
+                      }`}
                     >
-                      {meta.questions_count >= meta.total_questions ? 'Completed':'Incompleted'}
+                      {meta.questions_count >= meta.total_questions
+                        ? "Completed"
+                        : "Incompleted"}
                     </span>
                   </td>
                   <td>
                     <Dropdown
-                      items={getOptions(status)?.map((label) => ({ label }))}
-                      className="absolute right-[25px] top-[25%] z-4 -transalate-y-12 bg-white z-10"
+                      items={getOptions(status)
+                        ?.filter((label) => label !== EDIT_DETAILS)
+                        .map((label) => ({ label }))}
+                      className={`absolute z-20  bg-white bottom-[3%] right-[25px] `}
                       handleChange={(val) =>
                         handleDropdownClick(val, test_id, title)
                       }

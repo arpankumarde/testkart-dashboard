@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
 import { server } from "../api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProgressBar from "./ProgressBar";
 
 const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
@@ -10,7 +10,9 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
   const [showLoader, setShowLoader] = useState(false);
 
   const params = useParams();
-  console.log(params, "paramss");
+
+  const navigate = useNavigate();
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setQuestionFile(file);
@@ -24,16 +26,15 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
         formData.append("file", questionFile);
 
         const uploadQuestionUrl = `/api/v1/test-series/test/question/import/${params.test_id}?subject_id=${subject_id}`;
-        const { data } = await server.post(uploadQuestionUrl, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (data.success) {
-          // window.alert(data.message);
-          setShowLoader(true);
-          // setIsModalOpen(false);
-        }
+        // const { data } = await server.post(uploadQuestionUrl, formData, {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        // });
+        setShowLoader(true);
+        // if (data.success) {
+
+        // }
       } else {
         window.alert(`please select file to upload`);
       }
@@ -44,6 +45,8 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
     }
   };
 
+  console.log(showLoader ,"showww")
+
   return (
     <Modal
       title={"Upload question in bulk"}
@@ -51,8 +54,12 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
       isModalOpen={isModalOpen}
       setIsModalOpen={setIsModalOpen}
       onAccept={() => handleUploadFileToServer()}
-      saveButtonText={"upload Questions"}
+      onDecline={()=>navigate(`/test-series/${params.series_id}/test/${params.test_id}/questions`)}
+      saveButtonText={"Upload Docs"}
       isLoading={isLoading}
+      footerClassName="absolute right-4 top-0"
+      isAddQuestion={true}
+      saveButtonDisable={!questionFile}
     >
       <div className="text-[#4e4a4a] flex flex-col items-center h-[76vh]">
         <div className="text-[#4e4a4a] text-center py-10 px-10 border-b border-b-[#4e4a4a] flex flex-col gap-3">
@@ -77,7 +84,7 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
             name="questionfile"
             onChange={handleFileChange}
           />
-          {showLoader && <ProgressBar />}
+          {showLoader && <ProgressBar  hideLoader={()=>setShowLoader(false)}/>}
         </div>
       </div>
     </Modal>

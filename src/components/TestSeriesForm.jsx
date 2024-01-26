@@ -91,7 +91,7 @@ const TestSeriesForm = ({
           onChange={(e) => handleChange(e)}
         />
       </div>
-      <div className="flex justify-center items-center gap-4 text-[#596780] [&>div]:flex-1">
+      <div className="flex justify-center items-center  text-[#596780] [&>div]:flex-1 gap-8">
         <div className="flex flex-col w-[30%] gap-2">
           <label
             htmlFor="language"
@@ -113,25 +113,7 @@ const TestSeriesForm = ({
             ))}
           </select>
         </div>
-        <div className="flex flex-col w-[30%] gap-2">
-          <label
-            htmlFor="testscount"
-            className=" font-medium text-lg text-[#596780]"
-          >
-            Total number of tests in this series
-          </label>
-          <input
-            type="number"
-            name="total_tests"
-            id="testscount"
-            value={total_tests}
-            placeholder="6"
-            className="px-2 py-2  border border-[#ced4da] outline-none"
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-      </div>
-      <div className="flex justify-center items-center gap-4 text-[#596780] [&>div]:flex-1">
+        <div className="flex flex-row w-[30%] gap-2 mt-9">
         <div className="flex gap-2 p-2">
           <input
             type="radio"
@@ -154,6 +136,7 @@ const TestSeriesForm = ({
             onChange={(e) => handleChange(e)}
           />
           <label htmlFor="paid">Paid</label>
+        </div>
         </div>
       </div>
       {testSeriesType == TEST_SERIES_TYPE.Paid && (

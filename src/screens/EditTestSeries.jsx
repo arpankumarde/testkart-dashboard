@@ -20,7 +20,6 @@ const EditTestSeries = () => {
     title: "",
     description: "",
     language: "",
-    total_tests: "",
     exam_id: "",
     academy_id: 1,
     difficulty_level: "Easy",
@@ -34,7 +33,6 @@ const EditTestSeries = () => {
   const {
     title,
     description,
-    total_tests,
     language,
     exam_id,
     difficulty_level,
@@ -59,7 +57,6 @@ const EditTestSeries = () => {
           title: currentTest.title,
           description: currentTest.description,
           language: currentTest.language,
-          total_tests: currentTest.total_tests,
           exam_id: currentTest.exam_id,
           academy_id: currentTest.academy_id,
           is_paid : currentTest.is_paid,
@@ -124,7 +121,6 @@ const EditTestSeries = () => {
             title={title}
             description={description}
             language={language}
-            total_tests={total_tests}
             handleChange={(e) => handleChange(e)}
             difficultyLevel={difficulty_level}
             testSeriesType={is_paid}
@@ -145,7 +141,7 @@ const EditTestSeries = () => {
               Cancel
             </button>
             <button
-              disabled={isUpdating}
+              disabled={(isUpdating || !title || !description)}
               className="bg-[#6d45a4] border-transparent flex justify-center items-center  rounded-[3px] text-base text-white px-3 py-1 leading-6 whitespace-nowrap min-w-[100px] h-[30px]"
               onClick={() => updateTestSeries()}
             >

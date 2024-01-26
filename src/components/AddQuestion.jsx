@@ -50,7 +50,7 @@ const AddQuestion = ({
   };
 
   const clearState = () => {
-    setOptions([]);
+    setOptions(optionInitialState);
     setQuestion("");
     setSolution("");
   };
@@ -83,7 +83,7 @@ const AddQuestion = ({
       if (question_id) {
         await server.put(
           `/api/v1/test-series/test/question/${question_id}`,
-          formData
+                formData
         );
       } else {
         await server.post("/api/v1/test-series/test/question", formData);
@@ -129,7 +129,6 @@ const AddQuestion = ({
 
   }, [question_id]);
 
-  console.log(subject_id, "moo");
   return (
     <Modal
       title={title}
@@ -155,7 +154,7 @@ const AddQuestion = ({
         </div>
       </Modal>
       <div className="flex w-full bg-white flex-col md:flex-row ">
-        <div className="w-full md:w-[50%] p-5 overflow-scroll h-[400px] md:h-[75vh] custom-scroll-bar">
+        <div className="w-full md:w-[50%] p-5 md:overflow-scroll md:h-[90vh] custom-scroll-bar">
           <div className="flex flex-col gap-3">
             <div className="flex gap-4 items-center">
               <p className="whitespace-nowrap text-lg font-medium">
@@ -230,7 +229,7 @@ const AddQuestion = ({
             </div>
           </div>
         </div>
-        <div className="w-full md:w-[50%] p-5 h-[calc(100vh-600px)] md:h- md:h-[75vh] overflow-scroll custom-scroll-bar">
+        <div className="w-full md:w-[50%] p-5  md:h-[90vh] md:overflow-scroll custom-scroll-bar">
           <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Question:</h1>
             <p dangerouslySetInnerHTML={{ __html: question }}></p>

@@ -1,12 +1,15 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { server } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, ButtonLoader, Loader } from "../components";
+import { Button, ButtonLoader, Loader, Modal } from "../components";
 import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
+import { BsClipboard } from "react-icons/bs";
+import { copyToClipboard } from "../utils/common";
 
 const Publish = () => {
   const params = useParams();
   const [isLoading, setIsLoading] = useState();
+  const [isLiveModal, setIsLiveModal] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -18,12 +21,13 @@ const Publish = () => {
     price_before_discount: 0,
     discount: 0,
     price: 0,
+    hash: "",
     discountType: "percentage",
     cover_photo: undefined,
   });
   const [isSubmitting, setIsSubmmiting] = useState(false);
 
-  const { title, price, discount, cover_photo } = formData;
+  const { title, price, discount, cover_photo, hash } = formData;
 
   const navigate = useNavigate();
 
@@ -34,7 +38,7 @@ const Publish = () => {
         `/api/v1/test-series/${params.series_id}/verify`
       );
       if (!data.success) {
-        alert('test series is not verified for listing')
+        alert("test series is not verified for listing");
         navigate(`/test-series/${params.series_id}`);
       }
       setFormData({ ...data.data.test_series[0], discountType: "percentage" });
@@ -91,16 +95,49 @@ const Publish = () => {
         `/api/v1/test-series/${params.series_id}/publish`,
         newFormData
       );
+      if (data) {
+        setIsLiveModal(true);
+      }
     } catch (error) {
       console.log(`error::`, error.message);
     } finally {
       setIsSubmmiting(false);
     }
   };
-  console.log(formData, "formm");
+
+  console.log(cover_photo ,"coverrPhoto" , typeof cover_photo)
+
   return (
     <div className="flex flex-col md:flex-row [&>div]:flex-1 p-5">
       {isLoading && <Loader />}
+
+      <Modal
+        title={"Live"}
+        isModalOpen={isLiveModal}
+        setIsModalOpen={setIsLiveModal}
+        isShare={true}
+      >
+        <div className="flex justify-center items-center flex-col gap-2 ">
+          <h1 className="text-lg font-medium leading-6">{title}</h1>
+          <p>Your test series is live and ready to be purchased by students</p>
+          <div className="flex w-full justify-center items-center">
+            <input
+              type="text"
+              disabled={true}
+              className="outline-none bg-[#e9ecef] flex-1 px-3 py-2"
+              value={`https://testkart.in/test-series/${hash}`}
+            />
+            <p
+              className="flex justify-center items-center bg-white px-3 py-[10px] border shadow-card cursor-pointer"
+              onClick={() =>
+                copyToClipboard(`https://testkart.in/test-series/${hash}`)
+              }
+            >
+              <BsClipboard />
+            </p>
+          </div>
+        </div>
+      </Modal>
       <div className="shadow-card bg-white border p-5 flex flex-col gap-2 text-[#596780]">
         <div className="py-4 border-b border-b-[#596780]">
           <h1>{title}</h1>
@@ -193,8 +230,7 @@ const Publish = () => {
         {cover_photo && (
           <img
             src={
-              cover_photo.startsWith("https")
-                ? cover_photo
+              typeof cover_photo === 'string' ? cover_photo
                 : URL.createObjectURL(cover_photo)
             }
             alt="cover-photo"

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 
-const ProgressBar = () => {
+const ProgressBar = ({hideLoader}) => {
   const [progress, setProgress] = useState(0);
   const [showDoneMessage, setShowDoneMessage] = useState(false);
+
+  const resetProgress = () => {
+    setProgress(0);
+  };
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setProgress((prevProgress) => {
-        // Increase the progress by 4% each second
-        const newProgress = prevProgress + 4;
+        const newProgress = prevProgress + 10;
 
         // Clear the interval when progress reaches 100%
         if (newProgress >= 100) {
@@ -17,8 +20,10 @@ const ProgressBar = () => {
 
           // Hide the component after 3 seconds
           setTimeout(() => {
+            resetProgress()
             setShowDoneMessage(false);
-          }, 4000);
+            hideLoader?.()
+          }, 2000);
         }
 
         return newProgress;
@@ -32,14 +37,14 @@ const ProgressBar = () => {
     <div>
       {progress < 100 && (
         <div>
-        <div className="relative flex items-center justify-center w-full h-5 bg-gray-200 rounded-full my-4">
+        <div className="relative flex items-center justify-center w-full h-4 bg-gray-200 rounded-full my-4">
           <div
             style={{ width: `${progress}%` }}
             className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-800 h-full rounded-full transition-all"
           ></div>
           <span className="z-10 text-white">{progress}%</span>
         </div>
-        <p>question are importing please wait....</p>
+        <p className="text-lg text-blue-500 leading-6 font-medium">question are importing please wait....</p>
         </div>
       )}
 
