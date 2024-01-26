@@ -1,10 +1,39 @@
+import { useState } from "react";
+import { useAuth } from "../hooks";
+import { server } from "../api";
 import { MdCurrencyRupee } from "react-icons/md";
 import { PiExportFill } from "react-icons/pi";
 
 const EarningsWithdraw = ({ balance }) => {
+  const { logout } = useAuth();
+  const [amount, setAmount] = useState(0);
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const academy_id = user?.academy?.academy_id;
+
   const handleWithdrawRequest = (e) => {
     e.preventDefault();
-    console.log("Withdraw Requested");
+    if (amount < 500) {
+      return alert("Minimum withdrawal amount is ₹500");
+    }
+    if (amount > balance) {
+      return alert("You don't have enough balance");
+    }
+
+    server
+      .post("/api/v1/studio/academy/withdrawal-request", {
+        amount,
+        academy_id,
+      })
+      .then((res) => {
+        if (!res.data.success) return alert(res.data.error);
+        console.log(res.data);
+        alert("Withdraw Requested");
+      })
+      .catch((err) => {
+        if (err.response.status === 401) return logout();
+        console.log(err.response);
+      });
   };
 
   return (
@@ -22,7 +51,7 @@ const EarningsWithdraw = ({ balance }) => {
           <i className="-mb-0.5">
             <MdCurrencyRupee size={35} />
           </i>
-          {balance}
+          {balance?.toFixed(2)}
         </span>
       </div>
       <hr />
@@ -43,6 +72,8 @@ const EarningsWithdraw = ({ balance }) => {
             className="rounded-r-md bg-gray-100 p-2 outline-none w-48 border-y border-r border-gray-200"
             min={500}
             max={balance}
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
             required
           />
         </div>

@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks";
+import { server } from "../api";
 import {
   EarningsOverview,
   EarningsWithdraw,
@@ -9,16 +12,24 @@ import { IoIosArrowForward, IoMdWallet } from "react-icons/io";
 import { MdCurrencyRupee } from "react-icons/md";
 
 const Earnings = () => {
+  const { auth, logout } = useAuth();
+
   const path = useLocation().pathname.split("/")[2];
 
-  const balance = 7533.45;
+  const [earnings, setEarnings] = useState({ wallet: 0, graph: [{}] });
 
   const getEarningCard = (path) => {
     switch (path) {
       case "overview":
-        return <EarningsOverview />;
+        return (
+          <EarningsOverview
+            graphData={earnings?.graph}
+            xKey={"month"}
+            barKey={"income"}
+          />
+        );
       case "withdraw":
-        return <EarningsWithdraw balance={balance} />;
+        return <EarningsWithdraw balance={earnings?.wallet} />;
       case "transactions":
         return <EarningsTransactions />;
       case "settings":
@@ -27,6 +38,23 @@ const Earnings = () => {
         return null;
     }
   };
+
+  useEffect(() => {
+    server
+      .get("/api/v1/studio/academy/wallet-report")
+      .then((res) => {
+        if (!res.data.success) {
+          alert(res.data.error);
+        } else {
+          setEarnings(res.data.data);
+          console.log(res.data.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) return logout();
+        console.log(err);
+      });
+  }, []);
 
   return (
     <section className="md:p-4 lg:p-8">
@@ -45,7 +73,7 @@ const Earnings = () => {
               <i className="-mb-0.5">
                 <MdCurrencyRupee size={35} />
               </i>
-              {balance}
+              {earnings?.wallet?.toFixed(2)}
             </span>
           </div>
           <hr />

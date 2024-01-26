@@ -1,40 +1,79 @@
 import { useState } from "react";
+import axios from "axios";
+import { useAuth } from "../hooks";
+import { server } from "../api";
 import { BsBank2 } from "react-icons/bs";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { server } from "../api";
 
 const EarningsBankSettings = () => {
+  const { logout } = useAuth();
+
   const [bank, setBank] = useState({
-    preAccount: "",
-    account: "",
+    account_number: "",
+    confirm_account_number: "",
     ifsc: "",
+    branch: "",
     type: "current",
     name: "",
   });
 
+  const getBranch = (code) => {
+    if (code.length == 11) {
+      axios
+        .get(`https://ifsc.razorpay.com/${code}`)
+        .then((res) => {
+          console.log(res.data);
+          let branch = (res.data?.BANK + ", " + res.data?.BRANCH)
+            .toLowerCase()
+            .split(" ")
+            .map((word) => word[0].toUpperCase() + word.slice(1))
+            .join(" ");
+          setBank({
+            ...bank,
+            ifsc: code,
+            branch: branch,
+          });
+        })
+        .catch((err) => {
+          console.log(err.response);
+          if (err.response.status === 404) return alert("Invalid IFSC Code");
+        });
+    }
+  };
+
   const handleUpdateBankSettings = (e) => {
     e.preventDefault();
     if (
-      bank.preAccount === "" ||
-      bank.account === "" ||
+      bank.account_number === "" ||
+      bank.confirm_account_number === "" ||
       bank.ifsc === "" ||
+      bank.branch === "" ||
       bank.name === ""
     ) {
       return alert("Please fill all the fields");
     }
-    if (bank.preAccount != bank.account) {
+    if (bank.account_number != bank.confirm_account_number) {
       return alert("Account Numbers in both the fields do not match");
     }
 
-    console.log("Bank Settings Updated");
-
-    setBank({
-      preAccount: "",
-      account: "",
-      ifsc: "",
-      type: "current",
-      name: "",
-    });
+    server
+      .post("/api/v1/studio/academy/bank", bank)
+      .then((res) => {
+        if (!res.data.success) return alert(res.data.error);
+        alert("Bank Settings Updated");
+        setBank({
+          account_number: "",
+          confirm_account_number: "",
+          ifsc: "",
+          branch: "",
+          type: "current",
+          name: "",
+        });
+      })
+      .catch((err) => {
+        if (err.response.status === 401) return logout();
+        console.log(err.response);
+      });
   };
 
   return (
@@ -48,7 +87,7 @@ const EarningsBankSettings = () => {
       <hr />
       <form
         onSubmit={handleUpdateBankSettings}
-        className="flex flex-col justify-center items-center gap-2 py-6"
+        className="flex flex-col justify-center items-center gap-2 py-2"
       >
         <div className="flex items-center justify-between w-full md:w-96">
           <label htmlFor="account-number1">Account Number</label>
@@ -58,8 +97,10 @@ const EarningsBankSettings = () => {
             name="account-number1"
             className="rounded-md bg-gray-100 p-2 outline-none w-48 border border-gray-200"
             required
-            value={bank.preAccount}
-            onChange={(e) => setBank({ ...bank, preAccount: e.target.value })}
+            value={bank.account_number}
+            onChange={(e) =>
+              setBank({ ...bank, account_number: e.target.value })
+            }
           />
         </div>
         <div className="flex items-center justify-between w-full md:w-96">
@@ -70,8 +111,10 @@ const EarningsBankSettings = () => {
             name="account-number2"
             className="rounded-md bg-gray-100 p-2 outline-none w-48 border border-gray-200"
             required
-            value={bank.account}
-            onChange={(e) => setBank({ ...bank, account: e.target.value })}
+            value={bank.confirm_account_number}
+            onChange={(e) =>
+              setBank({ ...bank, confirm_account_number: e.target.value })
+            }
           />
         </div>
         <div className="flex items-center justify-between w-full md:w-96">
@@ -82,7 +125,25 @@ const EarningsBankSettings = () => {
             className="rounded-md bg-gray-100 p-2 outline-none w-48 border border-gray-200"
             required
             value={bank.ifsc}
-            onChange={(e) => setBank({ ...bank, ifsc: e.target.value })}
+            min={11}
+            max={11}
+            minLength={11}
+            maxLength={11}
+            onChange={(e) => {
+              setBank({ ...bank, ifsc: e.target.value.toUpperCase().trim() });
+              getBranch(e.target.value.toUpperCase().trim());
+            }}
+          />
+        </div>
+        <div className="flex items-center justify-between w-full md:w-96">
+          <label htmlFor="branch">Branch</label>
+          <input
+            type="text"
+            id="branch"
+            className="rounded-md bg-gray-100 p-2 outline-none w-48 border border-gray-200"
+            required
+            value={bank.branch}
+            disabled
           />
         </div>
         <div className="flex items-center justify-between w-full md:w-96">
@@ -122,11 +183,6 @@ const EarningsBankSettings = () => {
           Update Bank Settings
         </button>
       </form>
-      <hr />
-      <p className="text-center pt-2">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam nobis
-        est, sequi odit similique rem?
-      </p>
     </div>
   );
 };

@@ -1,9 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../hooks";
+import { server } from "../api";
 import { GrTransaction } from "react-icons/gr";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { BiLoaderAlt } from "react-icons/bi";
 
 const EarningsTransactions = () => {
-  const [tab, setTab] = useState("all");
+  const { logout } = useAuth();
+
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    server
+      .get("/api/v1/studio/academy/transaction-report")
+      .then((res) => {
+        console.log(res.data.data);
+        setTransactions(res.data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err.response.status == 401) return logout();
+        console.log(err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="bg-white md:rounded-md p-4 flex-1">
@@ -33,136 +54,60 @@ const EarningsTransactions = () => {
       </div>
       <hr />
       <div>
-        <div className="flex justify-between items-center gap-2 py-4 md:gap-4 [&>*]:rounded-md [&>*]:py-2 [&>*]:w-1/3 [&>*]:text-center [&>*]:cursor-pointer">
-          <span
-            onClick={() => setTab("all")}
-            className={tab == "all" && "bg-[#6d45a4] text-white"}
-          >
-            All
-          </span>
-          <span
-            onClick={() => setTab("credit")}
-            className={tab == "credit" && "bg-[#6d45a4] text-white"}
-          >
-            Credit
-          </span>
-          <span
-            onClick={() => setTab("debit")}
-            className={tab == "debit" && "bg-[#6d45a4] text-white"}
-          >
-            Debit
-          </span>
-        </div>
-        <div className="h-72 overflow-auto">
+        <div className="h-[22rem] overflow-auto">
           <table className="w-full">
-            <thead className="sticky top-0 bg-white">
+            <thead className="sticky top-0 bg-white border-b">
               <tr className="text-center">
                 <th className="px-4 py-2">Particulars</th>
                 <th className="px-4 py-2">Date</th>
-                <th className="px-4 py-2">Type</th>
-                <th className="px-4 py-2">Balance</th>
                 <th className="px-4 py-2">Amount</th>
+                <th className="px-4 py-2">Balance</th>
+                <th className="px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody className="text-gray-700 hover:[&>*]:text-gray-950 hover:[&>*]:bg-gray-100">
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 1</td>
-                <td className="px-4 py-2">2022-01-01</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 1000</td>
-                <td className="px-4 py-2">₹ 50</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 2</td>
-                <td className="px-4 py-2">2022-01-02</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 950</td>
-                <td className="px-4 py-2">₹ 100</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 3</td>
-                <td className="px-4 py-2">2022-01-03</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 900</td>
-                <td className="px-4 py-2">₹ 75</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 4</td>
-                <td className="px-4 py-2">2022-01-04</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 825</td>
-                <td className="px-4 py-2">₹ 125</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 5</td>
-                <td className="px-4 py-2">2022-01-05</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 900</td>
-                <td className="px-4 py-2">₹ 50</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 6</td>
-                <td className="px-4 py-2">2022-01-06</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 850</td>
-                <td className="px-4 py-2">₹ 75</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 7</td>
-                <td className="px-4 py-2">2022-01-07</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 925</td>
-                <td className="px-4 py-2">₹ 100</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 8</td>
-                <td className="px-4 py-2">2022-01-08</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 825</td>
-                <td className="px-4 py-2">₹ 150</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 9</td>
-                <td className="px-4 py-2">2022-01-09</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 900</td>
-                <td className="px-4 py-2">₹ 50</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 10</td>
-                <td className="px-4 py-2">2022-01-10</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 850</td>
-                <td className="px-4 py-2">₹ 75</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 11</td>
-                <td className="px-4 py-2">2022-01-11</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 925</td>
-                <td className="px-4 py-2">₹ 100</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 12</td>
-                <td className="px-4 py-2">2022-01-12</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 825</td>
-                <td className="px-4 py-2">₹ 150</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 13</td>
-                <td className="px-4 py-2">2022-01-13</td>
-                <td className="px-4 py-2">Credit</td>
-                <td className="px-4 py-2">₹ 900</td>
-                <td className="px-4 py-2">₹ 50</td>
-              </tr>
-              <tr className="text-center">
-                <td className="px-4 py-2">Dummy Particulars 14</td>
-                <td className="px-4 py-2">2022-01-14</td>
-                <td className="px-4 py-2">Debit</td>
-                <td className="px-4 py-2">₹ 850</td>
-                <td className="px-4 py-2">₹ 75</td>
-              </tr>
+              {transactions.length != 0 ? (
+                transactions.map((transaction, key) => (
+                  <tr className="text-center border-b" key={key}>
+                    <td className="px-4 py-2">{transaction.title}</td>
+                    <td className="px-4 py-2">
+                      {new Date(transaction.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-2">₹ {transaction.amount}</td>
+                    <td className="px-4 py-2">₹ {transaction.balance}</td>
+                    <td className="px-4 py-2 text-white capitalize text-sm">
+                      <span
+                        className={`${
+                          transaction.status.toLowerCase() == "success"
+                            ? "bg-green-600"
+                            : transaction.status.toLowerCase() == "pending"
+                            ? "bg-yellow-600"
+                            : "bg-red-600"
+                        } px-4 py-1 rounded-full`}
+                      >
+                        {transaction.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr className="text-center">
+                  <td className="px-4 py-2" colSpan="5">
+                    {loading ? (
+                      <>
+                        <span>Loading Transactions</span>
+                        {"  "}
+                        <BiLoaderAlt
+                          className="inline animate-spin"
+                          size={20}
+                        />
+                      </>
+                    ) : (
+                      "No Transactions Found"
+                    )}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
