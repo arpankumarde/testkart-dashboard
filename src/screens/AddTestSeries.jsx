@@ -68,7 +68,7 @@ const AddTestSeries = () => {
       setIsUpdating(true);
       const {data} = await server.post(`/api/v1/test-series`, formData);
       if(data?.data?.test_series_id){
-        return navigate(`/test-series${data?.data?.test_series_id}`)
+        return navigate(`/test-series/${data?.data?.test_series_id}`)
       }
       navigate("/test-series");
     } catch (error) {
