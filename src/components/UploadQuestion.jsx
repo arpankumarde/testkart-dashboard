@@ -26,15 +26,15 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
         formData.append("file", questionFile);
 
         const uploadQuestionUrl = `/api/v1/test-series/test/question/import/${params.test_id}?subject_id=${subject_id}`;
-        // const { data } = await server.post(uploadQuestionUrl, formData, {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // });
-        setShowLoader(true);
-        // if (data.success) {
+        const { data } = await server.post(uploadQuestionUrl, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (data.success) {
+          setShowLoader(true);
 
-        // }
+        }
       } else {
         window.alert(`please select file to upload`);
       }
