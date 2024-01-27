@@ -11,6 +11,7 @@ import {
   MODIFY_LISTING,
   STATUS_COLOR_BY_STATUS_CODE,
   STATUS_MEANINGS_BY_CODE,
+  TEST_SERIES_TYPE,
   VIEW_TESTS,
 } from "../utils/constant";
 import { getOptions } from "../utils/common";
@@ -201,6 +202,44 @@ const ViewTestSeries = () => {
     }
   }, [tests]);
 
+  const toggleStatus = (id) => {
+    setTests((prev) =>
+      prev.map((test) => {
+        if (test.data.test_id?.toString() === id?.toString()) {
+          return {
+            ...test,
+            data: {
+              ...test.data,
+              is_paid: test.data.is_paid === 0 ? 1 : 0, // Toggle is_paid between 0 and 1
+            },
+          };
+        }
+
+        return test;
+      })
+    );
+  };
+
+  const handleStatusChange = async (id) => {
+    try {
+      setIsLoading(true)
+      const currentTest = tests.find(
+        (item) => item.data.test_id?.toString() === id?.toString()
+      );
+      const { data } = await server.put(`api/v1/test-series/test/${id}`, {
+        id: currentTest.data.test_id,
+        is_paid: currentTest.data.is_paid === 0 ? 1 : 0,
+      });
+      if (data) {
+        toggleStatus(id);
+      }
+    } catch (error) {
+      console.log(error ,'Error while handleStatusChange')
+    }finally{
+      setIsLoading(false)
+    }
+  };
+
   return (
     <section className="px-[15px] py-3 flex flex-col gap-3">
       {isLoading && <Loader />}
@@ -301,17 +340,21 @@ const ViewTestSeries = () => {
           </p>
         </div>
         <div className="flex gap-3 justify-end flex-1">
-         <Button
+          <Button
             activeTab={true}
             buttonText={`Add new Test`}
             className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center`}
             onClick={() => setModal(ADD_QUESTION)}
           />
-          {isPublish && <Button
-            buttonText={`Publish new Test`}
-            className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
-            onClick={() =>navigate(`/test-series/${params.series_id}/publish`)}
-          />}
+          {isPublish && (
+            <Button
+              buttonText={`Publish new Test`}
+              className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
+              onClick={() =>
+                navigate(`/test-series/${params.series_id}/publish`)
+              }
+            />
+          )}
 
           {/* <Link to="/test-series/add">
             <button
@@ -332,15 +375,22 @@ const ViewTestSeries = () => {
               <th>Subjects</th>
               <th>Questions</th>
               <th>Duration</th>
-              <th>Free/Paid</th>
               <th>Status</th>
+              <th>Free</th>
             </tr>
           </thead>
           <tbody>
             {tests.map(
               (
                 {
-                  data: { title, duration, status, test_series_id, test_id , is_paid},
+                  data: {
+                    title,
+                    duration,
+                    status,
+                    test_series_id,
+                    test_id,
+                    is_paid,
+                  },
                   meta,
                 },
                 index
@@ -362,7 +412,9 @@ const ViewTestSeries = () => {
                   </td>
                   <td>{meta?.subjects}</td>
                   <td>{`${meta.questions_count}/${meta.total_questions} `}</td>
-                  <td>{duration}</td>
+                  <td>
+                    {duration} 
+                  </td>
                   {/* <td>
                     <span
                       className={`rounded-full px-4 py-1 text-green-500 cursor-pointer`}
@@ -375,16 +427,6 @@ const ViewTestSeries = () => {
                       View Test
                     </span>
                   </td> */}
-                  <td className="flex justify-center items-center w-20">
-                    <input
-                      id="helper-checkbox"
-                      aria-describedby="helper-checkbox-text"
-                      type="checkbox"
-                      checked={is_paid}
-                      // disabled={true}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                    />
-                  </td>
                   <td>
                     <span
                       className={`rounded-full px-4 py-1 text-white ${
@@ -394,9 +436,20 @@ const ViewTestSeries = () => {
                       }`}
                     >
                       {meta.questions_count >= meta.total_questions
-                        ? "Completed"
-                        : "Incompleted"}
+                        ? "Complete"
+                        : "Incomplete"}
                     </span>
+                  </td>
+                  <td className="flex justify-center items-center w-20">
+                    <input
+                      id="helper-checkbox"
+                      aria-describedby="helper-checkbox-text"
+                      type="checkbox"
+                      checked={is_paid == TEST_SERIES_TYPE.Free}
+                      // disabled={true}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                      onChange={() => handleStatusChange(test_id)}
+                    />
                   </td>
                   <td>
                     <Dropdown
