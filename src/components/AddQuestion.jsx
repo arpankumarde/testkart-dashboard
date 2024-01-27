@@ -127,6 +127,15 @@ const AddQuestion = ({
 
   }, [question_id]);
 
+
+  const isAllDataExist = ()=>{
+    const isOptionAvailable = options.find((item)=> (item.option && item.is_correct))
+    if(!question || !solution || !isOptionAvailable){
+        return true
+    }
+    return false
+  }
+
   return (
     <Modal
       title={title}
@@ -138,6 +147,7 @@ const AddQuestion = ({
       onDelete={() => setModal(DELETE)}
       showDelete={!!question_id}
       isAddQuestion={true}
+      saveButtonDisable={isAllDataExist()}
     >
       {isLoading && <Loader />}
       <Modal
