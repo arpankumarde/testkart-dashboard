@@ -159,7 +159,7 @@ const ViewTestSeries = () => {
       }
       case DELETE: {
         setIsModalContent((prev) => ({ ...prev, title, id }));
-        setModal(DELETE);
+       return  setModal(DELETE);
       }
       case VIEW_TESTS:{
         navigate(
@@ -435,7 +435,7 @@ const ViewTestSeries = () => {
                         : "Incomplete"}
                     </span>
                   </td>
-                  <td className="flex justify-center items-center w-20">
+                  <td className="text-center w-10">
                     <input
                       id="helper-checkbox"
                       aria-describedby="helper-checkbox-text"
