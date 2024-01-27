@@ -6,6 +6,7 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { HiOutlineDocumentText } from "react-icons/hi2";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { PiUserCircle } from "react-icons/pi";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import {
   IoPeopleOutline,
   IoLogOutOutline,
@@ -49,7 +50,10 @@ const Sidebar = ({ navState, setNavState }) => {
             Hi {user?.academy.academy_name}!
           </h2>
           <hr className="my-2" />
-          <div className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2">
+          <div
+            id="navlinks-container"
+            className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2"
+          >
             <NavLink
               to="/"
               onClick={handleMobileNavCollapse}
@@ -89,6 +93,14 @@ const Sidebar = ({ navState, setNavState }) => {
             >
               <MdOutlineCurrencyRupee size={20} />
               Earnings
+            </NavLink>
+            <NavLink
+              to="/notifications"
+              onClick={handleMobileNavCollapse}
+              className="hover:bg-gray-100 hover:text-gray-950"
+            >
+              <IoMdNotificationsOutline size={20} />
+              Notifications
             </NavLink>
             <NavLink
               to="/profile"

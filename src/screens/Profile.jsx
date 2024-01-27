@@ -21,6 +21,46 @@ const Profile = () => {
       });
   }, [user]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (
+      !file.type.startsWith("image/jpeg") &&
+      !file.type.startsWith("image/jpg") &&
+      !file.type.startsWith("image/png")
+    ) {
+      alert("Please upload a JPG, JPEG, or PNG image file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("column_name", "logo");
+    formData.append("table", "academy");
+    formData.append("entity", "academy_id");
+    formData.append("entity_id", profile?.academy?.academy_id);
+    server
+      .post("/api/v1/files/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        if (res.data.success) {
+          alert("Logo uploaded successfully");
+          setProfile((prevProfile) => ({
+            ...prevProfile,
+            academy: {
+              ...prevProfile.academy,
+              logo: res.data?.data?.url,
+            },
+          }));
+        } else {
+          alert("Failed to upload logo");
+        }
+      });
+  };
+
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     console.log(profile);
@@ -32,6 +72,7 @@ const Profile = () => {
         )
         .then(() => {
           localStorage.setItem("user", JSON.stringify(profile));
+          alert("Profile updated successfully");
         })
         .catch((err) => {
           if (err.response.status === 401) logout();
@@ -41,6 +82,10 @@ const Profile = () => {
       console.log("failed to update Academy Details: ", error);
     }
   };
+
+  useEffect(() => {
+    setProfile(JSON.parse(localStorage.getItem("user")));
+  }, [user]);
 
   return (
     <section className="md:p-4 lg:p-8">
@@ -123,6 +168,7 @@ const Profile = () => {
                 type="file"
                 id="logo"
                 accept=".jpg, .jpeg, .png"
+                onChange={handleFileChange}
                 className="bg-gray-100 border border-gray-200 outline-gray-300 w-full p-2 rounded-md"
               />
             </div>
@@ -148,7 +194,7 @@ const Profile = () => {
               />
             </div>
           </div>
-          <div className="bg-white flex-1 flex flex-col gap-4 md:rounded-md p-4 max-md:pt-0 md:mb-4 lg:mb-8 [&>*>label]:w-64">
+          <div className="bg-white flex-1 flex flex-col gap-4 md:rounded-md p-4 pt-0 md:pt-4 md:mb-4 lg:mb-8 [&>*>label]:w-64">
             <div className="flex flex-col items-start md:items-center gap-2 md:flex-row w-auto">
               <label htmlFor="website">Website</label>
               <input
@@ -277,7 +323,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        <div className="max-md:bg-white max-md:px-4 max-md:pb-4 flex justify-end">
+        <div className="bg-white md:bg-inherit px-4 md:px-0 pb-4 md:pb-0 flex justify-center pt-2">
           <button
             type="submit"
             className="bg-[#6d45a4] text-white w-full md:w-64 py-2 px-4 rounded-md"

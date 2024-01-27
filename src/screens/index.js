@@ -10,7 +10,24 @@ import TestReportsDetails from "./TestReportsDetails";
 import Students from "./Students";
 import StudentsDetails from "./StudentsDetails";
 import Earnings from "./Earnings";
+import Notifications from "./Notifications";
 import Profile from "./Profile";
 import Settings from "./Settings";
 
-export { Login, Dashboard  ,TestSeries , AddTestSeries  , EditTestSeries , ViewTestSeries , Test, TestReports, TestReportsDetails, Students, StudentsDetails, Earnings, Settings, Profile};
+export {
+  Login,
+  Dashboard,
+  TestSeries,
+  AddTestSeries,
+  EditTestSeries,
+  ViewTestSeries,
+  Test,
+  TestReports,
+  TestReportsDetails,
+  Students,
+  StudentsDetails,
+  Earnings,
+  Notifications,
+  Settings,
+  Profile,
+};

@@ -13,8 +13,11 @@ const EarningsWithdraw = ({ balance }) => {
 
   const handleWithdrawRequest = (e) => {
     e.preventDefault();
-    if (amount < 500) {
+    if (amount < 100) {
       return alert("Minimum withdrawal amount is ₹500");
+    }
+    if (amount > 99999) {
+      return alert("Maximum withdrawal amount is ₹99999");
     }
     if (amount > balance) {
       return alert("You don't have enough balance");
@@ -70,11 +73,12 @@ const EarningsWithdraw = ({ balance }) => {
             type="number"
             id="withdraw"
             className="rounded-r-md bg-gray-100 p-2 outline-none w-48 border-y border-r border-gray-200"
-            min={500}
+            min={100}
             max={balance}
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
             required
+            disabled={balance < 100}
           />
         </div>
         <button
@@ -86,8 +90,8 @@ const EarningsWithdraw = ({ balance }) => {
       </form>
       <hr />
       <p className="text-center pt-4">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam nobis
-        est, sequi odit similique rem?
+        The minimum available balance should be Rs. 100 to inititae a withdraw
+        request
       </p>
     </div>
   );

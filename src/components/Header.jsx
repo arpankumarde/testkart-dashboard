@@ -1,18 +1,11 @@
-import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { RiMenu2Fill } from "react-icons/ri";
 import { IoAdd } from "react-icons/io5";
-import { LuBell, LuBellDot } from "react-icons/lu";
 import { VscChromeClose } from "react-icons/vsc";
 
 const Header = ({ navState, setNavState }) => {
-  const [msg, setMsg] = useState(true);
   const { user } = useAuth();
-
-  const handleNotificationClick = () => {
-    setMsg((prev) => !prev);
-  };
 
   const handleNavToggle = () => {
     setNavState((prev) => !prev);
@@ -38,7 +31,7 @@ const Header = ({ navState, setNavState }) => {
           <img
             src="/static/images/testkart-app-logo.png"
             alt="TestKart | Teacher's App"
-            className="h-16 md:h-20"
+            className="h-16"
           />
         </NavLink>
       </div>
@@ -51,13 +44,6 @@ const Header = ({ navState, setNavState }) => {
             <IoAdd size={20} />
             Test Series
           </Link>
-          <button
-            type="button"
-            onClick={handleNotificationClick}
-            className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition ease-in-out"
-          >
-            {msg ? <LuBellDot size={25} /> : <LuBell size={25} />}
-          </button>
         </div>
       )}
     </header>
