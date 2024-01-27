@@ -36,11 +36,9 @@ const TestSeries = () => {
     try {
       const { data } = await server.get("/api/v1/test-series");
       if (data) {
-        console.log(data, "data");
         setTests(data.data ?? []);
       }
     } catch (error) {
-      console.log(`Error: getAllTests --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +53,6 @@ const TestSeries = () => {
         setIsModal("");
       }
     } catch (error) {
-      console.log(`Error: getAllTests --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +64,6 @@ const TestSeries = () => {
       await server.get(`/api/v1/test-series/${id}/unlist`);
       await getAllTest();
     } catch (error) {
-      console.log(`Error: getAllTests --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -238,7 +234,7 @@ const TestSeries = () => {
             {!!tests.length &&
               filteredTestSeries()?.map(
                 (
-                  { title, total_tests, price, status, test_series_id },
+                  { title, total_tests, price, status, test_series_id , students_joined},
                   index
                 ) => (
                   <tr
@@ -254,7 +250,7 @@ const TestSeries = () => {
                     </td>
                     <td>{total_tests}</td>
                     <td>{price ?? 0}</td>
-                    <td>2021</td>
+                    <td>{students_joined ?? 0}</td>
                     <td>
                       <span
                         className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}

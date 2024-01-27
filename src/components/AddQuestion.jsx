@@ -92,7 +92,6 @@ const AddQuestion = ({
       onChange();
       clearState();
     } catch (error) {
-      console.log(error, "error while adding Question:", error);
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +99,6 @@ const AddQuestion = ({
 
   const getQuestionInfo = async () => {
     try {
-      console.log(question_id, "quu");
       if (question_id) {
         setIsLoading(true);
         const { data } = await server.get(
@@ -191,15 +189,12 @@ const AddQuestion = ({
                   value={item.option}
                   setValue={(e) => handleValueChange(e, index)}
                 />
-                <div
-                  className="w-full flex gap-2"
-                  onClick={() => handleChange(index)}
-                  role="button"
-                >
+                <div className="w-full flex gap-2">
                   <input
                     type="checkbox"
                     name="checked"
                     checked={item.is_correct ? true : false}
+                    onChange={() => handleChange(index)}
                   />
                   <span>if this option is correct</span>
                 </div>

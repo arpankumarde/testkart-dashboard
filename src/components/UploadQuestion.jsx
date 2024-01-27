@@ -39,13 +39,11 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
         window.alert(`please select file to upload`);
       }
     } catch (error) {
-      console.log(`Error handleUploadFileToServer::`, error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  console.log(showLoader ,"showww")
 
   return (
     <Modal

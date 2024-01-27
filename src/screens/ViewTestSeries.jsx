@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Button, Dropdown, Loader, Modal } from "../components";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { server } from "../api";
 import {
   ADD_QUESTION,
   DELETE,
   EDIT_DETAILS,
-  MODIFY_LISTING,
-  STATUS_COLOR_BY_STATUS_CODE,
-  STATUS_MEANINGS_BY_CODE,
   TEST_SERIES_TYPE,
   VIEW_TESTS,
 } from "../utils/constant";
@@ -65,7 +62,6 @@ const ViewTestSeries = () => {
         }));
       }
     } catch (error) {
-      console.log(`Error: getAllTestsBySeriesid  --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -78,11 +74,9 @@ const ViewTestSeries = () => {
         `/api/v1/test-series/test?series_id=${params.series_id}`
       );
       if (data) {
-        console.log(data, "data");
         setTests(data.data ?? []);
       }
     } catch (error) {
-      console.log(`Error: getAllTestsBySeriesid  --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +106,6 @@ const ViewTestSeries = () => {
         setModal("");
       }
     } catch (error) {
-      console.log(`Error: handleOnAccept  --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -160,7 +153,6 @@ const ViewTestSeries = () => {
   }, []);
 
   const handleDropdownClick = (value, id, title) => {
-    console.log(value, "vaa");
     switch (value) {
       case EDIT_DETAILS: {
         return;
@@ -168,6 +160,11 @@ const ViewTestSeries = () => {
       case DELETE: {
         setIsModalContent((prev) => ({ ...prev, title, id }));
         setModal(DELETE);
+      }
+      case VIEW_TESTS:{
+        navigate(
+          `/test-series/${params?.series_id}/test/${id}/questions`
+        )
       }
       // Add more cases if needed
       default: {
@@ -183,7 +180,6 @@ const ViewTestSeries = () => {
       setTests((prev) => prev.filter((item) => item.data.test_id !== id));
       setModal("");
     } catch (error) {
-      console.log(`Error: deleteTestFromTestSeries --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -234,7 +230,6 @@ const ViewTestSeries = () => {
         toggleStatus(id);
       }
     } catch (error) {
-      console.log(error ,'Error while handleStatusChange')
     }finally{
       setIsLoading(false)
     }

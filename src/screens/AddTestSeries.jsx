@@ -53,7 +53,6 @@ const AddTestSeries = () => {
         setExams(data.data ?? []);
       }
     } catch (error) {
-      console.log(`Error: getAllExams --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +71,6 @@ const AddTestSeries = () => {
       }
       navigate("/test-series");
     } catch (error) {
-      console.log(`Error while adding test-series ${error}`);
     } finally {
       setIsUpdating(false);
     }
@@ -109,7 +107,6 @@ const AddTestSeries = () => {
         calculateFinalPrice();
       }
     } catch (error) {
-      console.log(error, "error");
     }
   };
 

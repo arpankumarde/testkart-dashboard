@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { server } from "../api";
 import { Button, Loader, Modal } from "../components";
@@ -28,7 +28,6 @@ const Test = () => {
         `api/v1/test-series/test/${params.test_id}`
       );
       if (data) {
-        console.log(data, "data");
         const currentTest = data.data?.[0];
         setTest(currentTest ?? {});
         if (currentTest) {
@@ -41,7 +40,6 @@ const Test = () => {
         }
       }
     } catch (error) {
-      console.log(`Error: getAllTests --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +55,6 @@ const Test = () => {
           );
 
           if (data.data) {
-            console.log(data.data.question ?? []);
             const response = data.data.questions ?? [];
             return { [subject_id]: response };
           }
@@ -106,7 +103,6 @@ const Test = () => {
       }));
       setModal("");
     } catch (error) {
-      console.log(`Error: deleteTestFromTestSeries --- ${error}}`);
     } finally {
       setIsLoading(false);
     }
@@ -177,6 +173,7 @@ const Test = () => {
           {test?.subjects
             ?.filter(({ inclued }) => inclued)
             .map(({ label, total_questions, question_count, subject_id }) => (
+              <Fragment key={subject_id}>
               <Button
                 activeTab={activeSubject === subject_id}
                 buttonText={`${label} (${question_count}/${total_questions})`}
@@ -187,7 +184,8 @@ const Test = () => {
                   );
                   setCurrentSubjectInfo(currentSubject);
                 }}
-              />
+                />
+                </Fragment>
             ))}
         </div>
       </div>
@@ -198,6 +196,7 @@ const Test = () => {
             new Array(parseInt(currentSubjectInfo.total_questions))
               ?.fill(null)
               .map((_, i) => (
+                <Fragment key={i}>
                 <Button
                   activeTab={
                     !!questions[activeSubject]?.find(({ index }) => index === i)
@@ -206,6 +205,7 @@ const Test = () => {
                   onClick={() => setCurrentQuestion(i + 1)}
                   className="min-w-[100px] h-[28px] flex justify-center items-center rounded-[5px]"
                 />
+                </Fragment>
               ))}
         </div>
       </div>
