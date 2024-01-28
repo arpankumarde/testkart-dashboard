@@ -1,12 +1,10 @@
-import React from "react";
-
 const Loader = () => {
   return (
     <div className="fixed z-[999] top-[35%] left-[52%]">
       <div className="flex">
         <div className="relative">
-          <div className="w-12 h-12 rounded-full absolute border-8 border-solid border-gray-200"></div>
-          <div className="w-12 h-12 rounded-full animate-spin absolute border-8 border-solid border-purple-500 border-t-transparent"></div>
+          <div className="w-12 h-12 rounded-full absolute border-8 border-solid border-gray-300"></div>
+          <div className="w-12 h-12 rounded-full animate-spin absolute border-8 border-solid border-[#6d45a4] border-t-transparent"></div>
         </div>
       </div>
     </div>
@@ -20,7 +18,7 @@ export const ButtonLoader = () => {
     <div role="status">
       <svg
         aria-hidden="true"
-        className="w-8 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className="w-8 h-5 text-gray-200 animate-spin bg-[#6d45a4]"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

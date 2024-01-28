@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const ProgressBar = ({hideLoader}) => {
+const ProgressBar = ({ hideLoader }) => {
   const [progress, setProgress] = useState(0);
   const [showDoneMessage, setShowDoneMessage] = useState(false);
 
@@ -20,9 +20,9 @@ const ProgressBar = ({hideLoader}) => {
 
           // Hide the component after 3 seconds
           setTimeout(() => {
-            resetProgress()
+            resetProgress();
             setShowDoneMessage(false);
-            hideLoader?.()
+            hideLoader?.();
           }, 2000);
         }
 
@@ -37,20 +37,24 @@ const ProgressBar = ({hideLoader}) => {
     <div>
       {progress < 100 && (
         <div>
-        <div className="relative flex items-center justify-center w-full h-4 bg-gray-200 rounded-full my-4">
-          <div
-            style={{ width: `${progress}%` }}
-            className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-800 h-full rounded-full transition-all"
-          ></div>
-          <span className="z-10 text-white">{progress}%</span>
-        </div>
-        <p className="text-lg text-blue-500 leading-6 font-medium">question are importing please wait....</p>
+          <div className="relative flex items-center justify-center w-full h-4 bg-gray-200 rounded-full my-4">
+            <div
+              style={{ width: `${progress}%` }}
+              className="absolute inset-0 bg-gradient-to-br from-blue-500 to-[#6d45a4] h-full rounded-full transition-all"
+            ></div>
+            <span className="z-10 text-white">{progress}%</span>
+          </div>
+          <p className="text-lg text-[#6d45a4] leading-6 font-medium">
+            Question are importing, please wait....
+          </p>
         </div>
       )}
 
       {showDoneMessage && (
         <div>
-          <span className="text-green-500 font-medium text-lg">New Questions are imported Successfully</span>
+          <span className="text-green-600 font-medium text-lg">
+            New Questions are imported Successfully!
+          </span>
         </div>
       )}
     </div>

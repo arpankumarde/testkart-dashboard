@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { server } from "../api";
 import {
@@ -59,11 +59,11 @@ const EditTestSeries = () => {
           language: currentTest.language,
           exam_id: currentTest.exam_id,
           academy_id: currentTest.academy_id,
-          is_paid : currentTest.is_paid,
+          is_paid: currentTest.is_paid,
           price_before_discount: currentTest.price_before_discount,
-          price:currentTest.price_before_discount,
-          difficulty_level:currentTest.difficulty_level,
-          discount : currentTest.discount
+          price: currentTest.price_before_discount,
+          difficulty_level: currentTest.difficulty_level,
+          discount: currentTest.discount,
         }));
       }
     } catch (error) {
@@ -104,7 +104,7 @@ const EditTestSeries = () => {
   const handleChange = ({ target }) => {
     const { name, value } = target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (['discount','price'].includes) {
+    if (["discount", "price"].includes) {
       calculateFinalPrice();
     }
   };
@@ -141,7 +141,7 @@ const EditTestSeries = () => {
               Cancel
             </button>
             <button
-              disabled={(isUpdating || !title || !description)}
+              disabled={isUpdating || !title || !description}
               className="bg-[#6d45a4] border-transparent flex justify-center items-center  rounded-[3px] text-base text-white px-3 py-1 leading-6 whitespace-nowrap min-w-[100px] h-[30px]"
               onClick={() => updateTestSeries()}
             >

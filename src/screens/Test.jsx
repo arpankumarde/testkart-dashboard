@@ -1,11 +1,11 @@
-import React, { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { server } from "../api";
 import { Button, Loader, Modal } from "../components";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import AddQuestion from "../components/AddQuestion";
-import { ADD_QUESTION, DELETE } from "../utils/constant";
 import UploadQuestion from "../components/UploadQuestion";
+import { ADD_QUESTION, DELETE } from "../utils/constant";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const Test = () => {
   const [test, setTest] = useState([]);
@@ -109,13 +109,13 @@ const Test = () => {
   };
 
   useEffect(() => {
-   if(searchParams.get('subject_id')){
-    setModal('upload')
-   }
-  }, [searchParams])
-  
+    if (searchParams.get("subject_id")) {
+      setModal("upload");
+    }
+  }, [searchParams]);
+
   return (
-    <section className="px-[15px] py-3 flex flex-col gap-3">
+    <section className="md:p-4 lg:p-8 relative">
       {isLoading && <Loader />}
       <AddQuestion
         title={`${
@@ -135,7 +135,7 @@ const Test = () => {
             deleteQuestionFromtest();
             fn(false);
           } else {
-            getTestInfo()
+            getTestInfo();
             getAllQuestions();
           }
         }}
@@ -143,9 +143,9 @@ const Test = () => {
       <UploadQuestion
         isModalOpen={modal === "upload"}
         setIsModalOpen={setModal}
-        subject_id={searchParams?.get('subject_id')?? activeSubject}
+        subject_id={searchParams?.get("subject_id") ?? activeSubject}
       />
-      <div className="w-full flex-col p-5 shadow-card bg-white">
+      <div className="w-full flex-col p-4 shadow-card bg-white">
         <div className="flex justify-between">
           <div className="relative">
             <p className="flex gap-2 items-center justify-center">
@@ -169,42 +169,44 @@ const Test = () => {
             Import Questions
           </button>
         </div>
-        <div className="flex gap-4 justify-start items-center py-4 flex-wrap">
+        <div className="flex gap-4 justify-start items-center pt-4 flex-wrap">
           {test?.subjects
             ?.filter(({ inclued }) => inclued)
             .map(({ label, total_questions, question_count, subject_id }) => (
               <Fragment key={subject_id}>
-              <Button
-                activeTab={activeSubject === subject_id}
-                buttonText={`${label} (${question_count}/${total_questions})`}
-                onClick={() => {
-                  setActiveSubject(subject_id);
-                  const currentSubject = test.subjects.find(
-                    ({ subject_id: id }) => subject_id === id
-                  );
-                  setCurrentSubjectInfo(currentSubject);
-                }}
+                <Button
+                  activeTab={activeSubject === subject_id}
+                  buttonText={`${label} (${question_count}/${total_questions})`}
+                  onClick={() => {
+                    setActiveSubject(subject_id);
+                    const currentSubject = test.subjects.find(
+                      ({ subject_id: id }) => subject_id === id
+                    );
+                    setCurrentSubjectInfo(currentSubject);
+                  }}
                 />
-                </Fragment>
+              </Fragment>
             ))}
         </div>
       </div>
-
+      <hr />
       <div className="p-6 bg-white w-full md:min-h-[120px]">
-        <div className="flex gap-4 justify-start flex-wrap">
+        <div className="flex gap-4 justify-center flex-wrap">
           {!!currentSubjectInfo.total_questions &&
             new Array(parseInt(currentSubjectInfo.total_questions))
               ?.fill(null)
               .map((_, i) => (
                 <Fragment key={i}>
-                <Button
-                  activeTab={
-                    !!questions[activeSubject]?.find(({ index }) => index === i)
-                  }
-                  buttonText={i + 1}
-                  onClick={() => setCurrentQuestion(i + 1)}
-                  className="min-w-[100px] h-[28px] flex justify-center items-center rounded-[5px]"
-                />
+                  <Button
+                    activeTab={
+                      !!questions[activeSubject]?.find(
+                        ({ index }) => index === i
+                      )
+                    }
+                    buttonText={i + 1}
+                    onClick={() => setCurrentQuestion(i + 1)}
+                    className="min-w-[100px] h-[28px] flex justify-center items-center rounded-[5px]"
+                  />
                 </Fragment>
               ))}
         </div>

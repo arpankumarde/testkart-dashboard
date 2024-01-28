@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import Button from "./Button";
-import { DELETE } from "../utils/constant";
+import { Button } from "./";
 
 const Modal = ({
   isModalOpen,
@@ -39,7 +37,7 @@ const Modal = ({
 
   const ModalFooter = ({ className }) => (
     <div
-      className={`flex items-center py-2 border-t border-gray-200 rounded-b dark:border-gray-600 gap-4 justify-between ${className}`}
+      className={`flex items-center py-2 border-t border-gray-200 rounded-b gap-4 justify-between ${className}`}
     >
       <Button buttonText={"Cancel"} onClick={handleDecline} />
 
@@ -54,7 +52,7 @@ const Modal = ({
             }
           }}
           type="button"
-          className="bg-red-500 text-white min-w-[80px] md:min-w-[120px]  p-1 md:px-3 md:py-2 flex justify-center items-center rounded-md "
+          className="bg-red-500 text-white min-w-[80px] md:min-w-[120px] p-1 md:px-3 md:py-2 flex justify-center items-center rounded-md"
         >
           Delete
         </button>
@@ -78,24 +76,22 @@ const Modal = ({
       } overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 justify-center items-center flex w-full md:inset-0 h-screen max-h-full bg-black bg-opacity-50`}
     >
       <div className={`relative p-4 w-full max-w-2xl max-h-full ${className}`}>
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 p-2">
+        <div className="relative bg-white rounded-lg shadow p-2">
           <div
-            className={`flex p-2 border-b rounded-t dark:border-gray-600 flex-wrap ${
+            className={`flex p-2 border-b rounded-t flex-wrap ${
               isAddQuestion
                 ? "flex-col md:flex-row md:items-center"
                 : "items-center justify-between"
             }`}
           >
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {title}
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
             {isAddQuestion ? (
-              <ModalFooter className={"!justify-end flex-1  !border-t-0 "} />
+              <ModalFooter className={"!justify-end flex-1 !border-t-0"} />
             ) : (
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
               >
                 <svg
                   className="w-3 h-3"
@@ -120,7 +116,7 @@ const Modal = ({
           <div
             className={`p-2 space-y-4 ${
               isAddQuestion
-                ? "h-[calc(100vh-10rem)] md:h-[calc(100vh-1rem)] overflow-scroll custom-scroll-bar"
+                ? "h-[calc(100vh-10rem)] md:h-[calc(100vh-1rem)] overflow-auto"
                 : ""
             }`}
           >

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { server } from "../api";
 import {
   ButtonLoader,
@@ -65,9 +65,9 @@ const AddTestSeries = () => {
   const addTestSeries = async () => {
     try {
       setIsUpdating(true);
-      const {data} = await server.post(`/api/v1/test-series`, formData);
-      if(data?.data?.test_series_id){
-        return navigate(`/test-series/${data?.data?.test_series_id}`)
+      const { data } = await server.post(`/api/v1/test-series`, formData);
+      if (data?.data?.test_series_id) {
+        return navigate(`/test-series/${data?.data?.test_series_id}`);
       }
       navigate("/test-series");
     } catch (error) {
@@ -106,16 +106,14 @@ const AddTestSeries = () => {
       if (["discount", "price_before_discount"].includes) {
         calculateFinalPrice();
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
-
   return (
-    <section className="flex md:flex-row flex-col pt-2 gap-4">
+    <section className="md:p-4 lg:p-8 flex md:flex-row flex-col md:gap-4 lg:gap-8">
       {isLoading && <Loader />}
       <div
-        className={`flex  md:w-[50%] flex-col gap-2 items-start  px-5 ${
+        className={`flex md:w-[50%] flex-col gap-2 items-start ${
           step === 1 ? "justify-center" : "justify-start"
         }`}
       >
@@ -124,7 +122,7 @@ const AddTestSeries = () => {
             <div className="w-full">
               <label
                 htmlFor="default"
-                className="block mb-2  text-gray-900 dark:text-white  font-semibold text-lg text-center"
+                className="block mb-2  text-gray-900 font-semibold text-lg text-center"
               >
                 Select an exam to proceed
               </label>
@@ -181,7 +179,13 @@ const AddTestSeries = () => {
             </button>
             <button
               onClick={() => handleNextClick()}
-              disabled={step === 1 ? !exam_id : step === 2 ? (!title || !description) : false}
+              disabled={
+                step === 1
+                  ? !exam_id
+                  : step === 2
+                  ? !title || !description
+                  : false
+              }
               className="bg-[#6d45a4] border-transparent flex justify-center items-center  rounded-[3px] text-base text-white px-3 py-1 leading-6 whitespace-nowrap min-w-[100px] h-[30px]"
             >
               {isUpdating ? (

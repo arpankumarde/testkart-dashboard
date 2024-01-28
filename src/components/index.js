@@ -13,7 +13,7 @@ import ImportantTipForCreators from "./ImportantTipForCreators";
 import Loader, { ButtonLoader } from "./Loader";
 import Modal from "./Modal";
 import ReactQuillComponet from "./ReactQuill";
-import ProgressBar from './ProgressBar'
+import ProgressBar from "./ProgressBar";
 
 export {
   DashboardOverviewCard,
@@ -26,7 +26,7 @@ export {
   ButtonLoader,
   Modal,
   ReactQuillComponet,
-  ProgressBar
+  ProgressBar,
 };
 
 import EarningsOverview from "./EarningsOverview";

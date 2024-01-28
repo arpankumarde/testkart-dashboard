@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 
 const Dropdown = ({
   items,
@@ -36,7 +36,7 @@ const Dropdown = ({
       {buttonText && (
         <button
           onClick={toggleDropdown}
-          className="dropdown-button flex justify-center items-center bg-[#545b62] border-t-current py-1 px-2 text-white font-normal"
+          className="dropdown-button flex justify-center items-center border-[#6d45a4] border py-1 px-4 font-normal rounded-md"
         >
           {buttonText}
           <svg
@@ -60,13 +60,13 @@ const Dropdown = ({
       {children && <button onClick={toggleDropdown}> {children} </button>}
 
       {isOpen && (
-        <div className={`dropdown-menu bg-white  shadow-card p-1 ${className}`}>
+        <div className={`dropdown-menu bg-white shadow-card p-1 ${className}`}>
           <ul className="dropdown-list">
             {items.map((item, index) => (
               <Fragment key={item.label}>
                 <li
                   key={`${item.label - index}`}
-                  className={`dropdown-item py-2 px-6 w-full hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer whitespace-nowrap ${
+                  className={`dropdown-item py-2 px-6 w-full hover:bg-gray-100 cursor-pointer whitespace-nowrap ${
                     item.label === "Unlist" ? "!text-red-600" : ""
                   } ${selectedValue === item.label && "text-[#833ee4]"}`}
                   onClick={() => {

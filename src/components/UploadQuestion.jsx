@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Modal from "./Modal";
+import { useState } from "react";
+import { Modal } from "./";
 import { server } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import ProgressBar from "./ProgressBar";
@@ -10,7 +10,6 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
   const [showLoader, setShowLoader] = useState(false);
 
   const params = useParams();
-
   const navigate = useNavigate();
 
   const handleFileChange = (event) => {
@@ -33,26 +32,29 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
         });
         if (data.success) {
           setShowLoader(true);
-
         }
       } else {
-        window.alert(`please select file to upload`);
+        alert("Please select file to upload");
       }
-    } catch (error) {
+    } catch (err) {
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-
   return (
     <Modal
-      title={"Upload question in bulk"}
-      className={"max-w-full !p-0 [&>div]:!h-screen !overflow-hidden"}
+      title={"Upload question in Bulk"}
+      className={"max-w-full !p-0 [&>div]:!h-dvh !overflow-hidden"}
       isModalOpen={isModalOpen}
       setIsModalOpen={setIsModalOpen}
       onAccept={() => handleUploadFileToServer()}
-      onDecline={()=>navigate(`/test-series/${params.series_id}/test/${params.test_id}/questions`)}
+      onDecline={() =>
+        navigate(
+          `/test-series/${params.series_id}/test/${params.test_id}/questions`
+        )
+      }
       saveButtonText={"Upload Docs"}
       isLoading={isLoading}
       footerClassName="absolute right-4 top-0"
@@ -66,14 +68,19 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
           </h1>
           <p>
             This template is a doc file, you have to put all you questions and
-            answers in the given format 2 questions are given for your refrence
+            answers in the given format.
+            <br />2 questions are given for your reference
           </p>
-          <a href="" className="text-blue-700">
+          <a
+            href="/static/docs/template.docx"
+            className="text-blue-700"
+            download={true}
+          >
             template.docx
           </a>
         </div>
         <div className="p-10 text-[#4e4a4a] text-center flex flex-col gap-3">
-          <h1 className=" leading-6 text-xl font-semibold">
+          <h1 className="leading-6 text-xl font-semibold">
             Please use the template to upload your question
           </h1>
           <input
@@ -81,8 +88,11 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
             id="questionfile"
             name="questionfile"
             onChange={handleFileChange}
+            className="p-2 bg-gray-100 rounded-md"
           />
-          {showLoader && <ProgressBar  hideLoader={()=>setShowLoader(false)}/>}
+          {showLoader && (
+            <ProgressBar hideLoader={() => setShowLoader(false)} />
+          )}
         </div>
       </div>
     </Modal>

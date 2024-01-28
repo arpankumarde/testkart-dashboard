@@ -159,12 +159,10 @@ const ViewTestSeries = () => {
       }
       case DELETE: {
         setIsModalContent((prev) => ({ ...prev, title, id }));
-       return  setModal(DELETE);
+        return setModal(DELETE);
       }
-      case VIEW_TESTS:{
-        navigate(
-          `/test-series/${params?.series_id}/test/${id}/questions`
-        )
+      case VIEW_TESTS: {
+        navigate(`/test-series/${params?.series_id}/test/${id}/questions`);
       }
       // Add more cases if needed
       default: {
@@ -218,7 +216,7 @@ const ViewTestSeries = () => {
 
   const handleStatusChange = async (id) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const currentTest = tests.find(
         (item) => item.data.test_id?.toString() === id?.toString()
       );
@@ -230,13 +228,13 @@ const ViewTestSeries = () => {
         toggleStatus(id);
       }
     } catch (error) {
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <section className="px-[15px] py-3 flex flex-col gap-3">
+    <section className="md:p-4 lg:p-8">
       {isLoading && <Loader />}
       <Modal
         title={`Exam:${testDetails.exam}`}
@@ -323,7 +321,7 @@ const ViewTestSeries = () => {
           <p>Are you sure to delete this test?</p>
         </div>
       </Modal>
-      <div className="flex justify-between p-5 shadow-card bg-white flex-wrap">
+      <div className="flex justify-between p-4 shadow-card bg-white flex-wrap gap-4">
         <div className="relative">
           <p className="flex gap-2 items-center justify-center">
             <IoMdArrowRoundBack
@@ -334,17 +332,17 @@ const ViewTestSeries = () => {
             <h1 className="font-medium text-lg">{title}</h1>
           </p>
         </div>
-        <div className="flex gap-3 justify-end flex-1">
+        <div className="flex gap-4 justify-center sm:justify-end flex-1">
           <Button
             activeTab={true}
             buttonText={`Add new Test`}
-            className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center`}
+            className={`px-4 py-1 whitespace-nowrap flex justify-center items-center`}
             onClick={() => setModal(ADD_QUESTION)}
           />
           {isPublish && (
             <Button
               buttonText={`Publish new Test`}
-              className={`h-9 whitespace-nowrap md:h-9 flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
+              className={`px-4 py-1 whitespace-nowrap flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
               onClick={() =>
                 navigate(`/test-series/${params.series_id}/publish`)
               }
@@ -361,17 +359,18 @@ const ViewTestSeries = () => {
           </Link> */}
         </div>
       </div>
-      <div className="px-6 pb-6 bg-white w-full md:h-[340px] overflow-scroll custom-scroll-bar">
-        <table className="table-auto w-full ">
-          <thead className="border-y border-y-[#e9ecef] bg-white shadow-card sticky top-0 left-0 right-0 z-20">
-            <tr className="text-left  [&>th]:py-[15px] [&>th]:px-3 [&>th]:font-medium">
+      <div className="h-fit mobile:min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-14rem-0.6rem)] bg-white overflow-auto px-4">
+        <table className="table-auto w-full">
+          <thead className="sticky top-0 left-0 bg-white z-10">
+            <tr className="text-center [&>th]:py-4 [&>th]:px-4 [&>th]:font-medium">
               <th>#</th>
-              <th>Test title</th>
+              <th className="min-w-36">Test Title</th>
               <th>Subjects</th>
               <th>Questions</th>
               <th>Duration</th>
               <th>Status</th>
-              <th>Free</th>
+              <th>Free?</th>
+              <th>Options</th>
             </tr>
           </thead>
           <tbody>
@@ -392,11 +391,11 @@ const ViewTestSeries = () => {
               ) => (
                 <tr
                   key={index}
-                  className="hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 relative"
+                  className="text-center hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 relative"
                 >
                   <td> {index + 1}</td>
                   <td
-                    className="cursor-pointer"
+                    className="text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                     onClick={() =>
                       navigate(
                         `/test-series/${test_series_id}/test/${test_id}/questions`
@@ -407,9 +406,7 @@ const ViewTestSeries = () => {
                   </td>
                   <td>{meta?.subjects}</td>
                   <td>{`${meta.questions_count}/${meta.total_questions} `}</td>
-                  <td>
-                    {duration} 
-                  </td>
+                  <td>{duration}</td>
                   {/* <td>
                     <span
                       className={`rounded-full px-4 py-1 text-green-500 cursor-pointer`}
@@ -424,7 +421,7 @@ const ViewTestSeries = () => {
                   </td> */}
                   <td>
                     <span
-                      className={`rounded-full px-4 py-1 text-white ${
+                      className={`rounded-full px-4 py-1 text-white text-sm ${
                         meta.questions_count >= meta.total_questions
                           ? "bg-[#30d530]"
                           : "bg-[#545b62]"
@@ -465,7 +462,7 @@ const ViewTestSeries = () => {
 
             {!isLoading && !tests.length && (
               <p className="w-full py-4 text-base px-2 font-medium">
-                There is no test added yet.{" "}
+                No Test added yet!
               </p>
             )}
           </tbody>

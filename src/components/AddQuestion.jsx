@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { MdCancel } from "react-icons/md";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import ReactQuillComponet from "./ReactQuill";
 import Modal from "./Modal";
-import { useParams } from "react-router-dom";
-import { server } from "../api";
 import Loader from "./Loader";
+import { server } from "../api";
 import { DELETE } from "../utils/constant";
+import { MdCancel } from "react-icons/md";
 
 const optionInitialState = [
   {
@@ -83,7 +83,7 @@ const AddQuestion = ({
       if (question_id) {
         await server.put(
           `/api/v1/test-series/test/question/${question_id}`,
-                formData
+          formData
         );
       } else {
         await server.post("/api/v1/test-series/test/question", formData);
@@ -122,19 +122,19 @@ const AddQuestion = ({
     getQuestionInfo();
 
     return () => {
-      clearState()
+      clearState();
     };
-
   }, [question_id]);
 
-
-  const isAllDataExist = ()=>{
-    const isOptionAvailable = options.find((item)=> (item.option && item.is_correct))
-    if(!question || !solution || !isOptionAvailable){
-        return true
+  const isAllDataExist = () => {
+    const isOptionAvailable = options.find(
+      (item) => item.option && item.is_correct
+    );
+    if (!question || !solution || !isOptionAvailable) {
+      return true;
     }
-    return false
-  }
+    return false;
+  };
 
   return (
     <Modal
@@ -162,7 +162,7 @@ const AddQuestion = ({
         </div>
       </Modal>
       <div className="flex w-full bg-white flex-col md:flex-row ">
-        <div className="w-full md:w-[50%] p-5 md:overflow-scroll md:h-[90vh] custom-scroll-bar">
+        <div className="w-full md:w-[50%] p-5 md:overflow-scroll md:h-[90vh]">
           <div className="flex flex-col gap-3">
             <div className="flex gap-4 items-center">
               <p className="whitespace-nowrap text-lg font-medium">
@@ -173,14 +173,14 @@ const AddQuestion = ({
                 id="language"
                 name="language"
                 value={question_type}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 outline-none"
               >
                 <option value="MCQ-S" className="">
                   MCQ-SingleSelect
                 </option>
               </select>
             </div>
-            <p className="text-lg font-medium">Question :</p>
+            <p className="text-lg font-medium">Question: </p>
             <ReactQuillComponet
               value={question}
               setValue={(e) => setQuestion(e)}
@@ -226,7 +226,7 @@ const AddQuestion = ({
               Add more options
             </button>
             <div>
-              <p className="text-lg font-semibold">Solution:</p>
+              <p className="text-lg font-semibold">Solution: </p>
               <ReactQuillComponet
                 value={solution}
                 setValue={(val) => setSolution(val)}
@@ -234,13 +234,13 @@ const AddQuestion = ({
             </div>
           </div>
         </div>
-        <div className="w-full md:w-[50%] p-5  md:h-[90vh] md:overflow-scroll custom-scroll-bar">
+        <div className="w-full md:w-[50%] p-5  md:h-[90vh] md:overflow-scroll">
           <div className="md:min-h-[200px]">
-            <h1 className="text-lg font-medium leading-6">Question:</h1>
+            <h1 className="text-lg font-medium leading-6">Question: </h1>
             <p dangerouslySetInnerHTML={{ __html: question }}></p>
           </div>
           <div className="md:min-h-[200px]">
-            <h1 className="text-lg font-medium leading-6">Options:</h1>
+            <h1 className="text-lg font-medium leading-6">Options: </h1>
             <div className="flex gap-2 flex-wrap">
               {options
                 .filter(({ option: _option }) => !!_option.length)
