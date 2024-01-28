@@ -91,7 +91,13 @@ const UploadQuestion = ({ isModalOpen, setIsModalOpen, subject_id }) => {
             className="p-2 bg-gray-100 rounded-md"
           />
           {showLoader && (
-            <ProgressBar hideLoader={() => setShowLoader(false)} />
+            <ProgressBar
+              hideLoader={() => {
+                setShowLoader(false);
+                window.alert(`your questions are imported successfully please wait for 5 minutes.`)
+                setIsModalOpen(false)
+              }}
+            />
           )}
         </div>
       </div>

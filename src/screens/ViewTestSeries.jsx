@@ -8,6 +8,7 @@ import {
   ADD_QUESTION,
   DELETE,
   EDIT_DETAILS,
+  STATUS_CODE_BY_STATUS,
   TEST_SERIES_TYPE,
   VIEW_TESTS,
 } from "../utils/constant";
@@ -25,6 +26,7 @@ const ViewTestSeries = () => {
     id: "",
   });
   const [isPublish, setIsPublish] = useState(false);
+  const [isLive, setIsLive] = useState(false);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -47,6 +49,7 @@ const ViewTestSeries = () => {
       if (data) {
         const updatedTestDetails = data.data.exam ?? {};
         setTitle(data.data.title);
+        setIsLive(data?.data?.status === STATUS_CODE_BY_STATUS?.Live)
         setTestDetails(updatedTestDetails);
         setTestData((prevTestData) => ({
           ...prevTestData,
@@ -339,7 +342,7 @@ const ViewTestSeries = () => {
             className={`px-4 py-1 whitespace-nowrap flex justify-center items-center`}
             onClick={() => setModal(ADD_QUESTION)}
           />
-          {isPublish && (
+          {(isPublish && !isLive) && (
             <Button
               buttonText={`Publish new Test`}
               className={`px-4 py-1 whitespace-nowrap flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
