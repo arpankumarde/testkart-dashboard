@@ -12,7 +12,7 @@ import TestSeriesForm from "./TestSeriesForm";
 import ImportantTipForCreators from "./ImportantTipForCreators";
 import Loader, { ButtonLoader } from "./Loader";
 import Modal from "./Modal";
-import ReactQuillComponet from "./ReactQuill";
+import ReactQuillComponent from "./ReactQuillComponent";
 import ProgressBar from "./ProgressBar";
 
 export {
@@ -25,7 +25,7 @@ export {
   Loader,
   ButtonLoader,
   Modal,
-  ReactQuillComponet,
+  ReactQuillComponent,
   ProgressBar,
 };
 

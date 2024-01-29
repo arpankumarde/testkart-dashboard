@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ReactQuillComponet from "./ReactQuill";
+import ReactQuillComponent from "./ReactQuillComponent";
 import Modal from "./Modal";
 import Loader from "./Loader";
 import { server } from "../api";
@@ -162,7 +162,7 @@ const AddQuestion = ({
         </div>
       </Modal>
       <div className="flex w-full bg-white flex-col md:flex-row ">
-        <div className="w-full md:w-[50%] p-5 md:overflow-scroll md:h-[90vh]">
+        <div className="w-full md:w-[50%] p-5 md:overflow-auto md:h-[90vh]">
           <div className="flex flex-col gap-3">
             <div className="flex gap-4 items-center">
               <p className="whitespace-nowrap text-lg font-medium">
@@ -181,7 +181,7 @@ const AddQuestion = ({
               </select>
             </div>
             <p className="text-lg font-medium">Question: </p>
-            <ReactQuillComponet
+            <ReactQuillComponent
               value={question}
               setValue={(e) => setQuestion(e)}
             />
@@ -195,7 +195,7 @@ const AddQuestion = ({
                     className="cursor-pointer"
                   />
                 </div>
-                <ReactQuillComponet
+                <ReactQuillComponent
                   value={item.option}
                   setValue={(e) => handleValueChange(e, index)}
                 />
@@ -205,8 +205,9 @@ const AddQuestion = ({
                     name="checked"
                     checked={item.is_correct ? true : false}
                     onChange={() => handleChange(index)}
+                    className="accent-[#6d45a4]"
                   />
-                  <span>if this option is correct</span>
+                  <span>This is the Correct Option</span>
                 </div>
               </div>
             ))}
@@ -227,17 +228,20 @@ const AddQuestion = ({
             </button>
             <div>
               <p className="text-lg font-semibold">Solution: </p>
-              <ReactQuillComponet
+              <ReactQuillComponent
                 value={solution}
                 setValue={(val) => setSolution(val)}
               />
             </div>
           </div>
         </div>
-        <div className="w-full md:w-[50%] p-5  md:h-[90vh] md:overflow-scroll">
+        <div className="w-full md:w-[50%] p-5 md:h-[90vh] md:overflow-auto">
           <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Question: </h1>
-            <p dangerouslySetInnerHTML={{ __html: question }}></p>
+            <p
+              className="prose"
+              dangerouslySetInnerHTML={{ __html: question }}
+            ></p>
           </div>
           <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Options: </h1>
@@ -255,14 +259,20 @@ const AddQuestion = ({
                       checked={selectedOption === option}
                       onChange={() => setSelectedOption(option)}
                     />
-                    <p dangerouslySetInnerHTML={{ __html: option }}></p>
+                    <p
+                      className="prose"
+                      dangerouslySetInnerHTML={{ __html: option }}
+                    ></p>
                   </label>
                 ))}
             </div>
           </div>
           <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Solution:</h1>
-            <p dangerouslySetInnerHTML={{ __html: solution }}></p>
+            <p
+              className="prose"
+              dangerouslySetInnerHTML={{ __html: solution }}
+            ></p>
           </div>
         </div>
       </div>

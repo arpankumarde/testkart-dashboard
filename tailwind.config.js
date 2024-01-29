@@ -5,12 +5,12 @@ export default {
   theme: {
     extend: {
       screens: {
-        'mobile': { 'raw': '(max-width: 768px)' },
+        mobile: { raw: "(max-width: 768px)" },
       },
       boxShadow: {
-        card : '1px 0 20px #0000000d'
-      }
+        card: "1px 0 20px #0000000d",
+      },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };
