@@ -165,7 +165,7 @@ const AddTestSeries = () => {
           )}
           <div className="flex justify-between w-full py-2">
             <button
-              className="bg-transparent border rounded-[3px]  border-black text-black w-[100px] h-[30px]"
+              className="bg-transparent border rounded-md border-black text-black w-28 h-8"
               onClick={() => {
                 if (step === 1) {
                   return navigate("/test-series");
@@ -186,7 +186,7 @@ const AddTestSeries = () => {
                   ? !title || !description
                   : false
               }
-              className="bg-[#6d45a4] border-transparent flex justify-center items-center  rounded-[3px] text-base text-white px-3 py-1 leading-6 whitespace-nowrap min-w-[100px] h-[30px]"
+              className="bg-[#6d45a4] border-transparent flex justify-center items-center rounded-md text-base text-white px-4 py-1 leading-6 whitespace-nowrap min-w-28 h-8"
             >
               {isUpdating ? (
                 <ButtonLoader />
