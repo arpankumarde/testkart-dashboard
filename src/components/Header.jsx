@@ -1,15 +1,21 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { RiMenu2Fill } from "react-icons/ri";
 import { IoAdd } from "react-icons/io5";
 import { VscChromeClose } from "react-icons/vsc";
+import { useEffect } from "react";
 
 const Header = ({ navState, setNavState }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const path = useLocation().pathname.split("/")[1];
 
   const handleNavToggle = () => {
     setNavState((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (path.toLowerCase() == "login") logout();
+  }, [path]);
 
   return (
     <header className="flex justify-between gap-2 items-center sticky top-0 w-full h-16 px-2 border-b md:border-none drop-shadow-lg bg-white">

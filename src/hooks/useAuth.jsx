@@ -18,13 +18,13 @@ export const useAuth = () => {
 
 // Provider hook that creates auth object and handles state
 function useProvideAuth() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const navigate = useNavigate();
 
   // Check if user info is in local storage to keep user logged in after page refresh
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    const user = localStorage.getItem("user");
+    const user = JSON.parse(localStorage.getItem("user"));
 
     if (token && user) {
       // Set Auth Header for future requests
@@ -60,7 +60,7 @@ function useProvideAuth() {
         server.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         server.defaults.headers.common["user_type"] = "TEACHER";
 
-        setUser(user);
+        setUser(JSON.parse(user));
         navigate("/");
       } else {
         alert(response.data.error);

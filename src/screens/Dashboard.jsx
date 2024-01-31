@@ -14,7 +14,7 @@ import { IoIosPaper } from "react-icons/io";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 const Dashboard = () => {
-  const auth = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const [dashboard, setDashboard] = useState({});
@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // If user is not logged in, redirect to login page
-    if (!auth.user) return navigate("/login");
+    if (!user) return navigate("/login");
 
     server
       .get("/api/v1/studio/dashboard")
@@ -32,10 +32,10 @@ const Dashboard = () => {
         console.log(res.data.data);
       })
       .catch((err) => {
-        if (err.response.status === 401) auth.logout();
+        if (err.response.status === 401) logout();
         else console.log(err.response);
       });
-  }, [auth.user, navigate, auth]);
+  }, [user, navigate]);
 
   return (
     <section className="md:p-4 lg:p-8">

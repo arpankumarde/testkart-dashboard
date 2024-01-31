@@ -11,12 +11,10 @@ import {
   IoPeopleOutline,
   IoLogOutOutline,
   IoSettingsOutline,
-  IoTicketOutline,
 } from "react-icons/io5";
 
 const Sidebar = ({ navState, setNavState }) => {
   let { user, logout } = useAuth();
-  user = JSON.parse(user);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -26,14 +24,6 @@ const Sidebar = ({ navState, setNavState }) => {
 
   const handleMobileNavCollapse = () => {
     isMobile ? setNavState(false) : null;
-    FreshworksWidget("close");
-  };
-
-  const handleSupportRequest = (e) => {
-    e.preventDefault();
-    handleMobileNavCollapse();
-    FreshworksWidget("show");
-    FreshworksWidget("open");
   };
 
   return (
@@ -41,13 +31,13 @@ const Sidebar = ({ navState, setNavState }) => {
       <nav
         className={
           navState
-            ? `w-full h-[calc(100dvh-4rem)] z-50 md:w-64 bg-green-10 absolute md:static left-0 text-gray-600 bg-white`
+            ? `w-full h-[calc(100dvh-4rem)] md:w-64 bg-green-10 absolute md:static left-0 text-gray-600 bg-white`
             : `hidden`
         }
       >
         <div className="w-full [&>h2]:text-gray-800 [&>h2]:px-4 [&>h2]:pb-2 [&>h2]:mt-4">
           <h2 className="capitalize font-semibold">
-            Hi {user?.academy.academy_name}!
+            Hi {user?.academy?.academy_name ?? "Untitled"}!
           </h2>
           <hr className="my-2" />
           <div
@@ -128,14 +118,6 @@ const Sidebar = ({ navState, setNavState }) => {
             >
               <IoLogOutOutline size={20} />
               Logout
-            </button>
-            <button
-              type="button"
-              onClick={handleSupportRequest}
-              className="hover:bg-gray-100 hover:text-gray-950"
-            >
-              <IoTicketOutline size={20} />
-              Support
             </button>
           </div>
         </div>

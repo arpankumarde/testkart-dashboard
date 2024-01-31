@@ -9,11 +9,11 @@ const Settings = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(JSON.parse(user) || {});
+  const [profile, setProfile] = useState(user || {});
 
   const [email, setEmail] = useState({
-    id: profile.teacher_id,
-    email: profile.email,
+    id: profile?.teacher_id,
+    email: profile?.email,
     new_email: "",
     confirm_email: "",
   });
@@ -138,7 +138,7 @@ const Settings = () => {
           <div className="bg-white md:bg-inherit px-4 md:px-0 pb-4 md:pb-0 flex justify-end pt-2">
             <button
               type="submit"
-              className="bg-[#6d45a4] text-white w-full md:w-56 py-2 px-4 rounded-md"
+              className="bg-[#6d45a4] text-white w-full md:w-60 py-2 px-4 rounded-md"
             >
               Update Account Email
             </button>
@@ -193,7 +193,7 @@ const Settings = () => {
           <div className="bg-white md:bg-inherit px-4 md:px-0 pb-4 md:pb-0 flex justify-end pt-2">
             <button
               type="submit"
-              className="bg-[#6d45a4] text-white w-full md:w-56 py-2 px-4 rounded-md"
+              className="bg-[#6d45a4] text-white w-full md:w-60 py-2 px-4 rounded-md"
             >
               Update Account Password
             </button>
