@@ -34,7 +34,7 @@ const TestReports = () => {
         <div className="bg-white md:rounded-md p-4 flex-1">
           <h2 className="text-xl flex items-center gap-2">
             <i className="p-2">
-              <HiOutlineDocumentReport size={25} />
+              <HiOutlineDocumentReport size={20} />
             </i>
             <span>Test Reports</span>
           </h2>

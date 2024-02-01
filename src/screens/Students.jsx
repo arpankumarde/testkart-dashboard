@@ -34,7 +34,7 @@ const Students = () => {
         <div className="bg-white md:rounded-md p-4 flex-1">
           <h2 className="text-xl flex items-center gap-2">
             <i className="p-2">
-              <PiStudentFill size={25} />
+              <PiStudentFill size={20} />
             </i>
             <span>Students</span>
           </h2>

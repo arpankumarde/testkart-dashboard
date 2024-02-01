@@ -17,14 +17,15 @@ const TestSeriesForm = ({
   handleDiscountType,
 }) => {
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-2 overflow-auto">
       {currentExamInfo && (
-        <div className="flex flex-col gap-1">
+        <div>
           <h1>
-            EXAM: <span className="ml-1">{currentExamInfo.exam} </span>{" "}
+            <span className="text-[#596780] font-medium text-lg">EXAM: </span>
+            <span>{currentExamInfo.exam} </span>{" "}
           </h1>
           <p>
-            <span className="mr-1">SUBJECTS: </span>
+            <span className="text-[#596780] font-medium text-lg">SUBJECTS: </span>
             {currentExamInfo?.default_pattern?.subjects.map(
               ({ subject: currentSubject }, index) => (
                 <span key={currentSubject}>
@@ -37,7 +38,7 @@ const TestSeriesForm = ({
           </p>
         </div>
       )}
-      <div className="h-0 my-2 w-full border-t border-t-[#e9ecef]"></div>
+      <hr className="w-full border-t border-t-[#e9ecef]"></hr>
       <div className="flex w-full gap-4 justify-center items-center flex-wrap">
         <div className="flex flex-col gap-2 flex-[2] h-28">
           <label htmlFor="title" className="text-[#596780] font-medium text-lg">
@@ -57,7 +58,7 @@ const TestSeriesForm = ({
           </span>
         </div>
         <div className="flex flex-col gap-2 flex-1 h-28">
-          <label htmlFor="difficulty" className="font-medium text-lg">
+          <label htmlFor="difficulty" className="text-[#596780] font-medium text-lg">
             Difficulty
           </label>
           <select
@@ -75,7 +76,6 @@ const TestSeriesForm = ({
           </select>
         </div>
       </div>
-
       <div className="flex flex-col w-full gap-2">
         <label htmlFor="title" className="text-[#596780] font-medium text-lg">
           Description
@@ -85,8 +85,8 @@ const TestSeriesForm = ({
           id="description"
           value={description}
           placeholder="Description for test"
-          className="w-full outline-none border border-[#ced4da] bg-white p-2 rounded-md"
-          rows={6}
+          className="w-full outline-none border border-[#ced4da] bg-white p-2 rounded-md resize-none"
+          rows={5}
           onChange={(e) => handleChange(e)}
         />
       </div>

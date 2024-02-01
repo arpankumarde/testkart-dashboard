@@ -110,19 +110,19 @@ const AddTestSeries = () => {
   };
 
   return (
-    <section className="md:p-4 lg:p-8 flex md:flex-row flex-col md:gap-4 lg:gap-8">
+    <section className="md:p-4 lg:p-8 flex flex-col lg:flex-row md:gap-4 lg:gap-8">
       {isLoading && <Loader />}
       <div
-        className={`flex md:w-[50%] flex-col gap-2 items-start ${
+        className={`flex w-full lg:w-[50%] flex-col gap-2 items-start ${
           step === 1 ? "justify-center" : "justify-start"
         }`}
       >
-        <div className="flex flex-col gap-2 w-full bg-white shadow-card justify-start items-start p-5">
+        <div className="flex flex-col gap-2 w-full h-full lg:h-[calc(100dvh-8rem)] rounded-md bg-white shadow-card justify-center items-start p-4 overflow-auto">
           {step === 1 && (
             <div className="w-full">
               <label
                 htmlFor="default"
-                className="block mb-2  text-gray-900 font-semibold text-lg text-center"
+                className="block mb-2 text-gray-900 font-semibold text-lg text-center"
               >
                 Select an exam to proceed
               </label>
@@ -131,7 +131,7 @@ const AddTestSeries = () => {
                 name="exam_id"
                 onChange={(e) => handleChange(e)}
                 id="default"
-                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
+                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg block w-full p-2.5 outline-none"
               >
                 <option value={""} disabled>
                   Please select exam to proceed
@@ -163,9 +163,9 @@ const AddTestSeries = () => {
               }}
             />
           )}
-          <div className="flex justify-between w-full py-2">
+          <div className="flex justify-between w-full pt-2">
             <button
-              className="bg-transparent border rounded-md border-black text-black w-28 h-8"
+              className="bg-transparent border rounded-md border-[#6d45a4] text-black w-28 h-8"
               onClick={() => {
                 if (step === 1) {
                   return navigate("/test-series");

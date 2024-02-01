@@ -14,7 +14,7 @@ const EarningsWithdraw = ({ balance }) => {
   const handleWithdrawRequest = (e) => {
     e.preventDefault();
     if (amount < 100) {
-      return alert("Minimum withdrawal amount is ₹500");
+      return alert("Minimum withdrawal amount is ₹100");
     }
     if (amount > 99999) {
       return alert("Maximum withdrawal amount is ₹99999");

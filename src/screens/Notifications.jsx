@@ -35,7 +35,7 @@ const Notifications = () => {
         <div className="bg-white md:rounded-md p-4 flex-1">
           <h2 className="text-xl flex items-center gap-2">
             <i className="p-2">
-              <IoMdNotifications size={25} />
+              <IoMdNotifications size={20} />
             </i>
             <span>Notifications</span>
           </h2>

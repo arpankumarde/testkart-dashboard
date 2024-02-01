@@ -28,11 +28,6 @@ const Login = () => {
         className="flex flex-col items-center justify-center w-full lg:w-1/2 bg-white md:bg-opacity-10 backdrop-filter backdrop-blur-lg"
         onSubmit={handleLogin}
       >
-        <img
-          src="/static/images/testkart-app-logo.png"
-          alt="logo"
-          className="w-72 object-contain -mt-16"
-        />
         <div className="bg-white p-8 rounded-md flex flex-col gap-2 w-full md:w-96">
           <h1 className="text-2xl font-bold text-center">Welcome Back!</h1>
           <p className="text-center mb-8">

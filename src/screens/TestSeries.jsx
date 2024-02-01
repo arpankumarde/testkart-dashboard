@@ -191,101 +191,105 @@ const TestSeries = () => {
           </div>
         </div>
       </Modal>
-
-      <div className="flex justify-between p-4 shadow-card bg-white">
-        <div className="relative">
-          <Dropdown
-            className="absolute top-0 left-0 text-base translate-y-8 z-40"
-            buttonText={selectedOption}
-            items={["All series", "Live", "Draft", "Unlisted"]
-              .filter((item) => item !== selectedOption)
-              .map((label) => ({ label }))}
-            handleChange={(val) => setSelectedOption(val)}
-          />
-        </div>
-        <Link to="/test-series/add">
-          <button
-            type="button"
-            className="bg-[#6d45a4] border border-[#6d45a4] rounded-md text-base text-white px-4 py-1 leading-6"
+      <div className="bg-white rounded-md">
+        <div className="flex justify-between p-4 shadow-card">
+          <div className="relative">
+            <Dropdown
+              className="absolute top-0 left-0 text-base translate-y-8 z-40"
+              buttonText={selectedOption}
+              items={["All series", "Live", "Draft", "Unlisted"]
+                .filter((item) => item !== selectedOption)
+                .map((label) => ({ label }))}
+              handleChange={(val) => setSelectedOption(val)}
+            />
+          </div>
+          <Link
+            to="/test-series/add"
+            className="bg-[#6d45a4] border border-[#6d45a4] rounded-md text-white px-4 py-1 leading-6"
           >
             Create Test Series
-          </button>
-        </Link>
-      </div>
-      <div className="h-fit mobile:min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-14rem-0.6rem)] bg-white overflow-auto px-4">
-        <table className="table-auto w-full">
-          <thead className="sticky top-0 left-0 bg-white">
-            <tr className="text-center [&>th]:py-4 [&>th]:px-4 [&>th]:font-medium">
-              <th>#</th>
-              <th className="text-left">Test series</th>
-              <th>No. of tests</th>
-              <th>Price</th>
-              <th>Students</th>
-              <th>Status</th>
-              <th>Options</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!!tests.length &&
-              filteredTestSeries()?.map(
-                (
-                  {
-                    title,
-                    total_tests,
-                    price,
-                    status,
-                    test_series_id,
-                    students_joined,
-                  },
-                  index
-                ) => (
-                  <tr
-                    key={index}
-                    className="text-center hover:bg-gray-100 border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 mobile:relative"
-                  >
-                    <td>{index + 1}.</td>
-                    <td
-                      className="text-left text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
-                      onClick={() => navigate(`/test-series/${test_series_id}`)}
+          </Link>
+        </div>
+        <hr className="mt-1" />
+        <div className="bg-white h-full md:h-[calc(100dvh-10rem-0.6rem)] lg:h-[calc(100dvh-12rem-0.6rem)] overflow-auto px-4">
+          <table className="table-auto w-full">
+            <thead className="sticky top-0 left-0 bg-white">
+              <tr className="text-center [&>th]:py-4 [&>th]:px-4 [&>th]:font-medium">
+                <th>#</th>
+                <th className="text-left">Test series</th>
+                <th>No. of tests</th>
+                <th>Price</th>
+                <th>Students</th>
+                <th>Status</th>
+                <th>Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!!tests.length &&
+                filteredTestSeries()?.map(
+                  (
+                    {
+                      title,
+                      total_tests,
+                      price,
+                      status,
+                      test_series_id,
+                      students_joined,
+                    },
+                    index
+                  ) => (
+                    <tr
+                      key={index}
+                      className="text-center hover:bg-gray-100 border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 mobile:relative"
                     >
-                      {title ?? "Untitled"}
-                    </td>
-                    <td>{total_tests ?? 0}</td>
-                    <td>{price ?? 0}</td>
-                    <td>{students_joined ?? 0}</td>
-                    <td>
-                      <span
-                        className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
-                      >
-                        {STATUS_MEANINGS_BY_CODE[status] ?? ""}{" "}
-                      </span>
-                    </td>
-                    <td>
-                      <Dropdown
-                        items={getOptions(status)?.map((label) => ({ label }))}
-                        className={`absolute z-20 -transalate-y-12 bg-white  ${
-                          getOptions(status).length > 3
-                            ? "top-[25%] right-[25px]"
-                            : "top-[40%] right-[15px]"
-                        }`}
-                        handleChange={(val) =>
-                          handleDropdownClick(val, test_series_id, title)
+                      <td>{index + 1}.</td>
+                      <td
+                        className="text-left text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                        onClick={() =>
+                          navigate(`/test-series/${test_series_id}`)
                         }
                       >
-                        <BsThreeDotsVertical className="cursor-pointer" />
-                      </Dropdown>
-                    </td>
-                  </tr>
-                )
-              )}
+                        {title ?? "Untitled"}
+                      </td>
+                      <td>{total_tests ?? 0}</td>
+                      <td>{price ?? 0}</td>
+                      <td>{students_joined ?? 0}</td>
+                      <td>
+                        <span
+                          className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
+                        >
+                          {STATUS_MEANINGS_BY_CODE[status] ?? ""}{" "}
+                        </span>
+                      </td>
+                      <td>
+                        <Dropdown
+                          items={getOptions(status)?.map((label) => ({
+                            label,
+                          }))}
+                          className={`absolute z-20 -transalate-y-12 bg-white  ${
+                            getOptions(status).length > 3
+                              ? "top-[25%] right-[25px]"
+                              : "top-[40%] right-[15px]"
+                          }`}
+                          handleChange={(val) =>
+                            handleDropdownClick(val, test_series_id, title)
+                          }
+                        >
+                          <BsThreeDotsVertical className="cursor-pointer" />
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  )
+                )}
 
-            {!isLoading && !tests.length && (
-              <p className="w-full py-4 text-base px-2 font-medium">
-                No test series found!
-              </p>
-            )}
-          </tbody>
-        </table>
+              {!isLoading && !tests.length && (
+                <p className="w-full py-4 text-base px-2 font-medium">
+                  No test series found!
+                </p>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   );

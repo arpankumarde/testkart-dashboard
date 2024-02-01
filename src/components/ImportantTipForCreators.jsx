@@ -1,6 +1,6 @@
 const ImportantTipForCreators = () => {
   return (
-    <div className="md:w-[50%] bg-white shadow-card p-5 text-[text-[#596780] flex flex-col gap-4 h-[75dvh] overflow-auto">
+    <div className="w-full lg:w-[50%] bg-white rounded-md p-5 text-[text-[#596780] flex flex-col gap-4 h-full lg:h-[calc(100dvh-8rem)] mobile:border-t overflow-auto">
       <h1 className="text-center text-xl font-semibold leading-6 text-[#596780] py-2">
         Important Tips for Creators
       </h1>
