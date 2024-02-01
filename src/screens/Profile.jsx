@@ -7,14 +7,19 @@ const Profile = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(JSON.parse(user) || {});
+  const [profile, setProfile] = useState(user ?? {});
 
   useEffect(() => {
     // If user is not logged in, redirect to login page
     if (!user) return navigate("/login");
 
+    setProfile(user);
+
     server
-      .get(`/api/v1/studio/academy/${profile.academy.academy_id}`)
+      .get(`/api/v1/studio/academy/${profile?.academy?.academy_id}`)
+      .then((res) => {
+        setProfile((prev) => ({ ...prev, academy: res.data.data }));
+      })
       .catch((err) => {
         if (err.response.status === 401) logout();
         else console.log(err.response);
@@ -67,8 +72,8 @@ const Profile = () => {
     try {
       await server
         .post(
-          `/api/v1/studio/academy/${profile.academy.academy_id}`,
-          profile.academy
+          `/api/v1/studio/academy/${profile?.academy?.academy_id}`,
+          profile?.academy
         )
         .then(() => {
           localStorage.setItem("user", JSON.stringify(profile));
@@ -82,10 +87,6 @@ const Profile = () => {
       console.log("failed to update Academy Details: ", error);
     }
   };
-
-  useEffect(() => {
-    setProfile(JSON.parse(localStorage.getItem("user")));
-  }, [user]);
 
   return (
     <section className="md:p-4 lg:p-8">
