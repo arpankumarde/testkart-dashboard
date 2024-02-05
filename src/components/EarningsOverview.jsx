@@ -9,7 +9,7 @@ import {
   Legend,
 } from "recharts";
 
-const EarningsOverview = ({ graphData, xKey, barKey }) => {
+const EarningsOverview = ({ graphData = [{}], xKey = "", barKey = "" }) => {
   return (
     <div className="bg-white md:rounded-md p-4 flex-1">
       <h2 className="text-xl flex items-center gap-2 mb-4">

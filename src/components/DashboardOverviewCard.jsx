@@ -45,7 +45,7 @@ const DashboardOverviewCard = ({
           }
           `}
           >
-            {data?.change ? data?.change : 0}%
+            {data?.change ?? 0}%
           </span>{" "}
           <span>From previous {timeframe}</span>
         </div>

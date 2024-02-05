@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { server } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, ButtonLoader, Loader, Modal } from "../components";
@@ -105,7 +105,7 @@ const Publish = () => {
     }
   };
 
-  console.log(cover_photo ,"coverrPhoto" , typeof cover_photo)
+  console.log(cover_photo, "coverrPhoto", typeof cover_photo);
 
   return (
     <div className="flex flex-col md:flex-row [&>div]:flex-1 p-5">
@@ -192,7 +192,8 @@ const Publish = () => {
           <div className="flex gap-2 justify-between w-full">
             <p className="text-lg font-medium leading-6">Display Price</p>
             <p className="flex gap-2">
-              <span>Rs</span> <p>{Math.round(price / 1.09).toFixed(2)}</p>
+              <span>Rs</span>{" "}
+              <p>{(Math.round(price / 1.09) ?? 0).toFixed(2)}</p>
             </p>
           </div>
           <div className="flex gap-2 justify-between w-full">
@@ -207,7 +208,7 @@ const Publish = () => {
           <p className="text-lg font-medium leading-6">You will Receive</p>
           <p className="flex gap-2">
             <span className="font-semibold text-lg">₹</span>{" "}
-            <p>{Math.round(price / 1.09).toFixed(2) - price / 5}</p>
+            <p>{(Math.round(price / 1.09) ?? 0).toFixed(2) - price / 5}</p>
           </p>
         </div>
         <div className="flex gap-2 justify-between w-full py-2">
@@ -230,7 +231,8 @@ const Publish = () => {
         {cover_photo && (
           <img
             src={
-              typeof cover_photo === 'string' ? cover_photo
+              typeof cover_photo === "string"
+                ? cover_photo
                 : URL.createObjectURL(cover_photo)
             }
             alt="cover-photo"

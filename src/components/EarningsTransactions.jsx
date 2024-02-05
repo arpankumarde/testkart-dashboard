@@ -69,12 +69,14 @@ const EarningsTransactions = () => {
               {transactions.length != 0 ? (
                 transactions.map((transaction, key) => (
                   <tr className="text-center border-b" key={key}>
-                    <td className="px-4 py-2">{transaction.title}</td>
                     <td className="px-4 py-2">
-                      {new Date(transaction.createdAt).toLocaleDateString()}
+                      {transaction?.title ?? "Untitled Transaction"}
                     </td>
-                    <td className="px-4 py-2">₹ {transaction.amount}</td>
-                    <td className="px-4 py-2">₹ {transaction.balance}</td>
+                    <td className="px-4 py-2">
+                      {new Date(transaction?.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-2">₹ {transaction.amount ?? 0}</td>
+                    <td className="px-4 py-2">₹ {transaction.balance ?? 0}</td>
                     <td className="px-4 py-2 text-white capitalize text-sm">
                       <span
                         className={`${

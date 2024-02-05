@@ -54,7 +54,7 @@ const EarningsWithdraw = ({ balance }) => {
           <i className="-mb-0.5">
             <MdCurrencyRupee size={35} />
           </i>
-          {balance?.toFixed(2)}
+          {(balance ?? 0.0).toFixed(2)}
         </span>
       </div>
       <hr />

@@ -63,25 +63,25 @@ const Dashboard = () => {
             name={"Students"}
             icon={<PiStudentFill size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.students}
+            cardData={dashboard?.widgets?.students ?? 0}
           />
           <DashboardOverviewCard
             name={"Earnings"}
             icon={<TbCoinRupeeFilled size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.earnings}
+            cardData={dashboard?.widgets?.earnings ?? 0}
           />
           <DashboardOverviewCard
             name={"Series Sold"}
             icon={<BsFillCartFill size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.test_series_sell}
+            cardData={dashboard?.widgets?.test_series_sell ?? 0}
           />
           <DashboardOverviewCard
             name={"Tests Taken"}
             icon={<IoIosPaper size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.tests_taken}
+            cardData={dashboard?.widgets?.tests_taken ?? 0}
           />
         </div>
       </div>
@@ -93,26 +93,18 @@ const Dashboard = () => {
           <h2 className="text-xl">Earnings</h2>
           <div className="my-4 flex justify-evenly [&>div>h4]:text-lg [&>div>h4]:font-bold [&>div>h4]:text-gray-600">
             <div className="flex flex-col items-center">
-              <h4>
-                {dashboard?.earnings
-                  ? dashboard?.earnings?.overview?.total.toFixed(2)
-                  : 0}
-              </h4>
+              <h4>{(dashboard?.earnings?.overview?.total ?? 0).toFixed(2)}</h4>
               <h5>Marketplace</h5>
             </div>
             <div className="flex flex-col items-center">
               <h4>
-                {dashboard?.earnings
-                  ? dashboard?.earnings?.overview?.last_week.toFixed(2)
-                  : 0}
+                {(dashboard?.earnings?.overview?.last_week ?? 0).toFixed(2)}
               </h4>
               <h5>Last week</h5>
             </div>
             <div className="flex flex-col items-center">
               <h4>
-                {dashboard?.earnings
-                  ? dashboard?.earnings?.overview?.last_month.toFixed(2)
-                  : 0}
+                {(dashboard?.earnings?.overview?.last_month ?? 0).toFixed(2)}
               </h4>
               <h5>Last Month</h5>
             </div>

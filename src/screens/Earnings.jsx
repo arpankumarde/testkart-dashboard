@@ -18,7 +18,7 @@ const Earnings = () => {
 
   const [earnings, setEarnings] = useState({ wallet: 0, graph: [{}] });
 
-  const getEarningCard = (path) => {
+  const getEarningCard = (path = "") => {
     switch (path) {
       case "overview":
         return (
@@ -73,7 +73,7 @@ const Earnings = () => {
               <i className="-mb-0.5">
                 <MdCurrencyRupee size={35} />
               </i>
-              {earnings?.wallet?.toFixed(2)}
+              {(earnings?.wallet ?? 0).toFixed(2)}
             </span>
           </div>
           <hr />

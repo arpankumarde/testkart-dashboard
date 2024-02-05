@@ -17,7 +17,7 @@ const EarningsBankSettings = () => {
     name: "",
   });
 
-  const getBranch = (code) => {
+  const getBranch = (code = "") => {
     if (code.length == 11) {
       axios
         .get(`https://ifsc.razorpay.com/${code}`)
