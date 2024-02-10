@@ -5,11 +5,8 @@ import { MdCurrencyRupee } from "react-icons/md";
 import { PiExportFill } from "react-icons/pi";
 
 const EarningsWithdraw = ({ balance }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [amount, setAmount] = useState(0);
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  const academy_id = user?.academy?.academy_id;
 
   const handleWithdrawRequest = (e) => {
     e.preventDefault();
@@ -26,7 +23,7 @@ const EarningsWithdraw = ({ balance }) => {
     server
       .post("/api/v1/studio/academy/withdrawal-request", {
         amount,
-        academy_id,
+        academy_id: user?.academy?.academy_id,
       })
       .then((res) => {
         if (!res.data.success) return alert(res.data.error);

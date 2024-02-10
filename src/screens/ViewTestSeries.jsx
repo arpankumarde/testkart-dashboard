@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Button, Dropdown, Loader, Modal } from "../components";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../hooks";
 import { server } from "../api";
 import {
   ADD_QUESTION,
@@ -16,6 +17,7 @@ import { getOptions } from "../utils/common";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 const ViewTestSeries = () => {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [tests, setTests] = useState([]);
   const [testDetails, setTestDetails] = useState({});
@@ -34,7 +36,7 @@ const ViewTestSeries = () => {
   const [testData, setTestData] = useState({
     test_series_id: null,
     exam_id: null,
-    academy_id: 1,
+    academy_id: user?.academy?.academy_id,
     title: "",
     duration: 0,
     subjects: [],
@@ -49,7 +51,7 @@ const ViewTestSeries = () => {
       if (data) {
         const updatedTestDetails = data.data.exam ?? {};
         setTitle(data.data.title);
-        setIsLive(data?.data?.status === STATUS_CODE_BY_STATUS?.Live)
+        setIsLive(data?.data?.status === STATUS_CODE_BY_STATUS?.Live);
         setTestDetails(updatedTestDetails);
         setTestData((prevTestData) => ({
           ...prevTestData,
@@ -342,7 +344,7 @@ const ViewTestSeries = () => {
             className={`px-4 py-1 whitespace-nowrap flex justify-center items-center`}
             onClick={() => setModal(ADD_QUESTION)}
           />
-          {(isPublish && !isLive) && (
+          {isPublish && !isLive && (
             <Button
               buttonText={`Publish new Test`}
               className={`px-4 py-1 whitespace-nowrap flex justify-center items-center !bg-[#30d530] border-transparent text-white`}

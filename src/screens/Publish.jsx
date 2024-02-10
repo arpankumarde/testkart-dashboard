@@ -1,13 +1,15 @@
 import { useLayoutEffect, useState } from "react";
-import { server } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, ButtonLoader, Loader, Modal } from "../components";
+import { useAuth } from "../hooks";
+import { server } from "../api";
 import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
-import { BsClipboard } from "react-icons/bs";
 import { copyToClipboard } from "../utils/common";
+import { Button, ButtonLoader, Loader, Modal } from "../components";
+import { BsClipboard } from "react-icons/bs";
 
 const Publish = () => {
-  const params = useParams();
+  const { series_id } = useParams();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState();
   const [isLiveModal, setIsLiveModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,7 +17,7 @@ const Publish = () => {
     description: "",
     language: "",
     exam_id: "",
-    academy_id: 1,
+    academy_id: user?.academy?.academy_id,
     difficulty_level: "Easy",
     is_paid: TEST_SERIES_TYPE.Free,
     price_before_discount: 0,
@@ -35,11 +37,11 @@ const Publish = () => {
     setIsLoading(true);
     try {
       const { data } = await server.get(
-        `/api/v1/test-series/${params.series_id}/verify`
+        `/api/v1/test-series/${series_id}/verify`
       );
       if (!data.success) {
         alert("test series is not verified for listing");
-        navigate(`/test-series/${params.series_id}`);
+        navigate(`/test-series/${series_id}`);
       }
       setFormData({ ...data.data.test_series[0], discountType: "percentage" });
       console.log(data, "dataa");
@@ -92,7 +94,7 @@ const Publish = () => {
       newFormData.append("file", cover_photo);
 
       const { data } = await server.post(
-        `/api/v1/test-series/${params.series_id}/publish`,
+        `/api/v1/test-series/${series_id}/publish`,
         newFormData
       );
       if (data) {
@@ -215,7 +217,7 @@ const Publish = () => {
           <Button
             buttonText="Cancel"
             className={"rounded-md"}
-            onClick={() => navigate(`/test-series/${params.series_id}`)}
+            onClick={() => navigate(`/test-series/${series_id}`)}
           />
           <button
             type="button"

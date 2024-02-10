@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks";
 import { server } from "../api";
+import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
 import {
   ButtonLoader,
   ImportantTipForCreators,
   Loader,
   TestSeriesForm,
 } from "../components";
-import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
 
 const AddTestSeries = () => {
   const [step, setStep] = useState(1);
@@ -17,13 +18,14 @@ const AddTestSeries = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    language: "",
+    language: "English",
     exam_id: "",
-    academy_id: 1,
+    academy_id: user?.academy?.academy_id,
     difficulty_level: "Easy",
     is_paid: TEST_SERIES_TYPE.Free,
     price_before_discount: 0,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../hooks";
 import { server } from "../api";
 import {
   ButtonLoader,
@@ -15,13 +16,14 @@ const EditTestSeries = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     language: "",
     exam_id: "",
-    academy_id: 1,
+    academy_id: user?.academy?.academy_id,
     difficulty_level: "Easy",
     is_paid: TEST_SERIES_TYPE.Free,
     price_before_discount: 0,
