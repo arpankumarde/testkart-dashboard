@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Button, Dropdown, Loader, Modal } from "../components";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,6 +14,7 @@ import {
 } from "../utils/constant";
 import { getOptions } from "../utils/common";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const ViewTestSeries = () => {
   const { user } = useAuth();
@@ -66,7 +66,11 @@ const ViewTestSeries = () => {
           ),
         }));
       }
+      console.log("tests:", tests);
+      console.log("testData", testData);
+      console.log("testDetails:\n", testDetails);
     } catch (error) {
+      toast.error("Failed to fetch test details");
     } finally {
       setIsLoading(false);
     }
@@ -167,7 +171,9 @@ const ViewTestSeries = () => {
         return setModal(DELETE);
       }
       case VIEW_TESTS: {
-        navigate(`/test-series/${params?.series_id}/test/${id}/questions`);
+        return navigate(
+          `/test-series/${params?.series_id}/test/${id}/questions`
+        );
       }
       // Add more cases if needed
       default: {
@@ -183,6 +189,7 @@ const ViewTestSeries = () => {
       setTests((prev) => prev.filter((item) => item.data.test_id !== id));
       setModal("");
     } catch (error) {
+      toast.error("Failed to delete test");
     } finally {
       setIsLoading(false);
     }
@@ -219,7 +226,7 @@ const ViewTestSeries = () => {
     );
   };
 
-  const handleStatusChange = async (id) => {
+  const handleFreeStatusChange = async (id) => {
     try {
       setIsLoading(true);
       const currentTest = tests.find(
@@ -233,16 +240,57 @@ const ViewTestSeries = () => {
         toggleStatus(id);
       }
     } catch (error) {
+      toast.error("Failed to update test status");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleScheduleStatusChange = async (id, value) => {
+    // check if the date in value is at last 1 hour ahead from now
+    if (new Date(value) < new Date(new Date().getTime() + 60 * 60 * 1000)) {
+      toast.error("You can only schedule test at least 1 hour ahead from now");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const currentTest = tests.find(
+        (item) => item.data.test_id?.toString() === id?.toString()
+      );
+      const { data } = await server.post(
+        `api/v1/test-series/test/schedule-test`,
+        {
+          test_id: currentTest.data.test_id,
+          scheduled_on: value,
+        }
+      );
+      if (data) {
+        getAllTestsBySeriesid();
+      }
+    } catch (error) {
+      toast.error("Failed to schedule test");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDateTime = (date, hoursToAdd = 0) => {
+    // if null return empty string
+    if (!date) return "";
+
+    let result = new Date(date);
+    result.setHours(result.getHours() + hoursToAdd);
+
+    // Convert date into this format: yyyy-MM-ddThh:mm
+    return result.toISOString().slice(0, 16);
   };
 
   return (
     <section className="md:p-4 lg:p-8">
       {isLoading && <Loader />}
       <Modal
-        title={`Exam:${testDetails.exam}`}
+        title={`Exam: ${testDetails.exam}`}
         isModalOpen={modal === ADD_QUESTION}
         setIsModalOpen={setModal}
         className={""}
@@ -257,7 +305,7 @@ const ViewTestSeries = () => {
               type="text"
               name="title"
               id="testTitle"
-              placeholder="enter test title"
+              placeholder="Enter test title"
               value={testData.title}
               onChange={(e) => handleChange(e)}
             />
@@ -284,7 +332,7 @@ const ViewTestSeries = () => {
         </div>
         <div className="px-4">
           <h1 className="text-base">
-            Select which subjects you wanted to inclued in this test
+            Select which subjects you wanted to be included in this test
           </h1>
           {testData?.subjects?.map((val) => {
             return (
@@ -313,7 +361,7 @@ const ViewTestSeries = () => {
         </div>
       </Modal>
       <Modal
-        title="Are  you sure ?"
+        title="Are you sure?"
         isModalOpen={modal == DELETE}
         setIsModalOpen={setModal}
         isDelete={true}
@@ -367,7 +415,7 @@ const ViewTestSeries = () => {
       <div className="h-fit mobile:min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-14rem-0.6rem)] bg-white overflow-auto px-4">
         <table className="table-auto w-full">
           <thead className="sticky top-0 left-0 bg-white z-10">
-            <tr className="text-center [&>th]:py-4 [&>th]:px-4 [&>th]:font-medium">
+            <tr className="text-center [&>th]:py-4 [&>th]:px-2 [&>th]:font-medium">
               <th>#</th>
               <th className="min-w-36">Test Title</th>
               <th>Subjects</th>
@@ -375,7 +423,8 @@ const ViewTestSeries = () => {
               <th>Duration</th>
               <th>Status</th>
               <th>Free?</th>
-              <th>Options</th>
+              <th>Scheduled At</th>
+              <th>More</th>
             </tr>
           </thead>
           <tbody>
@@ -389,30 +438,34 @@ const ViewTestSeries = () => {
                     test_series_id,
                     test_id,
                     is_paid,
+                    is_scheduled,
+                    scheduled_on,
                   },
                   meta,
                 },
                 index
-              ) => (
-                <tr
-                  key={index}
-                  className="text-center hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 relative"
-                >
-                  <td> {index + 1}</td>
-                  <td
-                    className="text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
-                    onClick={() =>
-                      navigate(
-                        `/test-series/${test_series_id}/test/${test_id}/questions`
-                      )
-                    }
+              ) => {
+                console.log(is_scheduled, scheduled_on);
+                return (
+                  <tr
+                    key={index}
+                    className="text-center hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-2 relative"
                   >
-                    {title}
-                  </td>
-                  <td>{meta?.subjects}</td>
-                  <td>{`${meta.questions_count}/${meta.total_questions} `}</td>
-                  <td>{duration}</td>
-                  {/* <td>
+                    <td> {index + 1}</td>
+                    <td
+                      className="text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                      onClick={() =>
+                        navigate(
+                          `/test-series/${test_series_id}/test/${test_id}/questions`
+                        )
+                      }
+                    >
+                      {title}
+                    </td>
+                    <td>{meta?.subjects}</td>
+                    <td>{`${meta.questions_count}/${meta.total_questions} `}</td>
+                    <td>{duration}</td>
+                    {/* <td>
                     <span
                       className={`rounded-full px-4 py-1 text-green-500 cursor-pointer`}
                       onClick={() =>
@@ -424,45 +477,60 @@ const ViewTestSeries = () => {
                       View Test
                     </span>
                   </td> */}
-                  <td>
-                    <span
-                      className={`rounded-full px-4 py-1 text-white text-sm ${
-                        meta.questions_count >= meta.total_questions
-                          ? "bg-[#30d530]"
-                          : "bg-[#545b62]"
-                      }`}
-                    >
-                      {meta.questions_count >= meta.total_questions
-                        ? "Complete"
-                        : "Incomplete"}
-                    </span>
-                  </td>
-                  <td className="text-center w-10">
-                    <input
-                      id="helper-checkbox"
-                      aria-describedby="helper-checkbox-text"
-                      type="checkbox"
-                      checked={is_paid == TEST_SERIES_TYPE.Free}
-                      // disabled={true}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                      onChange={() => handleStatusChange(test_id)}
-                    />
-                  </td>
-                  <td>
-                    <Dropdown
-                      items={getOptions(status)
-                        ?.filter((label) => label !== EDIT_DETAILS)
-                        .map((label) => ({ label }))}
-                      className={`absolute z-20  bg-white bottom-[3%] right-[25px] `}
-                      handleChange={(val) =>
-                        handleDropdownClick(val, test_id, title)
-                      }
-                    >
-                      <BsThreeDotsVertical className="cursor-pointer" />
-                    </Dropdown>
-                  </td>
-                </tr>
-              )
+                    <td>
+                      <span
+                        className={`rounded-full px-4 py-1 text-white text-sm ${
+                          meta.questions_count >= meta.total_questions
+                            ? "bg-[#30d530]"
+                            : "bg-[#545b62]"
+                        }`}
+                      >
+                        {meta.questions_count >= meta.total_questions
+                          ? "Complete"
+                          : "Incomplete"}
+                      </span>
+                    </td>
+                    <td className="text-center w-10">
+                      <input
+                        id="helper-checkbox"
+                        aria-describedby="helper-checkbox-text"
+                        type="checkbox"
+                        checked={is_paid == TEST_SERIES_TYPE.Free}
+                        // disabled={true}
+                        disabled={isLoading}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                        onChange={() => handleFreeStatusChange(test_id)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="datetime-local"
+                        value={formatDateTime(scheduled_on)}
+                        min={formatDateTime(new Date(), 1)}
+                        // disabled={is_scheduled ? false : true}
+                        disabled={isLoading}
+                        onChange={(e) =>
+                          handleScheduleStatusChange(test_id, e.target.value)
+                        }
+                        className="border border-gray-300 rounded-md p-1 text-center"
+                      />
+                    </td>
+                    <td>
+                      <Dropdown
+                        items={getOptions(status)
+                          ?.filter((label) => label !== EDIT_DETAILS)
+                          .map((label) => ({ label }))}
+                        className={`absolute z-20 bg-white bottom-[3%] right-[25px]`}
+                        handleChange={(val) =>
+                          handleDropdownClick(val, test_id, title)
+                        }
+                      >
+                        <BsThreeDotsVertical className="cursor-pointer" />
+                      </Dropdown>
+                    </td>
+                  </tr>
+                );
+              }
             )}
 
             {!isLoading && !tests.length && (
