@@ -266,10 +266,32 @@ const ViewTestSeries = () => {
         }
       );
       if (data) {
-        getAllTestsBySeriesid();
+        await getAllTestsBySeriesid();
       }
     } catch (error) {
       toast.error("Failed to schedule test");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUnschedule = async (id) => {
+    try {
+      setIsLoading(true);
+      const currentTest = tests.find(
+        (item) => item.data.test_id?.toString() === id?.toString()
+      );
+      const { data } = await server.post(
+        `api/v1/test-series/test/unschedule-test`,
+        {
+          test_id: currentTest.data.test_id,
+        }
+      );
+      if (data) {
+        await getAllTestsBySeriesid();
+      }
+    } catch (error) {
+      toast.error("Failed to unschedule test");
     } finally {
       setIsLoading(false);
     }
@@ -498,11 +520,11 @@ const ViewTestSeries = () => {
                         checked={is_paid == TEST_SERIES_TYPE.Free}
                         // disabled={true}
                         disabled={isLoading}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded cursor-pointer"
                         onChange={() => handleFreeStatusChange(test_id)}
                       />
                     </td>
-                    <td>
+                    <td className="flex flex-col gap-1">
                       <input
                         type="datetime-local"
                         value={formatDateTime(scheduled_on)}
@@ -514,6 +536,14 @@ const ViewTestSeries = () => {
                         }
                         className="border border-gray-300 rounded-md p-1 text-center"
                       />
+                      <button
+                        onClick={() => handleUnschedule(test_id)}
+                        className={`text-red-500 hover:text-red-600 cursor-pointer px-4 ${
+                          is_scheduled ? "" : "hidden"
+                        }`}
+                      >
+                        Unschedule
+                      </button>
                     </td>
                     <td>
                       <Dropdown
