@@ -1,6 +1,7 @@
 import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
 import Dropdown from "./Dropdown";
 import { languages } from "../utils/common";
+import ReactQuillComponent from "./ReactQuillComponent";
 
 const TestSeriesForm = ({
   currentExamInfo,
@@ -15,29 +16,29 @@ const TestSeriesForm = ({
   discount,
   discountType,
   handleDiscountType,
+  handleDescUpdate,
 }) => {
   return (
     <div className="w-full flex flex-col gap-2 overflow-auto">
-      {currentExamInfo && (
-        <div>
-          <h1>
-            <span className="text-[#596780] font-medium text-lg">EXAM: </span>
-            <span>{currentExamInfo.exam} </span>{" "}
-          </h1>
-          <p>
-            <span className="text-[#596780] font-medium text-lg">SUBJECTS: </span>
-            {currentExamInfo?.default_pattern?.subjects.map(
-              ({ subject: currentSubject }, index) => (
-                <span key={currentSubject}>
-                  {currentSubject}
-                  {index + 1 !==
-                    currentExamInfo?.default_pattern?.subjects.length && ", "}
-                </span>
-              )
-            )}
-          </p>
-        </div>
-      )}
+      <div>
+        <h1>
+          <span className="text-[#596780] font-medium text-lg">EXAM: </span>
+          <span>{currentExamInfo?.exam} </span>{" "}
+        </h1>
+        <p>
+          <span className="text-[#596780] font-medium text-lg">SUBJECTS: </span>
+          {currentExamInfo?.default_pattern?.subjects.map(
+            ({ subject: currentSubject }, index) => (
+              <span key={currentSubject}>
+                {currentSubject}
+                {index + 1 !==
+                  currentExamInfo?.default_pattern?.subjects.length && ", "}
+              </span>
+            )
+          )}
+        </p>
+      </div>
+
       <hr className="w-full border-t border-t-[#e9ecef]"></hr>
       <div className="flex w-full gap-4 justify-center items-center flex-wrap">
         <div className="flex flex-col gap-2 flex-[2] h-28">
@@ -58,7 +59,10 @@ const TestSeriesForm = ({
           </span>
         </div>
         <div className="flex flex-col gap-2 flex-1 h-28">
-          <label htmlFor="difficulty" className="text-[#596780] font-medium text-lg">
+          <label
+            htmlFor="difficulty"
+            className="text-[#596780] font-medium text-lg"
+          >
             Difficulty
           </label>
           <select
@@ -80,7 +84,19 @@ const TestSeriesForm = ({
         <label htmlFor="title" className="text-[#596780] font-medium text-lg">
           Description
         </label>
-        <textarea
+        <div className="prose">
+          <ReactQuillComponent
+            value={description}
+            setValue={(desc) => handleDescUpdate(desc)}
+            container={[
+              [{ header: [2, 3, 4, false] }],
+              ["bold", "italic", "underline", "strike"],
+              [{ list: "ordered" }, { list: "bullet" }],
+              ["clean"],
+            ]}
+          />
+        </div>
+        {/* <textarea
           name="description"
           id="description"
           value={description}
@@ -88,7 +104,7 @@ const TestSeriesForm = ({
           className="w-full outline-none border border-[#ced4da] bg-white p-2 rounded-md resize-none"
           rows={5}
           onChange={(e) => handleChange(e)}
-        />
+        /> */}
       </div>
       <div className="flex justify-center items-center text-[#596780] [&>div]:flex-1 gap-4">
         <div className="flex flex-col w-[30%] gap-2">

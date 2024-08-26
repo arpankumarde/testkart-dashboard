@@ -56,16 +56,16 @@ const EditTestSeries = () => {
         setTestinfo(currentTest ?? {});
         setFormData((prev) => ({
           ...prev,
-          title: currentTest.title,
-          description: currentTest.description,
-          language: currentTest.language,
-          exam_id: currentTest.exam_id,
-          academy_id: currentTest.academy_id,
-          is_paid: currentTest.is_paid,
-          price_before_discount: currentTest.price_before_discount,
-          price: currentTest.price_before_discount,
-          difficulty_level: currentTest.difficulty_level,
-          discount: currentTest.discount,
+          title: currentTest?.title,
+          description: currentTest?.description,
+          language: currentTest?.language,
+          exam_id: currentTest?.exam_id,
+          academy_id: currentTest?.academy_id,
+          is_paid: currentTest?.is_paid,
+          price_before_discount: currentTest?.price_before_discount,
+          price: currentTest?.price_before_discount,
+          difficulty_level: currentTest?.difficulty_level,
+          discount: currentTest?.discount,
         }));
       }
     } catch (error) {
@@ -111,6 +111,10 @@ const EditTestSeries = () => {
     }
   };
 
+  const handleDescUpdate = (desc) => {
+    setFormData((prev) => ({ ...prev, description: desc }));
+  };
+
   return (
     <section className="flex md:flex-row flex-col pt-2 gap-4">
       {isLoading && <Loader />}
@@ -130,6 +134,7 @@ const EditTestSeries = () => {
             finalPrice={price}
             discount={discount}
             discountType={discountType}
+            handleDescUpdate={handleDescUpdate}
             handleDiscountType={(value) => {
               setFormData((prev) => ({ ...prev, discountType: value }));
               return calculateFinalPrice();

@@ -146,7 +146,7 @@ const Test = () => {
         subject_id={searchParams?.get("subject_id") ?? activeSubject}
       />
       <div className="w-full flex-col p-4 shadow-card bg-white">
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           <div className="relative">
             <p className="flex gap-2 items-center justify-center">
               <IoMdArrowRoundBack

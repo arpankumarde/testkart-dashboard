@@ -157,12 +157,12 @@ const AddQuestion = ({
         isDelete={true}
         onAccept={() => onChange(DELETE, setModal)}
       >
-        <div className="flex justify-center items-center flex-col gap-2 ">
+        <div className="flex justify-center items-center flex-col gap-2">
           <p>Are you sure to delete this test?</p>
         </div>
       </Modal>
       <div className="flex w-full bg-white flex-col md:flex-row ">
-        <div className="w-full md:w-[50%] p-5 md:overflow-auto md:h-[90vh]">
+        <div className="w-full md:w-[50%] p-5 md:overflow-auto md:h-[85dvh]">
           <div className="flex flex-col gap-3">
             <div className="flex gap-4 items-center">
               <p className="whitespace-nowrap text-lg font-medium">
@@ -226,7 +226,7 @@ const AddQuestion = ({
             >
               Add more options
             </button>
-            <div>
+            <div className="mb-10">
               <p className="text-lg font-semibold">Solution: </p>
               <ReactQuillComponent
                 value={solution}
@@ -235,7 +235,7 @@ const AddQuestion = ({
             </div>
           </div>
         </div>
-        <div className="w-full md:w-[50%] p-5 md:h-[90vh] md:overflow-auto">
+        <div className="w-full md:w-[50%] p-5 md:overflow-auto md:h-[85dvh]">
           <div className="md:min-h-[200px]">
             <h1 className="text-lg font-medium leading-6">Question: </h1>
             <p

@@ -396,7 +396,7 @@ const ViewTestSeries = () => {
           <p>Are you sure to delete this test?</p>
         </div>
       </Modal>
-      <div className="flex justify-between p-4 shadow-card bg-white flex-wrap gap-4">
+      <div className="flex items-center justify-between p-4 shadow-card bg-white flex-wrap gap-4">
         <div className="relative">
           <p className="flex gap-2 items-center justify-center">
             <IoMdArrowRoundBack

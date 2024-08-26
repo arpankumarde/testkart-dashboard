@@ -114,9 +114,9 @@ const Modal = ({
           </div>
 
           <div
-            className={`p-2 space-y-4 ${
+            className={`px-2 space-y-4 ${
               isAddQuestion
-                ? "h-[calc(100vh-10rem)] md:h-[calc(100vh-1rem)] overflow-auto"
+                ? "h-[calc(100dvh-15rem)] md:h-[calc(100dvh-1rem)] overflow-auto"
                 : ""
             }`}
           >

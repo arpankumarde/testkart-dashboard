@@ -158,7 +158,7 @@ const Publish = () => {
             />
           </div>
         </div>
-        <div className="py-4 border-b border-b-[#596780] flex flex-col gap-4">
+        {/* <div className="py-4 border-b border-b-[#596780] flex flex-col gap-4">
           <div className="flex gap-2 justify-between w-full">
             <p className="text-lg font-medium leading-6">
               Selling Price for your test series
@@ -212,7 +212,7 @@ const Publish = () => {
             <span className="font-semibold text-lg">₹</span>{" "}
             <p>{(Math.round(price / 1.09) ?? 0).toFixed(2) - price / 5}</p>
           </p>
-        </div>
+        </div> */}
         <div className="flex gap-2 justify-between w-full py-2">
           <Button
             buttonText="Cancel"
