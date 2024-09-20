@@ -108,7 +108,13 @@ const AddTestSeries = () => {
       if (["discount", "price_before_discount"].includes) {
         calculateFinalPrice();
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDescUpdate = (desc) => {
+    setFormData((prev) => ({ ...prev, description: desc }));
   };
 
   return (
@@ -163,6 +169,7 @@ const AddTestSeries = () => {
                 setFormData((prev) => ({ ...prev, discountType: value }));
                 return calculateFinalPrice();
               }}
+              handleDescUpdate={handleDescUpdate}
             />
           )}
           <div className="flex justify-between w-full pt-2">
@@ -180,7 +187,7 @@ const AddTestSeries = () => {
               {step === 1 ? "Cancel" : "Back"}
             </button>
             <button
-              onClick={() => handleNextClick()}
+              onClick={handleNextClick}
               disabled={
                 step === 1
                   ? !exam_id
