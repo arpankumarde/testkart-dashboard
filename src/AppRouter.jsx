@@ -8,6 +8,7 @@ import {
   Notifications,
   Profile,
   Settings,
+  Signup,
   Students,
   StudentsDetails,
   Test,
@@ -23,6 +24,7 @@ const AppRouter = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
       <Route path="/test-series" element={<TestSeries />} />
       <Route path="/test-series/add" element={<AddTestSeries />} />

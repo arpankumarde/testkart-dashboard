@@ -48,7 +48,7 @@ function useProvideAuth() {
         type,
       });
 
-      if (response.data.success) {
+      if (response?.data?.success) {
         // Store token and user info in local storage
         const token = response.data.data.token;
         const user = JSON.stringify(response.data.data.user);
@@ -72,12 +72,29 @@ function useProvideAuth() {
     }
   };
 
-  const logout = async () => {
+  const signup = async (data) => {
+    try {
+      const response = await server.post("/api/v1/studio/academy", data);
+
+      if (response?.data?.success) {
+        alert("Signup successful. Please login to continue.");
+        return navigate("/login");
+      } else {
+        alert(response.data.error);
+        console.log(response.data.error);
+      }
+    } catch (error) {
+      console.error("Failed to Signup", error);
+      alert(error.message);
+    }
+  };
+
+  const logout = async (redirect = true) => {
     try {
       // Send logout request to server
       const response = await server.get("/auth/logout");
 
-      if (response.data.success) {
+      if (response?.data?.success) {
         // Remove token and user info from local storage
         localStorage.removeItem("access_token");
         localStorage.removeItem("user");
@@ -88,7 +105,8 @@ function useProvideAuth() {
 
         setUser(null);
         console.log(response.data.message);
-        navigate("/login");
+
+        if (redirect) navigate("/login");
       }
     } catch (error) {
       console.error("Failed to Logout", error);
@@ -99,6 +117,7 @@ function useProvideAuth() {
   return {
     user,
     login,
+    signup,
     logout,
   };
 }

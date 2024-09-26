@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../hooks";
 import { BiLoaderAlt } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -60,6 +61,16 @@ const Login = () => {
             />
             Log In
           </button>
+          <span className="text-center">
+            Don&apos;t have an account?
+            <br />
+            <Link
+              to="/signup"
+              className="text-[#6d45a4]/95 hover:text-[#6d45a4] font-medium"
+            >
+              Register as an Academy
+            </Link>
+          </span>
         </div>
       </form>
     </div>

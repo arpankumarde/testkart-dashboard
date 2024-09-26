@@ -14,7 +14,8 @@ const Header = ({ navState, setNavState }) => {
   };
 
   useEffect(() => {
-    if (path.toLowerCase() == "login") logout();
+    if (path.toLowerCase() === "login") logout();
+    else if (path.toLowerCase() === "signup") logout(false);
   }, [path]);
 
   return (
