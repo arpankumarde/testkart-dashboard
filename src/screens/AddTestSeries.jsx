@@ -52,7 +52,7 @@ const AddTestSeries = () => {
     try {
       const { data } = await server.get("/api/v1/exams/parsed");
       if (data) {
-        setExams(data.data ?? []);
+        setExams(data?.data ?? []);
       }
     } catch (error) {
     } finally {
@@ -65,9 +65,48 @@ const AddTestSeries = () => {
   }, []);
 
   const addTestSeries = async () => {
+    console.log("OnABV", formData);
     try {
+      let localFormData = { ...formData };
+      localFormData.is_paid = Number(localFormData.is_paid);
+
+      if (localFormData.is_paid === TEST_SERIES_TYPE.Free) {
+        console.log("re");
+        localFormData.price = 0;
+        localFormData.price_before_discount = 0;
+        localFormData.discount = 0;
+      } else {
+        localFormData.price = Number(parseFloat(formData.price).toFixed(2));
+        localFormData.price_before_discount = Number(
+          parseFloat(formData.price_before_discount).toFixed(2)
+        );
+        localFormData.discount = Number(
+          parseFloat(formData.discount).toFixed(2)
+        );
+      }
+
+      console.log("price_before_discount", localFormData.price_before_discount);
+      console.log("onAdd", localFormData);
+
+      if (localFormData?.discountType === DISCOUNT_TYPE.PERCENTAGE) {
+        if (localFormData?.discount < 0 || localFormData?.discount > 100) {
+          return alert("Discount percentage should be between 0 and 100.");
+        }
+      } else if (localFormData?.discountType === DISCOUNT_TYPE.AMOUNT) {
+        if (
+          localFormData?.discount < 0 ||
+          localFormData?.discount > localFormData?.price_before_discount
+        ) {
+          return alert(
+            "Discount amount should be between 0 and the price before discount."
+          );
+        }
+      }
+
       setIsUpdating(true);
-      const { data } = await server.post(`/api/v1/test-series`, formData);
+
+      const { data } = await server.post(`/api/v1/test-series`, localFormData);
+
       if (data?.data?.test_series_id) {
         return navigate(`/test-series/${data?.data?.test_series_id}`);
       }
@@ -89,25 +128,24 @@ const AddTestSeries = () => {
         prev.discountType === DISCOUNT_TYPE.PERCENTAGE
           ? (prev.price_before_discount * (100 - prev.discount)) / 100
           : prev.price_before_discount - prev.discount;
-      return { ...prev, price: discountPrice };
+      return { ...prev, price: Number(parseFloat(discountPrice).toFixed(2)) };
     });
   };
 
   const handleChange = ({ target }) => {
     try {
       const { name, value } = target;
+
       if (name === "exam_id") {
-        const currentExam = exams.find(
-          ({ exam_id }) => exam_id == target.value
-        );
+        const currentExam = exams.find(({ exam_id }) => exam_id == value);
 
         setCurrentExamInfo(currentExam);
       }
       setFormData((prev) => ({ ...prev, [name]: value }));
 
-      if (["discount", "price_before_discount"].includes) {
-        calculateFinalPrice();
-      }
+      // if (["discount", "price_before_discount"].includes) {
+      //   calculateFinalPrice();
+      // }
     } catch (error) {
       console.error(error);
     }
@@ -116,6 +154,19 @@ const AddTestSeries = () => {
   const handleDescUpdate = (desc) => {
     setFormData((prev) => ({ ...prev, description: desc }));
   };
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      price_before_discount: Number(parseInt(price_before_discount, 10)),
+      discount: Number(discount),
+      discountType: discountType,
+    }));
+
+    calculateFinalPrice();
+  }, [discountType, discount, price_before_discount]);
+
+  // console.log(formData);
 
   return (
     <section className="md:p-4 lg:p-8 flex flex-col lg:flex-row md:gap-4 lg:gap-8">
