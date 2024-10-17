@@ -72,10 +72,10 @@ const TestReportsDetails = () => {
                         {test.total_attempts ? test.total_attempts : 0}
                       </td>
                       <td className="px-4 py-2">
-                        {test.obtained_marks ? test.obtained_marks : 0}
+                        {parseFloat(test?.obtained_marks ?? 0).toFixed(2) ?? 0}
                       </td>
                       <td className="px-4 py-2">
-                        {test.time_spent ? test.time_spent : 0} mins
+                        {parseFloat(test?.time_spent ?? 0).toFixed(2) ?? 0} mins
                       </td>
                     </tr>
                   ))
