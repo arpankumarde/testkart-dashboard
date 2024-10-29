@@ -3,15 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { server } from "../api";
 import { DISCOUNT_TYPE, TEST_SERIES_TYPE } from "../utils/constant";
-import {
-  ButtonLoader,
-  ImportantTipForCreators,
-  Loader,
-  TestSeriesForm,
-} from "../components";
+import { ButtonLoader, Loader, TestSeriesForm } from "../components";
 
 const AddTestSeries = () => {
-  const [step, setStep] = useState(1);
   const [exams, setExams] = useState([]);
   const [isLoading, setIsLoading] = useState();
   const [currentExamInfo, setCurrentExamInfo] = useState({});
@@ -52,9 +46,11 @@ const AddTestSeries = () => {
     try {
       const { data } = await server.get("/api/v1/exams/parsed");
       if (data) {
+        data.data.sort((a, b) => a.exam.localeCompare(b.exam));
         setExams(data?.data ?? []);
       }
     } catch (error) {
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -117,11 +113,6 @@ const AddTestSeries = () => {
     }
   };
 
-  const handleNextClick = () => {
-    if (step === 1) return setStep(2);
-    addTestSeries();
-  };
-
   const calculateFinalPrice = () => {
     setFormData((prev) => {
       const discountPrice =
@@ -166,100 +157,109 @@ const AddTestSeries = () => {
     calculateFinalPrice();
   }, [discountType, discount, price_before_discount]);
 
-  // console.log(formData);
-
   return (
     <section className="md:p-4 lg:p-8 flex flex-col lg:flex-row md:gap-4 lg:gap-8">
       {isLoading && <Loader />}
-      <div
-        className={`flex w-full lg:w-[50%] flex-col gap-2 items-start ${
-          step === 1 ? "justify-center" : "justify-start"
-        }`}
-      >
-        <div className="flex flex-col gap-2 w-full h-full lg:h-[calc(100dvh-8rem)] rounded-md bg-white shadow-card justify-center items-start p-4 overflow-auto">
-          {step === 1 && (
-            <div className="w-full">
-              <label
-                htmlFor="default"
-                className="block mb-2 text-gray-900 font-semibold text-lg text-center"
-              >
-                Select an exam to proceed
-              </label>
-              <select
-                value={exam_id}
-                name="exam_id"
-                onChange={(e) => handleChange(e)}
-                id="default"
-                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg block w-full p-2.5 outline-none"
-              >
-                <option value={""} disabled>
-                  Please select exam to proceed
+      <div className="bg-white h-full lg:h-[calc(100dvh-8rem)] flex w-full flex-col lg:flex-row gap-2 items-start rounded-md shadow-card">
+        <div className="flex flex-col gap-2 w-full lg:w-1/2 h-full justify-between items-start p-4 lg:p-6 overflow-auto border-r">
+          <div className="w-full">
+            <label
+              htmlFor="default"
+              className="block mb-2 text-gray-900 font-semibold text-lg text-center"
+            >
+              Select an exam to proceed
+            </label>
+            <select
+              value={exam_id}
+              name="exam_id"
+              onChange={(e) => handleChange(e)}
+              id="default"
+              className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg block w-full p-2.5 outline-none"
+            >
+              <option value={""} disabled>
+                Please select exam to proceed
+              </option>
+              {exams.map(({ exam, exam_id }) => (
+                <option key={exam_id} value={exam_id}>
+                  {exam}
                 </option>
-                {exams.map(({ exam, exam_id }) => (
-                  <option key={exam_id} value={exam_id}>
-                    {exam}
-                  </option>
-                ))}
-              </select>
+              ))}
+            </select>
+
+            <div className="space-y-3">
+              {currentExamInfo?.exam && (
+                <p>
+                  <span className="text-black font-bold">EXAM: </span>
+                  <span>{currentExamInfo?.exam}</span>
+                </p>
+              )}
+              {currentExamInfo?.default_pattern?.subjects && (
+                <p>
+                  <span className="text-black font-bold">SUBJECTS: </span>
+                  {currentExamInfo?.default_pattern?.subjects?.map(
+                    ({ subject: currentSubject }, index) => (
+                      <span key={currentSubject}>
+                        {currentSubject.trim()}
+                        {index + 1 !==
+                          currentExamInfo?.default_pattern?.subjects.length &&
+                          ", "}
+                      </span>
+                    )
+                  )}
+                </p>
+              )}
             </div>
-          )}
-          {step === 2 && (
-            <TestSeriesForm
-              currentExamInfo={currentExamInfo}
-              title={title}
-              description={description}
-              language={language}
-              difficultyLevel={difficulty_level}
-              testSeriesType={is_paid}
-              price={price_before_discount}
-              finalPrice={price}
-              discount={discount}
-              discountType={discountType}
-              handleChange={(e) => handleChange(e)}
-              handleDiscountType={(value) => {
-                setFormData((prev) => ({ ...prev, discountType: value }));
-                return calculateFinalPrice();
-              }}
-              handleDescUpdate={handleDescUpdate}
-            />
-          )}
-          <div className="flex justify-between w-full pt-2">
+          </div>
+
+          <div className="hidden lg:flex justify-between w-full pt-2">
             <button
               className="bg-transparent border rounded-md border-[#6d45a4] text-black w-28 h-8"
               onClick={() => {
-                if (step === 1) {
-                  return navigate("/test-series");
-                } else {
-                  getAllExams();
-                  return setStep(1);
-                }
+                return navigate("/test-series");
               }}
             >
-              {step === 1 ? "Cancel" : "Back"}
+              Cancel
             </button>
+          </div>
+        </div>
+        <div className="flex flex-col w-full items-end justify-between gap-4 flex-1 p-4 h-full lg:p-6 overflow-hidden">
+          <TestSeriesForm
+            title={title}
+            description={description}
+            language={language}
+            difficultyLevel={difficulty_level}
+            testSeriesType={is_paid}
+            price={price_before_discount}
+            finalPrice={price}
+            discount={discount}
+            discountType={discountType}
+            handleChange={(e) => handleChange(e)}
+            handleDiscountType={(value) => {
+              setFormData((prev) => ({ ...prev, discountType: value }));
+              return calculateFinalPrice();
+            }}
+            handleDescUpdate={handleDescUpdate}
+          />
+          <div className="flex justify-between lg:justify-end w-full pt-2">
             <button
-              onClick={handleNextClick}
-              disabled={
-                step === 1
-                  ? !exam_id
-                  : step === 2
-                  ? !title || !description
-                  : false
-              }
+              className="lg:hidden bg-transparent border rounded-md border-[#6d45a4] text-black w-28 h-8"
+              onClick={() => {
+                return navigate("/test-series");
+              }}
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={addTestSeries}
+              disabled={!exam_id || !title || !description}
               className="bg-[#6d45a4] border-transparent flex justify-center items-center rounded-md text-base text-white px-4 py-1 leading-6 whitespace-nowrap min-w-28 h-8"
             >
-              {isUpdating ? (
-                <ButtonLoader />
-              ) : step === 1 ? (
-                "Next"
-              ) : (
-                "Save & Next"
-              )}
+              {isUpdating ? <ButtonLoader /> : "Save & Next"}
             </button>
           </div>
         </div>
       </div>
-      <ImportantTipForCreators />
     </section>
   );
 };

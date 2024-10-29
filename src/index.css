@@ -16,3 +16,15 @@ body {
 #navlinks-container a.active {
   @apply bg-gray-200;
 }
+
+.ql-container {
+  @apply rounded-b-md;
+}
+
+.ql-toolbar {
+  @apply rounded-t-md;
+}
+
+.ql-editor {
+  @apply min-h-20;
+}
