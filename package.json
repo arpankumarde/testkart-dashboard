@@ -1,12 +1,12 @@
 {
   "name": "testkart-dashboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint .",
     "preview": "vite preview --host"
   },
   "dependencies": {
@@ -23,17 +23,20 @@
     "recharts": "^2.10.4"
   },
   "devDependencies": {
+    "@eslint/js": "^9.13.0",
     "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.16",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.13",
+    "globals": "^15.11.0",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.12.2",
     "vite": "^5.0.8"
   }
 }

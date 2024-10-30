@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext();
 
 // Provider component that wraps the app and makes auth object available to any child component that calls useAuth().
-export function ProvideAuth({ children }) {
+export function ProvideAuth({ children }: { children: React.ReactNode }) {
   const auth = useProvideAuth();
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }
@@ -24,7 +24,7 @@ function useProvideAuth() {
   // Check if user info is in local storage to keep user logged in after page refresh
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user") ?? "");
 
     if (token && user) {
       // Set Auth Header for future requests
@@ -36,7 +36,7 @@ function useProvideAuth() {
     }
   }, []);
 
-  const login = async (email, password, type) => {
+  const login = async (email: string, password: string, type: string) => {
     try {
       email = email.toLowerCase();
       type = type.toUpperCase();
@@ -68,7 +68,7 @@ function useProvideAuth() {
       }
     } catch (error) {
       console.error("Failed to login", error);
-      alert(error.message);
+      alert(error?.message);
     }
   };
 
@@ -85,7 +85,7 @@ function useProvideAuth() {
       }
     } catch (error) {
       console.error("Failed to Signup", error);
-      alert(error.message);
+      alert(error?.message);
     }
   };
 
@@ -110,7 +110,7 @@ function useProvideAuth() {
       }
     } catch (error) {
       console.error("Failed to Logout", error);
-      alert(error.message);
+      alert(error?.message);
     }
   };
 

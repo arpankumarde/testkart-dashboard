@@ -11,7 +11,7 @@ const App = () => {
 
   useEffect(() => {
     setNavState(isMobile ? false : true);
-  }, [window.innerWidth]);
+  }, []);
 
   return (
     <ProvideAuth>

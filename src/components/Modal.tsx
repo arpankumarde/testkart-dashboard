@@ -1,4 +1,4 @@
-import { Button } from "./";
+import { Button } from ".";
 
 const Modal = ({
   isModalOpen,
@@ -35,7 +35,7 @@ const Modal = ({
     onDecline();
   };
 
-  const ModalFooter = ({ className }) => (
+  const ModalFooter = ({ className }: { className?: string }) => (
     <div
       className={`flex items-center py-2 border-t border-gray-200 rounded-b gap-4 justify-between ${className}`}
     >

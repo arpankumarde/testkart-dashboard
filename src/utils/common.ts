@@ -8,7 +8,7 @@ import {
   UnlistedOptionsList,
 } from "./constant";
 
-export const getOptions = (status) => {
+export const getOptions = (status: number) => {
   switch (STATUS_MEANINGS_BY_CODE[status]) {
     case Unlisted: {
       return UnlistedOptionsList;
@@ -26,7 +26,7 @@ export const getOptions = (status) => {
   }
 };
 
-export const copyToClipboard = async (value) => {
+export const copyToClipboard = async (value: string) => {
   try {
     return await navigator.clipboard.writeText(value);
   } catch (error) {
@@ -35,31 +35,31 @@ export const copyToClipboard = async (value) => {
 };
 
 export const languages = [
-  'English',
-  'Hindi',
-  'Bengali',
-  'Marathi',
-  'Telugu',
-  'Tamil',
-  'Gujarati',
-  'Urdu',
-  'Kannada',
-  'Odia',
-  'Malayalam',
-  'Punjabi',
-  'Assamese',
-  'Maithili',
-  'Meitei',
-  'Sanskrit',
-  'French',
-  'German',
-  'Mandarin',
-  'Spanish',
-  'Arabic',
-  'Russian',
-  'Portuguese',
-  'Indonesian',
-  'Japanese',
-  'Turkish',
-  'Vietnamese'
+  "English",
+  "Hindi",
+  "Bengali",
+  "Marathi",
+  "Telugu",
+  "Tamil",
+  "Gujarati",
+  "Urdu",
+  "Kannada",
+  "Odia",
+  "Malayalam",
+  "Punjabi",
+  "Assamese",
+  "Maithili",
+  "Meitei",
+  "Sanskrit",
+  "French",
+  "German",
+  "Mandarin",
+  "Spanish",
+  "Arabic",
+  "Russian",
+  "Portuguese",
+  "Indonesian",
+  "Japanese",
+  "Turkish",
+  "Vietnamese",
 ];

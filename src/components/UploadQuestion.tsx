@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal } from "./";
+import { Modal } from ".";
 import { server } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import ProgressBar from "./ProgressBar";
