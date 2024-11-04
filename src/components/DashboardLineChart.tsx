@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
   LineChart,
   Line,
@@ -9,7 +8,22 @@ import {
   Legend,
 } from "recharts";
 
-const DashboardLineChart = ({ data = [], xKey = "", line = "" }) => {
+interface EarningsGraph {
+  month: string;
+  income: number;
+}
+
+interface DashboardLineChartProps {
+  data?: EarningsGraph[];
+  xKey: string;
+  line: string;
+}
+
+const DashboardLineChart = ({
+  data = [],
+  xKey = "",
+  line = "",
+}: DashboardLineChartProps) => {
   return (
     <LineChart width={500} height={300} data={data}>
       <CartesianGrid strokeDasharray="5 5" />
@@ -25,12 +39,6 @@ const DashboardLineChart = ({ data = [], xKey = "", line = "" }) => {
       />
     </LineChart>
   );
-};
-
-DashboardLineChart.propTypes = {
-  data: PropTypes.array,
-  xKey: PropTypes.string,
-  line: PropTypes.string,
 };
 
 export default DashboardLineChart;

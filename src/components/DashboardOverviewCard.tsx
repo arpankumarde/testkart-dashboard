@@ -1,13 +1,30 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { GoArrowUp, GoArrowDown } from "react-icons/go";
+
+interface PeriodDataProps {
+  change: number;
+  total: number;
+}
+
+interface CardDataProps {
+  weekly: PeriodDataProps;
+  monthly: PeriodDataProps;
+  yearly: PeriodDataProps;
+}
+
+interface DashboardOverviewCardProps {
+  name: string;
+  icon: React.ReactNode;
+  cardData?: CardDataProps;
+  timeframe: string;
+}
 
 const DashboardOverviewCard = ({
   name = "",
-  icon = Object,
-  cardData = {},
+  icon,
+  cardData,
   timeframe = "month",
-}) => {
+}: DashboardOverviewCardProps) => {
   const [data, setData] = useState(cardData?.monthly);
 
   useEffect(() => {
@@ -39,7 +56,7 @@ const DashboardOverviewCard = ({
             className={`text-[#6d45a4] px-1 rounded-sm
           ${
             data?.change != 0 &&
-            (data?.change > 0
+            (data?.change ?? 0 > 0
               ? "bg-[#54cc96] text-white"
               : "bg-[#ff5560] text-white")
           }
@@ -53,7 +70,7 @@ const DashboardOverviewCard = ({
         <div className="flex gap-1 items-center text-lg font-semibold text-gray-600 overflow-hidden">
           {data?.total ? data?.total : 0}
           {data?.change != 0 &&
-            (data?.change > 0 ? (
+            (data?.change ?? 0 > 0 ? (
               <GoArrowUp size={20} color="#54cc96" />
             ) : (
               <GoArrowDown size={20} color="#ff5560" />
@@ -62,13 +79,6 @@ const DashboardOverviewCard = ({
       </div>
     </div>
   );
-};
-
-DashboardOverviewCard.propTypes = {
-  name: PropTypes.string,
-  icon: PropTypes.object,
-  cardData: PropTypes.object,
-  timeframe: PropTypes.string,
 };
 
 export default DashboardOverviewCard;

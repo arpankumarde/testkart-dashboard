@@ -1,24 +1,42 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { server } from "../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+interface UserProfile {
+  teacher_id?: string;
+  email?: string;
+}
+
+interface EmailState {
+  id?: string;
+  email?: string;
+  new_email: string;
+  confirm_email: string;
+}
+
+interface PasswordState {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
 const Settings = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(user || {});
+  const [profile, setProfile] = useState<UserProfile>(user || {});
 
-  const [email, setEmail] = useState({
+  const [email, setEmail] = useState<EmailState>({
     id: profile?.teacher_id,
     email: profile?.email,
     new_email: "",
     confirm_email: "",
   });
 
-  const [pass, setPass] = useState({
+  const [pass, setPass] = useState<PasswordState>({
     old_password: "",
     new_password: "",
     confirm_password: "",
@@ -29,7 +47,7 @@ const Settings = () => {
     if (!user) return navigate("/login");
   }, [user, navigate]);
 
-  const handleEmailUpdate = async (e) => {
+  const handleEmailUpdate = async (e: FormEvent) => {
     e.preventDefault();
     if (email.new_email !== email.confirm_email)
       return alert("Emails do not match");
@@ -60,7 +78,7 @@ const Settings = () => {
       });
   };
 
-  const handlePassUpdate = async (e) => {
+  const handlePassUpdate = async (e: FormEvent) => {
     e.preventDefault();
     if (pass.new_password !== pass.confirm_password)
       return alert("Passwords do not match");

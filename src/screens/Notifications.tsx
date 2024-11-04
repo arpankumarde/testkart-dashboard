@@ -5,19 +5,25 @@ import { server } from "../api";
 import { IoMdNotifications } from "react-icons/io";
 import { BiLoaderAlt } from "react-icons/bi";
 
+interface Notification {
+  student_name?: string;
+  test_series_name?: string;
+  purchase_time?: string;
+}
+
 const Notifications = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState([true]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // If user is not logged in, redirect to login page
     if (!user) return navigate("/login");
 
     server
-      .get("/api/v1/studio/academy/notification")
+      .get<{ data: Notification[] }>("/api/v1/studio/academy/notification")
       .then((res) => {
         setNotifications(res.data.data);
         setLoading(false);
@@ -27,7 +33,7 @@ const Notifications = () => {
         console.log(err);
         setLoading(false);
       });
-  }, [user, navigate]);
+  }, [user, navigate, logout]);
 
   return (
     <section className="md:p-4 lg:p-8">
@@ -41,7 +47,7 @@ const Notifications = () => {
           </h2>
           <hr className="my-4" />
           <div className="h-[calc(100dvh-10rem-0.6rem)] lg:h-[calc(100dvh-14rem-0.6rem)] overflow-auto text-gray-700 hover:[&>*]:text-gray-950 hover:[&>*]:bg-gray-100">
-            {notifications.length != 0 ? (
+            {notifications.length !== 0 ? (
               notifications.map((notification, index) => (
                 <p className="border-b px-4 py-2 rounded-md" key={index}>
                   {`${index + 1}. ${

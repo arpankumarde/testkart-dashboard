@@ -13,11 +13,86 @@ import { BsFillCartFill } from "react-icons/bs";
 import { IoIosPaper } from "react-icons/io";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
+interface WidgetData {
+  total: number;
+  change: number;
+}
+
+interface Widgets {
+  students: {
+    weekly: WidgetData;
+    monthly: WidgetData;
+    yearly: WidgetData;
+  };
+  earnings: {
+    weekly: WidgetData;
+    monthly: WidgetData;
+    yearly: WidgetData;
+  };
+  test_series_sell: {
+    weekly: WidgetData;
+    monthly: WidgetData;
+    yearly: WidgetData;
+  };
+  tests_taken: {
+    weekly: WidgetData;
+    monthly: WidgetData;
+    yearly: WidgetData;
+  };
+}
+
+interface EarningsOverview {
+  total: number;
+  last_month: number;
+  last_week: number;
+}
+
+interface EarningsGraph {
+  month: string;
+  income: number;
+}
+
+interface Earnings {
+  overview: EarningsOverview;
+  graph: EarningsGraph[];
+}
+
+interface RecentTestSeries {
+  test_series_id: number;
+  exam_id: number;
+  academy_id: number;
+  title: string;
+  language: string;
+  hash: string;
+  description: string;
+  cover_photo: string;
+  total_tests: number | null;
+  free_tests: number;
+  price: number;
+  price_before_discount: number;
+  discount: number;
+  discountType: string | null;
+  is_paid: number;
+  status: number;
+  difficulty_level: string;
+  is_purchased: number;
+  is_deleted: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface DataStructure {
+  widgets: Widgets;
+  earnings: Earnings;
+  recent_test_series: RecentTestSeries[];
+  recent_comments: string[];
+}
+
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [dashboard, setDashboard] = useState({});
+  const [dashboard, setDashboard] = useState<DataStructure | null>();
   const [timeframe, setTimeframe] = useState("month");
 
   useEffect(() => {
@@ -27,15 +102,15 @@ const Dashboard = () => {
     server
       .get("/api/v1/studio/dashboard")
       .then((res) => {
-        if (!res.data.success) return alert(res.data.error);
-        setDashboard(res.data.data);
-        console.log(res.data.data);
+        if (!res?.data?.success) return alert(res?.data?.error);
+        setDashboard(res?.data?.data);
+        // console.log(res?.data?.data);
       })
       .catch((err) => {
-        if (err.response.status === 401) logout();
-        else console.log(err.response);
+        if (err?.response?.status === 401) logout();
+        else console.log(err?.response);
       });
-  }, [user, navigate]);
+  }, [user, navigate, logout]);
 
   return (
     <section className="md:p-4 lg:p-8">
@@ -63,25 +138,25 @@ const Dashboard = () => {
             name={"Students"}
             icon={<PiStudentFill size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.students ?? 0}
+            cardData={dashboard?.widgets?.students}
           />
           <DashboardOverviewCard
             name={"Earnings"}
             icon={<TbCoinRupeeFilled size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.earnings ?? 0}
+            cardData={dashboard?.widgets?.earnings}
           />
           <DashboardOverviewCard
             name={"Series Sold"}
             icon={<BsFillCartFill size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.test_series_sell ?? 0}
+            cardData={dashboard?.widgets?.test_series_sell}
           />
           <DashboardOverviewCard
             name={"Tests Taken"}
             icon={<IoIosPaper size={30} />}
             timeframe={timeframe}
-            cardData={dashboard?.widgets?.tests_taken ?? 0}
+            cardData={dashboard?.widgets?.tests_taken}
           />
         </div>
       </div>
@@ -133,10 +208,11 @@ const Dashboard = () => {
           <div className="overflow-y-auto lg:h-96">
             {dashboard?.recent_test_series?.map((testSeries) => (
               <DashboardTopTestCard
-                key={testSeries.hash}
-                title={testSeries.title}
-                desc={testSeries.description}
-                img={testSeries.cover_photo}
+                key={testSeries?.hash}
+                title={testSeries?.title}
+                desc={testSeries?.description}
+                img={testSeries?.cover_photo}
+                hash={testSeries?.hash}
               />
             ))}
           </div>

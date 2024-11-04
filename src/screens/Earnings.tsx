@@ -54,7 +54,7 @@ const Earnings = () => {
         if (err.response.status === 401) return logout();
         console.log(err);
       });
-  }, []);
+  }, [logout]);
 
   return (
     <section className="md:p-4 lg:p-8">
