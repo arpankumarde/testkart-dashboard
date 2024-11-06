@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Dropdown, Loader, Modal } from "../components";
+import { Loader, Modal } from "../components";
 import { server } from "../api";
 import {
   DELETE,
@@ -16,15 +16,52 @@ import {
 } from "../utils/constant";
 import { copyToClipboard, getOptions } from "../utils/common";
 import { BsThreeDotsVertical, BsClipboard } from "react-icons/bs";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { Tooltip } from "react-tooltip";
+
+interface TestSeries {
+  test_series_id: number;
+  exam_id: number;
+  academy_id: number;
+  title: string;
+  language: string;
+  hash: string;
+  description: string;
+  cover_photo: string | null;
+  total_tests: number;
+  free_tests: number | null;
+  price: number;
+  price_before_discount: number;
+  discount: number | null;
+  discountType: "percentage" | "amount" | null;
+  is_paid: number;
+  status: number;
+  difficulty_level: string;
+  is_purchased: number;
+  is_deleted: number;
+  createdAt: string;
+  updatedAt: string;
+  students_joined: number;
+}
+
+interface TestSeriesResponse {
+  success: boolean;
+  data: TestSeries[];
+}
+
+interface ModalContent {
+  title: string;
+  id: number;
+}
 
 const TestSeries = () => {
-  const [selectedOption, setSelectedOption] = useState("All series");
-  const [tests, setTests] = useState([]);
-  const [isLoading, setIsLoading] = useState();
+  const [selectedOption, setSelectedOption] = useState<string>("All Series");
+  const [tests, setTests] = useState<TestSeries[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModal, setIsModal] = useState("");
-  const [modalContent, setIsModalContent] = useState({
+  const [modalContent, setIsModalContent] = useState<ModalContent>({
     title: "",
-    id: "",
+    id: 0,
   });
 
   const navigate = useNavigate();
@@ -32,17 +69,20 @@ const TestSeries = () => {
   const getAllTest = async () => {
     setIsLoading(true);
     try {
-      const { data } = await server.get("/api/v1/test-series");
+      const { data }: { data: TestSeriesResponse } = await server.get(
+        "/api/v1/test-series"
+      );
       if (data) {
         setTests(data.data ?? []);
       }
     } catch (error) {
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const deleteTestSeries = async (id) => {
+  const deleteTestSeries = async (id: number) => {
     setIsLoading(true);
     try {
       const { data } = await server.delete(`/api/v1/test-series/${id}`);
@@ -51,17 +91,19 @@ const TestSeries = () => {
         setIsModal("");
       }
     } catch (error) {
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const UnlistTestSeries = async (id) => {
+  const UnlistTestSeries = async (id: number) => {
     setIsLoading(true);
     try {
       await server.get(`/api/v1/test-series/${id}/unlist`);
       await getAllTest();
     } catch (error) {
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +113,7 @@ const TestSeries = () => {
     getAllTest();
   }, []);
 
-  const handleDropdownClick = (value, id, title) => {
+  const handleDropdownClick = (value: string, id: number, title: string) => {
     switch (value) {
       case VIEW_TESTS: {
         return navigate(`/test-series/${id}`);
@@ -108,7 +150,7 @@ const TestSeries = () => {
     }
   };
 
-  const getLiveUrlOfTestSeries = (test_series_id) => {
+  const getLiveUrlOfTestSeries = (test_series_id: number) => {
     const currentTest = tests.find(
       (item) => item?.test_series_id?.toString() === test_series_id?.toString()
     );
@@ -191,104 +233,141 @@ const TestSeries = () => {
           </div>
         </div>
       </Modal>
-      <div className="bg-white rounded-md">
-        <div className="flex justify-between p-4 shadow-card">
-          <div className="relative">
-            <Dropdown
-              className="absolute top-0 left-0 text-base translate-y-8 z-40"
-              buttonText={selectedOption}
-              items={["All series", "Live", "Draft", "Unlisted"]
-                .filter((item) => item !== selectedOption)
-                .map((label) => ({ label }))}
-              handleChange={(val) => setSelectedOption(val)}
-            />
+
+      <div className="flex flex-col md:flex-row md:gap-4 lg:gap-8">
+        <div className="bg-white md:rounded-md flex-1">
+          <div className="flex justify-between items-center p-4">
+            <div className="relative inline-block">
+              <select
+                id="select"
+                name="select"
+                onChange={(e) => setSelectedOption(e.target.value)}
+                value={selectedOption}
+                className="cursor-pointer appearance-none border border-[#6d45a4] rounded-md py-1 pl-3 pr-10 text-gray-700 focus:outline-none"
+              >
+                <option value="All series">All series</option>
+                <option value="Live">Live</option>
+                <option value="Draft">Draft</option>
+                <option value="Unlisted">Unlisted</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <IoMdArrowDropdown className="text-[#6d45a4]" />
+              </div>
+            </div>
+
+            <Link
+              to="/test-series/add"
+              className="bg-[#6d45a4] border border-[#6d45a4] rounded-md text-white px-4 py-1"
+            >
+              Create Test Series
+            </Link>
           </div>
-          <Link
-            to="/test-series/add"
-            className="bg-[#6d45a4] border border-[#6d45a4] rounded-md text-white px-4 py-1 leading-6"
-          >
-            Create Test Series
-          </Link>
-        </div>
-        <hr className="mt-1" />
-        <div className="bg-white h-full md:h-[calc(100dvh-10rem-0.6rem)] lg:h-[calc(100dvh-12rem-0.6rem)] overflow-auto px-4">
-          <table className="table-auto w-full">
-            <thead className="sticky top-0 left-0 bg-white">
-              <tr className="text-center [&>th]:py-4 [&>th]:px-4 [&>th]:font-medium">
-                <th>#</th>
-                <th className="text-left">Test series</th>
-                <th>No. of tests</th>
-                <th>Price</th>
-                <th>Students</th>
-                <th>Status</th>
-                <th>Options</th>
-              </tr>
-            </thead>
-            <tbody>
-              {!!tests.length &&
-                filteredTestSeries()?.map(
-                  (
-                    {
-                      title,
-                      total_tests,
-                      price,
-                      status,
-                      test_series_id,
-                      students_joined,
-                    },
-                    index
-                  ) => (
-                    <tr
-                      key={index}
-                      className="text-center hover:bg-gray-100 border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-3 mobile:relative"
-                    >
-                      <td>{index + 1}.</td>
-                      <td
-                        className="text-left text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
-                        onClick={() =>
-                          navigate(`/test-series/${test_series_id}`)
-                        }
+          <hr className="mx-4" />
+          <div className="h-[calc(100dvh-10rem-0.6rem)] lg:h-[calc(100dvh-12rem-0.6rem)] overflow-auto px-4">
+            <table className="w-full">
+              <thead className="w-full sticky top-0 left-0 bg-white border-b">
+                <tr className="text-center [&>th]:py-2 [&>th]:px-4 [&>th]:font-normal">
+                  <th>#</th>
+                  <th className="text-left w-max">Test series</th>
+                  <th>No. of tests</th>
+                  <th>Price</th>
+                  <th>Students</th>
+                  <th>Status</th>
+                  <th>Options</th>
+                </tr>
+              </thead>
+
+              <tbody className="text-gray-700 hover:[&>*]:text-gray-950 hover:[&>*]:bg-gray-100">
+                {!!tests.length &&
+                  filteredTestSeries()?.map(
+                    (
+                      {
+                        title,
+                        total_tests,
+                        price,
+                        status,
+                        test_series_id,
+                        students_joined,
+                      },
+                      index
+                    ) => (
+                      <tr
+                        key={index}
+                        className="text-center hover:bg-gray-100 border-b border-b-[#e9ecef] [&>td]:py-4 [&>td]:px-4 mobile:relative"
                       >
-                        {title ?? "Untitled"}
-                      </td>
-                      <td>{total_tests ?? 0}</td>
-                      <td>{price ?? 0}</td>
-                      <td>{students_joined ?? 0}</td>
-                      <td>
-                        <span
-                          className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
-                        >
-                          {STATUS_MEANINGS_BY_CODE[status] ?? ""}{" "}
-                        </span>
-                      </td>
-                      <td>
-                        <Dropdown
-                          items={getOptions(status)?.map((label) => ({
-                            label,
-                          }))}
-                          className={`absolute z-20 -transalate-y-12 bg-white  ${
-                            getOptions(status).length > 3
-                              ? "top-[25%] right-[25px]"
-                              : "top-[40%] right-[15px]"
-                          }`}
-                          handleChange={(val) =>
-                            handleDropdownClick(val, test_series_id, title)
+                        <td>{index + 1}.</td>
+                        <td
+                          className="text-left text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+                          onClick={() =>
+                            navigate(`/test-series/${test_series_id}`)
                           }
                         >
-                          <BsThreeDotsVertical className="cursor-pointer" />
-                        </Dropdown>
-                      </td>
-                    </tr>
-                  )
-                )}
+                          {title ?? "Untitled"}
+                        </td>
+                        <td>{total_tests ?? 0}</td>
+                        <td>{price ?? 0}</td>
+                        <td>{students_joined ?? 0}</td>
+                        <td>
+                          <span
+                            className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
+                          >
+                            {STATUS_MEANINGS_BY_CODE[status] ?? ""}
+                          </span>
+                        </td>
+                        <td>
+                          <a data-tooltip-id={`tooltip-${test_series_id}`}>
+                            <BsThreeDotsVertical className="cursor-pointer mx-auto" />
+                          </a>
+                          <Tooltip
+                            variant="light"
+                            id={`tooltip-${test_series_id}`}
+                            openOnClick
+                            clickable
+                            className="drop-shadow-lg shadow-lg !rounded-lg !opacity-100 border !p-0 !m-0"
+                          >
+                            <div>
+                              {getOptions(status)?.map((label) => (
+                                <>
+                                  <button
+                                    key={label}
+                                    className="block w-40 py-3 text-base px-4 border-[#e9ecef] first:rounded-t-lg last-of-type:rounded-b-lg hover:bg-gray-100"
+                                    onClick={() =>
+                                      handleDropdownClick(
+                                        label,
+                                        test_series_id,
+                                        title
+                                      )
+                                    }
+                                  >
+                                    <span
+                                      className={
+                                        label.toLowerCase() === "delete" ||
+                                        label.toLowerCase() === "unlist"
+                                          ? "text-red-500"
+                                          : undefined
+                                      }
+                                    >
+                                      {label}
+                                    </span>
+                                  </button>
+                                  <hr className="last-of-type:hidden" />
+                                </>
+                              ))}
+                            </div>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    )
+                  )}
 
-              {!isLoading && !tests.length && (
-                <p className="w-full py-4 text-base px-2 font-medium">
-                  No test series found!
-                </p>
-              )}
-            </tbody>
-          </table>
+                {!isLoading && !tests.length && (
+                  <p className="w-full py-4 text-base px-2 font-medium">
+                    No test series found!
+                  </p>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>

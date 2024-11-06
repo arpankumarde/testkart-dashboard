@@ -1,15 +1,20 @@
 import { useState, useEffect, Fragment } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { server } from "../api";
 import { Button, Loader, Modal } from "../components";
 import AddQuestion from "../components/AddQuestion";
 import UploadQuestion from "../components/UploadQuestion";
 import { ADD_QUESTION, DELETE } from "../utils/constant";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoChevronBackOutline } from "react-icons/io5";
 
 const Test = () => {
   const [test, setTest] = useState([]);
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState<boolean>();
   const [activeSubject, setActiveSubject] = useState(1);
   const [currentSubjectInfo, setCurrentSubjectInfo] = useState({});
   const navigate = useNavigate();
@@ -149,11 +154,14 @@ const Test = () => {
         <div className="flex items-center justify-between">
           <div className="relative">
             <p className="flex gap-2 items-center justify-center">
-              <IoMdArrowRoundBack
-                size={24}
-                className="cursor-pointer"
-                onClick={() => navigate(`/test-series/${params.series_id}`)}
-              />
+              <Link
+                to={`/test-series/${params.series_id}`}
+                className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200"
+              >
+                <i>
+                  <IoChevronBackOutline size={20} />
+                </i>
+              </Link>
               <h1 className="font-medium text-lg">{test.title}</h1>
             </p>
           </div>

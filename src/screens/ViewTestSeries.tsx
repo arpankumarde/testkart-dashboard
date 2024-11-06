@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { Button, Dropdown, Loader, Modal } from "../components";
-import { useNavigate, useParams } from "react-router-dom";
+import { Loader, Modal } from "../components";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { server } from "../api";
 import {
@@ -13,15 +13,16 @@ import {
   VIEW_TESTS,
 } from "../utils/constant";
 import { getOptions } from "../utils/common";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { toast } from "react-toastify";
+import { Tooltip } from "react-tooltip";
+import { IoChevronBackOutline } from "react-icons/io5";
 
 const ViewTestSeries = () => {
   const { user } = useAuth();
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState<string>("");
   const [tests, setTests] = useState([]);
   const [testDetails, setTestDetails] = useState({});
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [modal, setModal] = useState("");
   const [modalContent, setIsModalContent] = useState({
     title: "",
@@ -42,40 +43,6 @@ const ViewTestSeries = () => {
     subjects: [],
   });
 
-  const getTestDetails = async () => {
-    setIsLoading(true);
-    try {
-      const { data } = await server.get(
-        `/api/v1/test-series/${params.series_id}`
-      );
-      if (data) {
-        const updatedTestDetails = data.data.exam ?? {};
-        setTitle(data.data.title);
-        setIsLive(data?.data?.status === STATUS_CODE_BY_STATUS?.Live);
-        setTestDetails(updatedTestDetails);
-        setTestData((prevTestData) => ({
-          ...prevTestData,
-          exam_id: updatedTestDetails.exam_id || null,
-          test_series_id: params?.series_id || null,
-          duration: updatedTestDetails.default_pattern?.exam_duration || null,
-          subjects: (updatedTestDetails.default_pattern?.subjects || []).map(
-            (subject) => ({
-              ...subject,
-              inclued: true, // Set default value to true
-            })
-          ),
-        }));
-      }
-      console.log("tests:", tests);
-      console.log("testData", testData);
-      console.log("testDetails:\n", testDetails);
-    } catch (error) {
-      toast.error("Failed to fetch test details");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const getAllTestsBySeriesid = async () => {
     setIsLoading(true);
     try {
@@ -86,6 +53,8 @@ const ViewTestSeries = () => {
         setTests(data.data ?? []);
       }
     } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch tests");
     } finally {
       setIsLoading(false);
     }
@@ -115,6 +84,8 @@ const ViewTestSeries = () => {
         setModal("");
       }
     } catch (error) {
+      console.error(error);
+      toast.error("Failed to add test");
     } finally {
       setIsLoading(false);
     }
@@ -157,11 +128,46 @@ const ViewTestSeries = () => {
   };
 
   useEffect(() => {
+    const getTestDetails = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await server.get(
+          `/api/v1/test-series/${params.series_id}`
+        );
+        if (data) {
+          const updatedTestDetails = data.data.exam ?? {};
+          setTitle(data.data.title);
+          setIsLive(data?.data?.status === STATUS_CODE_BY_STATUS?.Live);
+          setTestDetails(updatedTestDetails);
+          setTestData((prevTestData) => ({
+            ...prevTestData,
+            exam_id: updatedTestDetails.exam_id || null,
+            test_series_id: params?.series_id || null,
+            duration: updatedTestDetails.default_pattern?.exam_duration || null,
+            subjects: (updatedTestDetails.default_pattern?.subjects || []).map(
+              (subject) => ({
+                ...subject,
+                inclued: true, // Set default value to true
+              })
+            ),
+          }));
+        }
+        console.log("tests:", tests);
+        console.log("testData", testData);
+        console.log("testDetails:\n", testDetails);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to fetch test details");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     getTestDetails();
     getAllTestsBySeriesid();
-  }, []);
+  }, [params?.series_id]);
 
-  const handleDropdownClick = (value, id, title) => {
+  const handleDropdownClick = (value: string, id: number, title: string) => {
     switch (value) {
       case EDIT_DETAILS: {
         return;
@@ -175,14 +181,13 @@ const ViewTestSeries = () => {
           `/test-series/${params?.series_id}/test/${id}/questions`
         );
       }
-      // Add more cases if needed
       default: {
         return;
       }
     }
   };
 
-  const deleteTestFromTestSeries = async (id) => {
+  const deleteTestFromTestSeries = async (id: number) => {
     setIsLoading(true);
     try {
       await server.delete(`/api/v1/test-series/test/${id}`);
@@ -195,20 +200,20 @@ const ViewTestSeries = () => {
     }
   };
 
-  const checkTestSeriesIsReadyForPublish = () => {
-    const data = tests.find(
-      (item) => item.meta.questions_count >= item.meta.total_questions
-    );
-    setIsPublish(!!data);
-  };
-
   useEffect(() => {
     if (tests.length) {
+      const checkTestSeriesIsReadyForPublish = () => {
+        const data = tests.find(
+          (item) => item.meta.questions_count >= item.meta.total_questions
+        );
+        setIsPublish(!!data);
+      };
+
       checkTestSeriesIsReadyForPublish();
     }
   }, [tests]);
 
-  const toggleStatus = (id) => {
+  const toggleStatus = (id: number) => {
     setTests((prev) =>
       prev.map((test) => {
         if (test.data.test_id?.toString() === id?.toString()) {
@@ -226,7 +231,7 @@ const ViewTestSeries = () => {
     );
   };
 
-  const handleFreeStatusChange = async (id) => {
+  const handleFreeStatusChange = async (id: number) => {
     try {
       setIsLoading(true);
       const currentTest = tests.find(
@@ -240,13 +245,14 @@ const ViewTestSeries = () => {
         toggleStatus(id);
       }
     } catch (error) {
+      console.error(error);
       toast.error("Failed to update test status");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleScheduleStatusChange = async (id, value) => {
+  const handleScheduleStatusChange = async (id: number, value: string) => {
     // check if the date in value is at last 1 hour ahead from now
     if (new Date(value) < new Date(new Date().getTime() + 60 * 60 * 1000)) {
       toast.error("You can only schedule test at least 1 hour ahead from now");
@@ -261,7 +267,7 @@ const ViewTestSeries = () => {
       const { data } = await server.post(
         `api/v1/test-series/test/schedule-test`,
         {
-          test_id: currentTest.data.test_id,
+          test_id: currentTest?.data?.test_id,
           scheduled_on: value,
         }
       );
@@ -269,17 +275,18 @@ const ViewTestSeries = () => {
         await getAllTestsBySeriesid();
       }
     } catch (error) {
+      console.error(error);
       toast.error("Failed to schedule test");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleUnschedule = async (id) => {
+  const handleUnschedule = async (id: number) => {
     try {
       setIsLoading(true);
       const currentTest = tests.find(
-        (item) => item.data.test_id?.toString() === id?.toString()
+        (item) => item?.data?.test_id?.toString() === id?.toString()
       );
       const { data } = await server.post(
         `api/v1/test-series/test/unschedule-test`,
@@ -291,13 +298,14 @@ const ViewTestSeries = () => {
         await getAllTestsBySeriesid();
       }
     } catch (error) {
+      console.error(error);
       toast.error("Failed to unschedule test");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const formatDateTime = (date, hoursToAdd = 0) => {
+  const formatDateTime = (date: string, hoursToAdd = 0) => {
     // if null return empty string
     if (!date) return "";
 
@@ -396,42 +404,36 @@ const ViewTestSeries = () => {
           <p>Are you sure to delete this test?</p>
         </div>
       </Modal>
+
       <div className="flex items-center justify-between p-4 shadow-card bg-white flex-wrap gap-4">
         <div className="relative">
           <p className="flex gap-2 items-center justify-center">
-            <IoMdArrowRoundBack
-              size={24}
-              onClick={() => navigate("/test-series")}
-              className="cursor-pointer"
-            />
+            <Link
+              to="/test-series"
+              className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200"
+            >
+              <i>
+                <IoChevronBackOutline size={20} />
+              </i>
+            </Link>
             <h1 className="font-medium text-lg">{title}</h1>
           </p>
         </div>
         <div className="flex gap-4 justify-center sm:justify-end flex-1">
-          <Button
-            activeTab={true}
-            buttonText={`Add new Test`}
-            className={`px-4 py-1 whitespace-nowrap flex justify-center items-center`}
+          <button
             onClick={() => setModal(ADD_QUESTION)}
-          />
+            className="px-4 py-2 whitespace-nowrap flex justify-center items-center text-white bg-[#6d45a4] rounded-lg"
+          >
+            Add new Test
+          </button>
           {isPublish && !isLive && (
-            <Button
-              buttonText={`Publish new Test`}
-              className={`px-4 py-1 whitespace-nowrap flex justify-center items-center !bg-[#30d530] border-transparent text-white`}
-              onClick={() =>
-                navigate(`/test-series/${params.series_id}/publish`)
-              }
-            />
-          )}
-
-          {/* <Link to="/test-series/add">
-            <button
-              type="button"
-              className="hover:bg-[#6c757d] hover:text-white bg-transparent border border-[#6c757d] rounded-[3px] text-base px-2 py-1 leading-6 delay-100 ease-in-out"
+            <Link
+              to={`/test-series/${params.series_id}/publish`}
+              className="px-4 py-2 whitespace-nowrap flex justify-center items-center bg-green-500 hover:bg-green-600 text-white rounded-lg"
             >
-              {MODIFY_LISTING}
-            </button>
-          </Link> */}
+              Publish new Test
+            </Link>
+          )}
         </div>
       </div>
       <div className="h-fit mobile:min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-14rem-0.6rem)] bg-white overflow-auto px-4">
@@ -546,7 +548,7 @@ const ViewTestSeries = () => {
                       </button>
                     </td>
                     <td>
-                      <Dropdown
+                      {/* <Dropdown
                         items={getOptions(status)
                           ?.filter((label) => label !== EDIT_DETAILS)
                           .map((label) => ({ label }))}
@@ -556,7 +558,48 @@ const ViewTestSeries = () => {
                         }
                       >
                         <BsThreeDotsVertical className="cursor-pointer" />
-                      </Dropdown>
+                      </Dropdown> */}
+
+                      <a data-tooltip-id={`tooltip-${test_series_id}`}>
+                        <BsThreeDotsVertical className="cursor-pointer mx-auto" />
+                      </a>
+                      <Tooltip
+                        variant="light"
+                        id={`tooltip-${test_series_id}`}
+                        openOnClick
+                        clickable
+                        className="drop-shadow-md shadow-lg !rounded-lg !opacity-100 border !p-0 !m-0"
+                      >
+                        <div>
+                          {getOptions(status)?.map((label) => (
+                            <>
+                              <button
+                                key={label}
+                                className="block w-40 py-3 text-base px-4 border-[#e9ecef] first:rounded-t-lg last-of-type:rounded-b-lg hover:bg-gray-100"
+                                onClick={() =>
+                                  handleDropdownClick(
+                                    label,
+                                    test_series_id,
+                                    title
+                                  )
+                                }
+                              >
+                                <span
+                                  className={
+                                    label.toLowerCase() === "delete" ||
+                                    label.toLowerCase() === "unlist"
+                                      ? "text-red-500"
+                                      : undefined
+                                  }
+                                >
+                                  {label}
+                                </span>
+                              </button>
+                              <hr className="last-of-type:hidden" />
+                            </>
+                          ))}
+                        </div>
+                      </Tooltip>
                     </td>
                   </tr>
                 );

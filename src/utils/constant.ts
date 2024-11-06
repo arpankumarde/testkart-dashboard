@@ -2,16 +2,34 @@ export const Draft = "Draft";
 export const Live = "Live";
 export const Unlisted = "Unlisted";
 
-export const STATUS_MEANINGS_BY_CODE = {
+interface StatusMeanings {
+  [key: number]: string;
+}
+
+export const STATUS_MEANINGS_BY_CODE: StatusMeanings = {
   0: Draft,
   1: Live,
   2: Unlisted,
 };
 
-export const STATUS_CODE_BY_STATUS = {
+interface StatusCode {
+  [key: string]: number;
+}
+
+export const STATUS_CODE_BY_STATUS: StatusCode = {
   Draft: 0,
   Live: 1,
   Unlisted: 2,
+};
+
+interface StatusColor {
+  [key: number]: string;
+}
+
+export const STATUS_COLOR_BY_STATUS_CODE: StatusColor = {
+  0: "bg-[#545b62]", // Draft
+  1: "bg-[#30d530]", // Live
+  2: "bg-[#6d45a4]", // Unlisted
 };
 
 export const TEST_SERIES_TYPE = {
@@ -22,12 +40,6 @@ export const TEST_SERIES_TYPE = {
 export const DISCOUNT_TYPE = {
   PERCENTAGE: "percentage",
   AMOUNT: "amount",
-};
-
-export const STATUS_COLOR_BY_STATUS_CODE = {
-  0: "bg-[#545b62]", // Draft
-  1: "bg-[#30d530]", // Live
-  2: "bg-[#6d45a4]", // Unlisted
 };
 
 export const VIEW_TESTS = "View Tests";
