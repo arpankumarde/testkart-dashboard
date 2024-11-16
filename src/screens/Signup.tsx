@@ -4,6 +4,7 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { BsBuildings } from "react-icons/bs";
 import { PiUserCircle } from "react-icons/pi";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [data, setData] = useState({
@@ -12,8 +13,8 @@ const Signup = () => {
     slug: "",
     contact_email: "",
     contact_phone: "",
-    website: "",
-    about: "",
+    website: "/",
+    about: ".",
     first_name: "",
     last_name: "",
     email: "",
@@ -23,29 +24,38 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     // make a slug from academy name
-    const slug = data.academy_name
+    const slug = data?.academy_name
       .toLowerCase()
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
+
+    if (data.password !== data.confirm_password) {
+      toast.error("Password and Confirm Password fields do not match!", {
+        theme: "light",
+      });
+      setLoading(false);
+      return;
+    }
 
     setData({
       ...data,
       slug,
       display_name: data?.academy_name,
-      about: ".",
-      website: ".",
     });
 
     try {
-      await signup(data);
+      await signup({ ...data, slug, display_name: data?.academy_name });
       // Redirect to dashboard or desired page upon successful login
     } catch (err) {
       console.log("Login failed", err);
+      toast.error("Signup failed!", {
+        theme: "light",
+      });
       // Handle signup error
     }
     setLoading(false);
@@ -64,19 +74,21 @@ const Signup = () => {
                 <span>Academy Signup</span>
               </h2>
             </div>
-            <div className="flex w-full">
+            <div className="flex flex-col md:flex-row w-full">
               <div className="flex-1">
-                <div className="h-[calc(100dvh-10rem-0.6rem)] lg:h-[calc(100dvh-14rem-0.6rem)] overflow-auto text-gray-700">
-                  <h2 className="text-xl flex items-center gap-2">
+                <div className="md:h-[calc(100dvh-10rem-0.6rem)] lg:h-[calc(100dvh-14rem-0.6rem)] overflow-auto text-gray-700">
+                  <h2 className="text-xl flex justify-center items-center gap-2">
                     <i className="p-2">
                       <BsBuildings size={20} />
                     </i>
                     <span>Academy Details</span>
                   </h2>
-                  <span>These information will be public</span>
+                  <span className="block text-center">
+                    These information will be public
+                  </span>
                   <hr className="my-4" />
 
-                  <div className="p-8 flex flex-col gap-2 w-full md:w-96 mx-auto">
+                  <div className="p-2 md:p-4 lg:p-8 flex flex-col gap-2 w-full md:w-96 mx-auto">
                     <label htmlFor="academy_name">Academy Name</label>
                     <input
                       type="text"
@@ -119,16 +131,18 @@ const Signup = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="text-xl flex items-center gap-2">
+                <h2 className="text-xl flex justify-center items-center gap-2">
                   <i className="p-2">
                     <PiUserCircle size={20} />
                   </i>
                   <span>Academy Admin Details</span>
                 </h2>
-                <span>This will be your login details for this dashboard.</span>
+                <span className="block text-center">
+                  This will be your login details for this dashboard.
+                </span>
                 <hr className="my-4" />
 
-                <div className="p-8 flex flex-col gap-2 w-full md:w-96 mx-auto">
+                <div className="p-2 md:p-4 lg:p-8 flex flex-col gap-2 w-full md:w-96 mx-auto">
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -182,7 +196,7 @@ const Signup = () => {
                     required
                   />
                 </div>
-                <div className="p-4 flex gap-4 justify-end">
+                <div className="p-4 flex items-center gap-4 justify-end">
                   <span className="text-center block text-xs">
                     Already have an account?
                     <br />
