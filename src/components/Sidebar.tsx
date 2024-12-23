@@ -7,16 +7,23 @@ import { HiOutlineDocumentText } from "react-icons/hi2";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { PiUserCircle } from "react-icons/pi";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { FiExternalLink } from "react-icons/fi";
 import {
   IoPeopleOutline,
   IoLogOutOutline,
   IoSettingsOutline,
 } from "react-icons/io5";
 
-const Sidebar = ({ navState, setNavState }) => {
+const Sidebar = ({
+  navState,
+  setNavState,
+}: {
+  navState: boolean;
+  setNavState: (state: boolean) => void;
+}) => {
   let { user, logout } = useAuth();
 
-  const handleLogout = (e) => {
+  const handleLogout = (e: Event) => {
     e.preventDefault();
     handleMobileNavCollapse();
     logout();
@@ -111,6 +118,16 @@ const Sidebar = ({ navState, setNavState }) => {
           </div>
           <hr className="my-4" />
           <div className="flex flex-col [&>*]:inline-flex [&>*]:items-center [&>*]:gap-2 [&>*]:pl-10 [&>*]:py-4 md:[&>*]:py-2">
+            <NavLink
+              to="https://testkart.in"
+              target="_blank"
+              onClick={handleMobileNavCollapse}
+              className="hover:bg-gray-100 hover:text-gray-950"
+              referrerPolicy="no-referrer"
+            >
+              <FiExternalLink size={20} />
+              Testkart Home
+            </NavLink>
             <button
               type="button"
               onClick={handleLogout}

@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 
 const App = () => {
-  const [navState, setNavState] = useState(false);
+  const [navState, setNavState] = useState<boolean>(false);
 
   useEffect(() => {
     setNavState(isMobile ? false : true);
