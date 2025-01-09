@@ -39,6 +39,7 @@ interface TestSeries {
   difficulty_level: string;
   is_purchased: number;
   is_deleted: number;
+  average_rating: number | null;
   createdAt: string;
   updatedAt: string;
   students_joined: number;
@@ -272,6 +273,7 @@ const TestSeries = () => {
                   <th>No. of tests</th>
                   <th>Price</th>
                   <th>Students</th>
+                  <th>Ratings</th>
                   <th>Status</th>
                   <th>Options</th>
                 </tr>
@@ -287,6 +289,7 @@ const TestSeries = () => {
                         price,
                         status,
                         test_series_id,
+                        average_rating,
                         students_joined,
                       },
                       index
@@ -307,6 +310,7 @@ const TestSeries = () => {
                         <td>{total_tests ?? 0}</td>
                         <td>{price ?? 0}</td>
                         <td>{students_joined ?? 0}</td>
+                        <td>{average_rating ?? "NA"}</td>
                         <td>
                           <span
                             className={`rounded-full px-4 py-1 text-white ${STATUS_COLOR_BY_STATUS_CODE[status]}`}
