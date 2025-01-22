@@ -577,11 +577,7 @@ const ViewTestSeries = () => {
                                 key={label}
                                 className="block w-40 py-3 text-base px-4 border-[#e9ecef] first:rounded-t-lg last-of-type:rounded-b-lg hover:bg-gray-100"
                                 onClick={() =>
-                                  handleDropdownClick(
-                                    label,
-                                    test_series_id,
-                                    title
-                                  )
+                                  handleDropdownClick(label, test_id, title)
                                 }
                               >
                                 <span
