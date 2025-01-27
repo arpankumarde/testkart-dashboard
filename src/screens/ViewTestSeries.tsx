@@ -168,12 +168,13 @@ const ViewTestSeries = () => {
   }, [params?.series_id]);
 
   const handleDropdownClick = (value: string, id: number, title: string) => {
+    console.log("id: ", id);
     switch (value) {
       case EDIT_DETAILS: {
         return;
       }
       case DELETE: {
-        setIsModalContent((prev) => ({ ...prev, title, id }));
+        setIsModalContent((prev) => ({ ...prev, title, id: id.toString() }));
         return setModal(DELETE);
       }
       case VIEW_TESTS: {
@@ -473,7 +474,7 @@ const ViewTestSeries = () => {
                 return (
                   <tr
                     key={index}
-                    className="text-center hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-2 relative"
+                    className="text-center hover:bg-[#eff3f6] border-b border-b-[#e9ecef] [&>td]:py-[15px] [&>td]:px-2"
                   >
                     <td> {index + 1}</td>
                     <td
@@ -560,12 +561,12 @@ const ViewTestSeries = () => {
                         <BsThreeDotsVertical className="cursor-pointer" />
                       </Dropdown> */}
 
-                      <a data-tooltip-id={`tooltip-${test_series_id}`}>
+                      <a data-tooltip-id={`tooltip-${test_id}`}>
                         <BsThreeDotsVertical className="cursor-pointer mx-auto" />
                       </a>
                       <Tooltip
                         variant="light"
-                        id={`tooltip-${test_series_id}`}
+                        id={`tooltip-${test_id}`}
                         openOnClick
                         clickable
                         className="drop-shadow-md shadow-lg !rounded-lg !opacity-100 border !p-0 !m-0"
@@ -574,6 +575,7 @@ const ViewTestSeries = () => {
                           {getOptions(status)?.map((label) => (
                             <>
                               <button
+                                type="button"
                                 key={label}
                                 className="block w-40 py-3 text-base px-4 border-[#e9ecef] first:rounded-t-lg last-of-type:rounded-b-lg hover:bg-gray-100"
                                 onClick={() =>
