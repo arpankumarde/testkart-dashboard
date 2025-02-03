@@ -1,19 +1,18 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
-      fontFamily: {
-        inter: ["Inter", "sans-serif"],
-      },
-      screens: {
-        mobile: { raw: "(max-width: 768px)" },
-      },
-      boxShadow: {
-        card: "1px 0 20px #0000000d",
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [],
 } satisfies Config;
