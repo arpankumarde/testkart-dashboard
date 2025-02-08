@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import Link from "next/link";
+import { IoShareSocial } from "react-icons/io5";
+import { Input } from "@/components/ui/input";
 
 interface TestSeries {
   test_series_id: number;
@@ -47,6 +61,10 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -83,7 +101,50 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
             <TableCell className="text-center">
               {renderStatusBadge(ts?.status)}
             </TableCell>
-            <TableCell></TableCell>
+            <TableCell className="flex gap-2 items-center justify-between">
+              <AlertDialog>
+                <AlertDialogTrigger
+                  asChild
+                  className={ts?.status == 1 ? "" : "hidden"}
+                >
+                  <Button
+                    variant={"secondary"}
+                    className="aspect-square h-6 w-6"
+                  >
+                    <IoShareSocial />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Share this test series with your students
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="flex">
+                      <Input
+                        type="text"
+                        defaultValue={`https://testkart.in/test-series/${ts?.hash}`}
+                        className="w-full p-2 rounded-r-none"
+                        readOnly
+                      />
+
+                      <Button
+                        className="rounded-s-none"
+                        onClick={() =>
+                          copyToClipboard(
+                            `https://testkart.in/test-series/${ts?.hash}`
+                          )
+                        }
+                      >
+                        Copy URL
+                      </Button>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Close</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
