@@ -71,7 +71,9 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
                 asChild
                 className="text-blue-600 hover:text-blue-700 p-0"
               >
-                <Link href={`/teacher/test-series/${ts.hash}`}>{ts.title}</Link>
+                <Link href={`/teacher/test-series/${ts?.test_series_id}`}>
+                  {ts?.title}
+                </Link>
               </Button>
             </TableCell>
             <TableCell>{ts?.total_tests ?? 0}</TableCell>
