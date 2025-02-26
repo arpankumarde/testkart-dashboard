@@ -33,7 +33,7 @@ interface User {
   academy: Academy;
 }
 
-interface AuthResponse {
+export type AuthResponse = {
   success: boolean;
   message: string;
   data: {
@@ -41,7 +41,7 @@ interface AuthResponse {
     token: string;
     user: User;
   };
-}
+};
 
 export async function login(payload: { email: string; password: string }) {
   try {
