@@ -95,7 +95,7 @@ const TTable = ({ data }: { data: Test[] }) => {
             <TableCell>
               {ts?.meta?.questions_count ?? 0}/{ts?.meta?.total_questions ?? 0}
             </TableCell>
-            <TableCell>{ts?.data?.duration}</TableCell>{" "}
+            <TableCell>{ts?.data?.duration}</TableCell>
             <TableCell className="text-center">
               {renderStatusBadge(ts?.meta)}
             </TableCell>

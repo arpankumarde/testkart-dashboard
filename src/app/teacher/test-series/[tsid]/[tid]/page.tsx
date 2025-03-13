@@ -163,6 +163,7 @@ const Page = async ({
       </div>
     );
   } catch (error) {
+    console.log(error);
     return <div>Failed to fetch questions</div>;
   }
 };

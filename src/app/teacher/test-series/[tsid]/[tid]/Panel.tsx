@@ -1,6 +1,9 @@
 "use client";
 
+import ReactQuillComponent from "@/components/blocks/ReactQuillComponent";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,7 +14,7 @@ import {
 import api from "@/lib/api";
 import getTokenClient from "@/lib/getTokenClient";
 import { BadgeIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 interface Subject {
   label: string;
@@ -97,6 +100,7 @@ interface ApiResponse2 {
 }
 
 const Panel = ({ test }: { test: Test }) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const subjects = test.subjects.filter((s) => s.inclued);
   const [subject, setSubject] = useState<number>(subjects[0]?.subject_id);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -117,6 +121,7 @@ const Panel = ({ test }: { test: Test }) => {
   };
 
   const getQuestion = async (index: number) => {
+    setLoading(true);
     const { data: singleQuestion }: { data: ApiResponse2 } = await api.get(
       `/api/v1/test-series/test/question/${index}`,
       {
@@ -127,14 +132,57 @@ const Panel = ({ test }: { test: Test }) => {
     );
 
     // copy the question to question state
-    let questiontemp = singleQuestion?.data?.question;
+    // let questiontemp = singleQuestion?.data?.question;
 
     setQuestion(singleQuestion?.data?.question);
     console.log("QP", singleQuestion);
+    setLoading(false);
+  };
+
+  const updateQuestion = async (index: number) => {
+    // check if the question is present and there are four options and one of the option is marked as correct
+    if (
+      !question ||
+      !question?.options ||
+      question?.options.length !== 4 ||
+      !question?.options.some((o) => o.is_correct)
+    ) {
+      return;
+    }
+
+    setLoading(true);
+
+    // abstract only the required fields from the question: index, options, question_type, solution, subject_id, test_id
+    const body = {
+      index: question.index,
+      options: question.options,
+      question_type: question.question_type,
+      question: question.question,
+      solution: question.solution,
+      subject_id: question.subject_id,
+      test_id: question.test_id,
+    };
+
+    const { data: singleQuestion }: { data: ApiResponse } = await api.put(
+      `/api/v1/test-series/test/question/${index}`,
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${getTokenClient()}`,
+        },
+      }
+    );
+
+    if (singleQuestion?.success) {
+      setQuestions(singleQuestion?.data?.questions);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
+    setLoading(true);
     getQuestions();
+    setLoading(false);
   }, [subject]);
 
   return (
@@ -211,41 +259,120 @@ const Panel = ({ test }: { test: Test }) => {
 
         <hr />
 
-        <div>
-          {/* show question if the question index is present in questions */}
-          {questions
+        {loading ? (
+          <div>Loading...</div>
+        ) : (
+          <div>
+            {/* show question if the question index is present in questions */}
+            {/* {questions
             .filter((q) => q.index === questionIndex)
             .map((q) => (
               <div key={q.question_id}>
                 <div>Question: {q.index + 1}</div>
                 <div>Question ID: {q.question_id}</div>
               </div>
-            ))}
+            ))} */}
 
-          {/* if question is null show question not found, else show the questions*/}
-          {question ? (
-            <>
-              <div>Question: {question?.question}</div>
-              <div>Question ID: {question?.question_id}</div>
-              <div>Question Type: {question?.question_type}</div>
-              <div>Difficulty Level: {question?.difficulty_level}</div>
-              <div>Positive Marks: {question?.positive_marks}</div>
-              <div>Negative Marks: {question?.negative_marks}</div>
-              <div>Options:</div>
+            {/* if question is null show question not found, else show the questions*/}
+            {question ? (
               <div>
-                {/* {question?.options?.map((option) => (
-                  <div key={option?.optionId}>
-                    {option?.option} -{" "}
-                    {option?.is_correct ? "Correct" : "Wrong"}
+                <div>
+                  Question:
+                  <ReactQuillComponent
+                    value={question?.question}
+                    setValue={(val) =>
+                      setQuestion({ ...question, question: val })
+                    }
+                  />
+                  Options:
+                  <div>
+                    {/* add 4 options spaces with recact quill and give checkboxed to sleect if thats's the correct option
+                     */}
+                    {question?.options?.map((option, index) => (
+                      <div key={option?.optionId ?? index}>
+                        <ReactQuillComponent
+                          value={option?.option}
+                          setValue={(val) =>
+                            setQuestion({
+                              ...question,
+                              options: question?.options.map((o, i) =>
+                                i === index ? { ...o, option: val } : o
+                              ),
+                            })
+                          }
+                        />
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={option?.is_correct}
+                            onCheckedChange={() => {
+                              const updatedOptions = question?.options.map(
+                                (o, i) => ({
+                                  ...o,
+                                  is_correct: i === index,
+                                })
+                              );
+                              setQuestion({
+                                ...question,
+                                options: updatedOptions,
+                              });
+                            }}
+                          />
+                          <Label>This is the correct option</Label>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))} */}
+                  Solution:
+                  <ReactQuillComponent
+                    value={question?.solution}
+                    setValue={(val) =>
+                      setQuestion({ ...question, solution: val })
+                    }
+                  />
+                </div>
+                <div>
+                  <div>Question ID: {question?.question_id}</div>
+                  <div>
+                    Question:
+                    <div
+                      dangerouslySetInnerHTML={{ __html: question?.question }}
+                    ></div>
+                  </div>
+                  <div>Options:</div>
+                  <div>
+                    {question?.options?.map((option) => (
+                      <Fragment key={option?.optionId}>
+                        <div
+                          dangerouslySetInnerHTML={{ __html: option?.option }}
+                        ></div>
+                        <span>
+                          {" "}
+                          {option?.is_correct ? "Correct" : "Incorrect"}
+                        </span>
+                      </Fragment>
+                    ))}
+                  </div>
+
+                  <div>
+                    Solution:
+                    <div
+                      dangerouslySetInnerHTML={{ __html: question?.solution }}
+                    ></div>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    updateQuestion(question?.question_id);
+                  }}
+                >
+                  Submit
+                </Button>
               </div>
-              <div>Solution: {question?.solution}</div>
-            </>
-          ) : (
-            <div>Question not found</div>
-          )}
-        </div>
+            ) : (
+              <div>Question not found</div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
