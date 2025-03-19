@@ -57,6 +57,7 @@ const Page = async () => {
       </div>
     );
   } catch (error) {
+    console.error(error);
     return <div>Failed to fetch Test Series</div>;
   }
 };

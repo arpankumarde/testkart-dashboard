@@ -58,3 +58,19 @@ export async function createTestSeries(payload: {
     return { success: false, error };
   }
 }
+
+export async function deleteTestSeries(tsid: number) {
+  try {
+    await api.delete(`/api/v1/test-series/${tsid}`, {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+
+    revalidatePath("/teacher/test-series");
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
+}

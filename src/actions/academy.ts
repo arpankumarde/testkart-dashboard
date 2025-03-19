@@ -23,7 +23,7 @@ interface Payload {
 
 interface ApiResponse {
   success: boolean;
-  data: {};
+  data: object;
 }
 
 export async function updateAcademy(payload: Payload) {

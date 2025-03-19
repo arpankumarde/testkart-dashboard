@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -20,9 +21,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { IoShareSocial } from "react-icons/io5";
+import { ImBin2 } from "react-icons/im";
 import { Input } from "@/components/ui/input";
+import { EllipsisVertical } from "lucide-react";
+import { deleteTestSeries } from "@/actions/test-series";
 
 interface TestSeries {
   test_series_id: number;
@@ -70,7 +81,9 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
       <TableHeader>
         <TableRow>
           <TableHead className="w-[60px] font-bold">#</TableHead>
-          <TableHead className="font-bold text-xl">Test Series Name</TableHead>
+          <TableHead className="max-w-48 font-bold text-xl">
+            Test Series Name
+          </TableHead>
           <TableHead className="font-bold text-xl">Tests</TableHead>
           <TableHead className="font-bold text-xl">Students</TableHead>
           <TableHead className="font-bold text-xl">Price</TableHead>
@@ -83,16 +96,13 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
         {data?.map((ts, id) => (
           <TableRow key={ts.test_series_id}>
             <TableCell>{id + 1}</TableCell>
-            <TableCell>
-              <Button
-                variant={"link"}
-                asChild
-                className="text-blue-600 hover:text-blue-700 p-0"
+            <TableCell className="max-w-48">
+              <Link
+                href={`/teacher/test-series/${ts?.test_series_id}`}
+                className="text-blue-600 hover:text-blue-700 underline underline-offset-4"
               >
-                <Link href={`/teacher/test-series/${ts?.test_series_id}`}>
-                  {ts?.title}
-                </Link>
-              </Button>
+                {ts?.title}
+              </Link>
             </TableCell>
             <TableCell>{ts?.total_tests ?? 0}</TableCell>
             <TableCell></TableCell>
@@ -101,16 +111,43 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
             <TableCell className="text-center">
               {renderStatusBadge(ts?.status)}
             </TableCell>
-            <TableCell className="flex gap-2 items-center justify-between">
+            <TableCell className="flex gap-2 items-center justify-around flex-wrap">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant={"ghost"} className="p-0 m-0">
+                    <EllipsisVertical size={20} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>
+                    <Link href={`/teacher/test-series/${ts?.test_series_id}`}>
+                      View Tests
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href={`/teacher/reports/${ts?.test_series_id}`}>
+                      View Reports
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href={`/teacher/reviews/${ts?.test_series_id}`}>
+                      View Reviews
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem>Billing</DropdownMenuItem>
+                  <DropdownMenuItem>Team</DropdownMenuItem>
+                  <DropdownMenuItem>Subscription</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <AlertDialog>
                 <AlertDialogTrigger
                   asChild
                   className={ts?.status == 1 ? "" : "hidden"}
                 >
-                  <Button
-                    variant={"secondary"}
-                    className="aspect-square h-6 w-6"
-                  >
+                  <Button variant={"ghost"} className="p-0 m-0">
                     <IoShareSocial />
                   </Button>
                 </AlertDialogTrigger>
@@ -141,6 +178,42 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Close</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              <AlertDialog>
+                <AlertDialogTrigger
+                  asChild
+                  className={ts?.status == 0 ? "" : "hidden"}
+                >
+                  <Button variant={"ghost"} className="p-0 m-0 text-red-600">
+                    <ImBin2 />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you sure you want to delete this test series?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Deleting this test series will remove all the tests and
+                      reports associated with it. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Close</AlertDialogCancel>
+                    <form
+                      action={async () => {
+                        await deleteTestSeries(ts?.test_series_id);
+                      }}
+                    >
+                      <AlertDialogAction asChild>
+                        <Button type="submit" variant={"destructive"}>
+                          Yes, Delete
+                        </Button>
+                      </AlertDialogAction>
+                    </form>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
