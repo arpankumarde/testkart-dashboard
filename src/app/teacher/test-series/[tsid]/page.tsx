@@ -129,7 +129,9 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
           </div>
           <div>
             <Button asChild>
-              <Link href="/teacher/test-series/create">Add New Test</Link>
+              <Link href={`/teacher/test-series/${tsid}/create`}>
+                Add New Test
+              </Link>
             </Button>
           </div>
         </div>
@@ -138,6 +140,7 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
       </div>
     );
   } catch (error) {
+    console.error(error);
     return <div>Failed to fetch Tests</div>;
   }
 };
