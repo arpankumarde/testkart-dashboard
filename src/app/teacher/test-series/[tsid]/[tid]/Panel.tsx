@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import api from "@/lib/api";
 import getTokenClient from "@/lib/getTokenClient";
-import { BadgeIcon } from "lucide-react";
+import { FaCircle } from "react-icons/fa";
 import { Fragment, useEffect, useState } from "react";
 
 interface Subject {
@@ -69,7 +69,7 @@ interface ApiResponse {
 interface Option {
   option: string;
   is_correct: boolean;
-  optionId: number;
+  optionId?: number;
 }
 
 interface Question2 {
@@ -99,6 +99,16 @@ interface ApiResponse2 {
   };
 }
 
+interface NewQuestionData {
+  index: number;
+  options: Option[];
+  question: string;
+  question_type: string;
+  solution: string;
+  subject_id: number;
+  test_id: number;
+}
+
 const Panel = ({ test }: { test: Test }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const subjects = test.subjects.filter((s) => s.inclued);
@@ -106,6 +116,41 @@ const Panel = ({ test }: { test: Test }) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [question, setQuestion] = useState<Question2 | null>(null);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
+
+  const newQuestionDataTemplate: NewQuestionData = {
+    question: "",
+    question_type: "MCQ-S",
+    solution: "",
+    subject_id: subject,
+    test_id: test?.test_id,
+    index: questionIndex,
+    options: [
+      {
+        optionId: 1,
+        option: "",
+        is_correct: false,
+      },
+      {
+        optionId: 2,
+        option: "",
+        is_correct: false,
+      },
+      {
+        optionId: 3,
+        option: "",
+        is_correct: false,
+      },
+      {
+        optionId: 4,
+        option: "",
+        is_correct: false,
+      },
+    ],
+  };
+
+  const [newQuestion, setNewQuestion] = useState<NewQuestionData>(
+    newQuestionDataTemplate
+  );
 
   const getQuestions = async () => {
     const { data: questions }: { data: ApiResponse } = await api.get(
@@ -179,11 +224,40 @@ const Panel = ({ test }: { test: Test }) => {
     setLoading(false);
   };
 
+  const addQuestion = async () => {
+    // check fi all fields of new question are present
+    if (
+      !newQuestion ||
+      !newQuestion.options ||
+      newQuestion.options.length !== 4 ||
+      !newQuestion.options.some((o) => o.is_correct)
+    ) {
+      return;
+    }
+
+    const { data }: { data: ApiResponse } = await api.post(
+      "/api/v1/test-series/test/question",
+      newQuestion,
+      {
+        headers: {
+          Authorization: `Bearer ${getTokenClient()}`,
+        },
+      }
+    );
+
+    if (data?.success) {
+      setQuestions(data?.data?.questions);
+    }
+    console.log(data);
+  };
+
   useEffect(() => {
     setLoading(true);
     getQuestions();
     setLoading(false);
   }, [subject]);
+
+  console.log(questions);
 
   return (
     <div className="w-full flex bg-fuchsia-100">
@@ -217,7 +291,7 @@ const Panel = ({ test }: { test: Test }) => {
                 key={i}
                 variant={i === questionIndex ? "default" : "secondary"}
                 type="button"
-                className="w-full rounded-none"
+                className="p-0 w-12 h-12 rounded-none"
                 onClick={() => {
                   setQuestionIndex(i);
                   // check if the question index is present in questions
@@ -231,13 +305,14 @@ const Panel = ({ test }: { test: Test }) => {
                 }}
                 asChild
               >
-                <div className="justify-between">
-                  Question {i + 1}
-                  {/* show badge if the question index is present in questions */}
-                  {questions.some((q) => q.index === i) && (
-                    <BadgeIcon size={24} fill="green" className="border-0" />
-                  )}
-                </div>
+                {questions.some((q) => q.index === i) ? (
+                  <div className="flex justify-center">
+                    {i + 1}
+                    <FaCircle className="text-green-500 !w-2 !h-2 -m-1" />
+                  </div>
+                ) : (
+                  <div className="justify-center">{i + 1}</div>
+                )}
               </Button>
             )
           )}
@@ -369,7 +444,102 @@ const Panel = ({ test }: { test: Test }) => {
                 </Button>
               </div>
             ) : (
-              <div>Question not found</div>
+              <div>
+                <div>
+                  Question:
+                  <ReactQuillComponent
+                    value={newQuestion?.question ?? ""}
+                    setValue={(val) =>
+                      setNewQuestion({ ...newQuestion, question: val })
+                    }
+                  />
+                  Options:
+                  <div>
+                    {/* add 4 options spaces with recact quill and give checkboxed to sleect if thats's the correct option
+                     */}
+                    {newQuestion?.options?.map((option, index) => (
+                      <div key={option?.optionId ?? index}>
+                        <ReactQuillComponent
+                          value={option?.option}
+                          setValue={(val) =>
+                            setNewQuestion({
+                              ...newQuestion,
+                              options: newQuestion?.options.map((o, i) =>
+                                i === index ? { ...o, option: val } : o
+                              ),
+                            })
+                          }
+                        />
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            checked={option?.is_correct}
+                            onCheckedChange={() => {
+                              const updatedOptions = newQuestion?.options.map(
+                                (o, i) => ({
+                                  ...o,
+                                  is_correct: i === index,
+                                })
+                              );
+                              setNewQuestion({
+                                ...newQuestion,
+                                options: updatedOptions,
+                              });
+                            }}
+                          />
+                          <Label>This is the correct option</Label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  Solution:
+                  <ReactQuillComponent
+                    value={newQuestion?.solution}
+                    setValue={(val) =>
+                      setNewQuestion({ ...newQuestion, solution: val })
+                    }
+                  />
+                </div>
+                <div>
+                  <div>
+                    Question:
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: newQuestion?.question,
+                      }}
+                    ></div>
+                  </div>
+                  <div>Options:</div>
+                  <div>
+                    {newQuestion?.options?.map((option) => (
+                      <Fragment key={option?.optionId}>
+                        <div
+                          dangerouslySetInnerHTML={{ __html: option?.option }}
+                        ></div>
+                        <span>
+                          {" "}
+                          {option?.is_correct ? "Correct" : "Incorrect"}
+                        </span>
+                      </Fragment>
+                    ))}
+                  </div>
+
+                  <div>
+                    Solution:
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: newQuestion?.solution,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    addQuestion();
+                  }}
+                >
+                  Save Question
+                </Button>
+              </div>
             )}
           </div>
         )}

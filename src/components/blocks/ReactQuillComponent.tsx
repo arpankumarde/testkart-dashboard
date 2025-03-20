@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -23,13 +24,15 @@ const ReactQuillComponent = ({ value, setValue }: ReactQuillComponentProps) => {
   };
 
   return (
-    <ReactQuill
-      theme="snow"
-      value={value}
-      onChange={setValue}
-      modules={modules}
-      className="prose"
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ReactQuill
+        theme="snow"
+        value={value}
+        onChange={setValue}
+        modules={modules}
+        className="prose"
+      />
+    </Suspense>
   );
 };
 
