@@ -43,6 +43,24 @@ export type AuthResponse = {
   };
 };
 
+interface SignupPayload {
+  academy_name: string;
+  display_name: string;
+  slug: string;
+  contact_email: string;
+  contact_phone: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+
+interface SignupResponse {
+  success: boolean;
+  data: object;
+}
+
 export async function login(payload: { email: string; password: string }) {
   try {
     const { data }: { data: AuthResponse } = await api.post(
@@ -52,6 +70,20 @@ export async function login(payload: { email: string; password: string }) {
         password: payload?.password,
         type: "TEACHER",
       }
+    );
+
+    return { data };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  }
+}
+
+export async function signup(payload: SignupPayload) {
+  try {
+    const { data }: { data: SignupResponse } = await api.post(
+      "/api/v1/studio/academy",
+      payload
     );
 
     return { data };
