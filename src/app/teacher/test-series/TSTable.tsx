@@ -29,8 +29,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { IoShareSocial } from "react-icons/io5";
-import { ImBin2 } from "react-icons/im";
 import { Input } from "@/components/ui/input";
 import { EllipsisVertical } from "lucide-react";
 import { deleteTestSeries } from "@/actions/test-series";
@@ -134,89 +132,101 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
                       View Reviews
                     </Link>
                   </DropdownMenuItem>
+
                   <DropdownMenuSeparator />
 
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuItem>Subscription</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  <DropdownMenuItem
+                    className={ts?.status === 2 ? "" : "hidden"}
+                  >
+                    <Link href={`/teacher/reviews/${ts?.test_series_id}`}>
+                      List Test Series
+                    </Link>
+                  </DropdownMenuItem>
 
-              <AlertDialog>
-                <AlertDialogTrigger
-                  asChild
-                  className={ts?.status == 1 ? "" : "hidden"}
-                >
-                  <Button variant={"ghost"} className="p-0 m-0">
-                    <IoShareSocial />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Share this test series with your students
-                    </AlertDialogTitle>
-                    <AlertDialogDescription className="flex">
-                      <Input
-                        type="text"
-                        defaultValue={`https://testkart.in/test-series/${ts?.hash}`}
-                        className="w-full p-2 rounded-r-none"
-                        readOnly
-                      />
-
-                      <Button
-                        className="rounded-s-none"
-                        onClick={() =>
-                          copyToClipboard(
-                            `https://testkart.in/test-series/${ts?.hash}`
-                          )
+                  <DropdownMenuItem asChild>
+                    <AlertDialog>
+                      <AlertDialogTrigger
+                        className={
+                          ts?.status == 1
+                            ? "text-left px-2 py-1.5 hover:bg-gray-100 text-sm w-full transition-colors rounded-sm"
+                            : "hidden"
                         }
                       >
-                        Copy URL
-                      </Button>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Close</AlertDialogCancel>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                        Share
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Share this test series with your students
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="flex">
+                            <Input
+                              type="text"
+                              defaultValue={`https://testkart.in/test-series/${ts?.hash}`}
+                              className="w-full p-2 rounded-r-none"
+                              readOnly
+                            />
 
-              <AlertDialog>
-                <AlertDialogTrigger
-                  asChild
-                  className={ts?.status == 0 ? "" : "hidden"}
-                >
-                  <Button variant={"ghost"} className="p-0 m-0 text-red-600">
-                    <ImBin2 />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you sure you want to delete this test series?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Deleting this test series will remove all the tests and
-                      reports associated with it. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Close</AlertDialogCancel>
-                    <form
-                      action={async () => {
-                        await deleteTestSeries(ts?.test_series_id);
-                      }}
-                    >
-                      <AlertDialogAction asChild>
-                        <Button type="submit" variant={"destructive"}>
-                          Yes, Delete
-                        </Button>
-                      </AlertDialogAction>
-                    </form>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                            <Button
+                              className="rounded-s-none"
+                              onClick={() =>
+                                copyToClipboard(
+                                  `https://testkart.in/test-series/${ts?.hash}`
+                                )
+                              }
+                            >
+                              Copy URL
+                            </Button>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Close</AlertDialogCancel>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <AlertDialog>
+                      <AlertDialogTrigger
+                        className={
+                          ts?.status == 0
+                            ? "text-left px-2 py-1.5 text-sm text-red-600 hover:bg-red-200 w-full rounded-sm"
+                            : "hidden"
+                        }
+                      >
+                        Delete
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you sure you want to delete this test series?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Deleting this test series will remove all the tests
+                            and reports associated with it. This action cannot
+                            be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Close</AlertDialogCancel>
+                          <form
+                            action={async () => {
+                              await deleteTestSeries(ts?.test_series_id);
+                            }}
+                          >
+                            <AlertDialogAction asChild>
+                              <Button type="submit" variant={"destructive"}>
+                                Yes, Delete
+                              </Button>
+                            </AlertDialogAction>
+                          </form>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TableCell>
           </TableRow>
         ))}
