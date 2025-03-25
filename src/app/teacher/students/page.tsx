@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 interface Student {
@@ -33,8 +32,6 @@ const Page = async () => {
         },
       }
     );
-
-    console.log(data);
 
     return (
       <div>
@@ -87,6 +84,7 @@ const Page = async () => {
       </div>
     );
   } catch (error) {
+    console.error(error);
     return <div>Failed to fetch students</div>;
   }
 };
