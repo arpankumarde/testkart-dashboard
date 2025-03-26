@@ -135,6 +135,14 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
 
                   <DropdownMenuSeparator />
 
+                  <DropdownMenuItem>
+                    <Link
+                      href={`/teacher/test-series/${ts?.test_series_id}/edit`}
+                    >
+                      Edit Test Series
+                    </Link>
+                  </DropdownMenuItem>
+
                   <DropdownMenuItem
                     className={ts?.status === 2 ? "" : "hidden"}
                   >
