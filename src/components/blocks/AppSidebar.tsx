@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -11,8 +13,19 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { deleteCookie } from "cookies-next/client";
+import { useRouter } from "next/navigation";
 
 const AppSidebar = () => {
+  const router = useRouter();
+  const logout = () => {
+    deleteCookie("tktoken");
+    deleteCookie("tkuser");
+
+    router.push("/auth/login");
+  };
+
   return (
     <Sidebar>
       <SidebarHeader />
@@ -70,14 +83,24 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/edit-students">Edit Profile</Link>
+                  <Link href="/teacher/edit-profile">Edit Profile</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Button variant={"destructive"} onClick={logout}>
+                Logout
+              </Button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 };
