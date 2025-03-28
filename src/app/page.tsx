@@ -1,9 +1,7 @@
+import { redirect } from "next/navigation";
+
 const Page = () => {
-  return (
-    <div>
-      <h1>Teacher{`'`}s App|Testkart</h1>
-    </div>
-  );
+  redirect("/auth/login");
 };
 
 export default Page;

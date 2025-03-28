@@ -1,7 +1,20 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { AuthResponse } from "@/actions/auth";
+import { getCookie } from "cookies-next";
+import { redirect } from "next/navigation";
 import SignupForm from "./SignupForm";
 
-const Page = () => {
+const Page = async () => {
+  const userCookie = await getCookie("tkuser", { cookies });
+  const user = userCookie
+    ? (JSON.parse(userCookie as string) as AuthResponse["data"])
+    : null;
+
+  if (user) {
+    redirect("/teacher/dashboard");
+  }
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
