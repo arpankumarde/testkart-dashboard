@@ -6,15 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { setCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
   const router = useRouter();
-
-  interface Payload {
-    email: string;
-    password: string;
-  }
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
 
   return (
     <form
@@ -22,12 +19,10 @@ const LoginForm = () => {
       action={async (e) => {
         const formData = Object.fromEntries(e.entries());
 
-        const payload: Payload = {
+        const { data, error } = await login({
           email: formData["email"] as string,
           password: formData["password"] as string,
-        };
-
-        const { data, error } = await login(payload);
+        });
 
         if (error) {
           return;
@@ -52,7 +47,13 @@ const LoginForm = () => {
       <div className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required />
+          <Input
+            defaultValue={email ?? ""}
+            id="email"
+            name="email"
+            type="email"
+            required
+          />
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">

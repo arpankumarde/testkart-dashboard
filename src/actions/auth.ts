@@ -43,12 +43,10 @@ export type AuthResponse = {
   };
 };
 
-interface SignupPayload {
+export interface SignupPayload {
   academy_name: string;
-  display_name: string;
-  slug: string;
-  contact_email: string;
-  contact_phone: string;
+  academy_email: string;
+  academy_phone: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -82,7 +80,21 @@ export async function login(payload: { email: string; password: string }) {
 export async function signup(payload: SignupPayload) {
   try {
     const { data }: { data: SignupResponse } = await api.post(
-      "/api/v1/studio/academy",
+      "/api/v1/studio/academy/register",
+      payload
+    );
+
+    return { data };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  }
+}
+
+export async function verifyTeacher(payload: { email: string; code: string }) {
+  try {
+    const { data }: { data: SignupResponse } = await api.post(
+      "/api/v1/studio/academy/verify-email",
       payload
     );
 

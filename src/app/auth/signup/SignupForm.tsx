@@ -1,6 +1,6 @@
 "use client";
 
-import { signup } from "@/actions/auth";
+import { signup, SignupPayload } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,19 +9,6 @@ import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
   const router = useRouter();
-
-  interface SignupPayload {
-    academy_name: string;
-    display_name: string;
-    slug: string;
-    contact_email: string;
-    contact_phone: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-    confirm_password: string;
-  }
 
   return (
     <form
@@ -36,16 +23,14 @@ const SignupForm = () => {
           .join("-");
 
         const payload: SignupPayload = {
-          first_name: formData["first_name"] as string,
-          last_name: formData["last_name"] as string,
-          email: formData["email"] as string,
+          first_name: (formData["first_name"] as string).trim(),
+          last_name: (formData["last_name"] as string).trim(),
+          email: (formData["email"] as string).trim(),
           password: formData["password"] as string,
           confirm_password: formData["confirm_password"] as string,
           academy_name: (formData["academy_name"] as string).trim(),
-          display_name: (formData["academy_name"] as string).trim(),
-          slug: formData["slug"] as string,
-          contact_email: formData["email"] as string,
-          contact_phone: formData["contact_phone"] as string,
+          academy_email: (formData["email"] as string).trim(),
+          academy_phone: (formData["academy_phone"] as string).trim(),
         };
 
         const { data } = await signup(payload);
@@ -54,8 +39,8 @@ const SignupForm = () => {
           alert("An error occurred. Please try again.");
           return;
         } else {
-          alert("Account created successfully. Please login to continue.");
-          router.push("/auth/login");
+          alert("Account created! Please verify your email to continue.");
+          router.push(`/auth/signup/verify?email=${payload.email}`);
         }
       }}
     >
@@ -77,12 +62,12 @@ const SignupForm = () => {
           </div>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Your Email</Label>
           <Input id="email" name="email" type="email" required />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="contact_phone">Contact Phone</Label>
-          <Input id="contact_phone" name="contact_phone" type="tel" required />
+          <Label htmlFor="academy_phone">Your Phone Number</Label>
+          <Input id="academy_phone" name="academy_phone" type="tel" required />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="academy_name">Academy Name</Label>
