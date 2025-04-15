@@ -84,7 +84,6 @@ interface Test {
 
 const TTable = ({ data }: { data: Test[] }) => {
   const [loading, setLoading] = useState(false);
-  console.log(data);
 
   const renderStatusBadge = (meta: TestMeta) => {
     switch (meta.questions_count >= meta.total_questions) {

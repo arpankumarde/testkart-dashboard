@@ -79,22 +79,22 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
       <TableHeader>
         <TableRow>
           <TableHead className="w-[60px] font-bold">#</TableHead>
-          <TableHead className="max-w-48 font-bold text-xl">
+          <TableHead className="max-w-60 font-semibold">
             Test Series Name
           </TableHead>
-          <TableHead className="font-bold text-xl">Tests</TableHead>
-          <TableHead className="font-bold text-xl">Students</TableHead>
-          <TableHead className="font-bold text-xl">Price</TableHead>
-          <TableHead className="font-bold text-xl">Ratings</TableHead>
-          <TableHead className="font-bold text-xl">Status</TableHead>
-          <TableHead className="font-bold text-xl">Actions</TableHead>
+          <TableHead className="font-semibold">Tests</TableHead>
+          <TableHead className="font-semibold">Students</TableHead>
+          <TableHead className="font-semibold">Price</TableHead>
+          <TableHead className="font-semibold">Ratings</TableHead>
+          <TableHead className="font-semibold">Status</TableHead>
+          <TableHead className="font-semibold">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {data?.map((ts, id) => (
           <TableRow key={ts.test_series_id}>
             <TableCell>{id + 1}</TableCell>
-            <TableCell className="max-w-48">
+            <TableCell className="max-w-48 whitespace-normal">
               <Link
                 href={`/teacher/test-series/${ts?.test_series_id}`}
                 className="text-blue-600 hover:text-blue-700 underline underline-offset-4"

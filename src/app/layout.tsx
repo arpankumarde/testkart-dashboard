@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
+import LoaderComponent from "@/components/blocks/LoaderComponent";
 
 const fontInter = Inter({
   variable: "--font-inter",
@@ -21,7 +23,7 @@ export default function RootLayout({
       <body
         className={`${fontInter.variable} antialiased font-[family-name:var(--font-inter)]`}
       >
-        {children}
+        <Suspense fallback={<LoaderComponent />}>{children}</Suspense>
       </body>
     </html>
   );

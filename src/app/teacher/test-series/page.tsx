@@ -1,8 +1,12 @@
+"use client";
+
 import api from "@/lib/api";
-import getToken from "@/lib/getToken";
 import TSTable from "./TSTable";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import getTokenClient from "@/lib/getTokenClient";
+import { useEffect, useState } from "react";
+import LoaderComponent from "@/components/blocks/LoaderComponent";
 
 interface ApiResponse {
   success: boolean;
@@ -34,32 +38,53 @@ interface TestSeries {
   updatedAt: string;
 }
 
-const Page = async () => {
-  try {
+const Page = () => {
+  const [data, setData] = useState<TestSeries[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchTestSeries = async () => {
     const { data }: { data: ApiResponse } = await api.get(
       "/api/v1/test-series",
       {
         headers: {
-          Authorization: `Bearer ${await getToken()}`,
+          Authorization: `Bearer ${await getTokenClient()}`,
         },
       }
     );
 
-    return (
-      <div className="space-y-4 p-4">
-        <div className="text-2xl font-bold mb-4 flex justify-end">
-          <Button asChild>
-            <Link href="/teacher/test-series/create">Create Test Series</Link>
-          </Button>
-        </div>
+    return data;
+  };
 
-        <TSTable data={data.data} />
-      </div>
-    );
-  } catch (error) {
-    console.error(error);
-    return <div>Failed to fetch Test Series</div>;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetchTestSeries();
+        setData(result.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return <LoaderComponent />;
   }
+
+  return (
+    <div className="space-y-4 p-4">
+      <div className="text-2xl font-bold mb-4 flex justify-end">
+        <Button asChild>
+          <Link href="/teacher/test-series/create">Create Test Series</Link>
+        </Button>
+      </div>
+
+      <TSTable data={data} />
+    </div>
+  );
 };
 
 export default Page;
