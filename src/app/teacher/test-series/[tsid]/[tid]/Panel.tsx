@@ -15,6 +15,8 @@ import api from "@/lib/api";
 import getTokenClient from "@/lib/getTokenClient";
 import { FaCircle } from "react-icons/fa";
 import { Fragment, useEffect, useState } from "react";
+import AddQComp from "./_components/AddQComp";
+import LoaderComponent from "@/components/blocks/LoaderComponent";
 
 interface Subject {
   label: string;
@@ -99,7 +101,7 @@ interface ApiResponse2 {
   };
 }
 
-interface NewQuestionData {
+export interface NewQuestionData {
   index: number;
   options: Option[];
   question: string;
@@ -180,7 +182,7 @@ const Panel = ({ test }: { test: Test }) => {
     // let questiontemp = singleQuestion?.data?.question;
 
     setQuestion(singleQuestion?.data?.question);
-    console.log("QP", singleQuestion);
+    console.log("Single Question: ", singleQuestion);
     setLoading(false);
   };
 
@@ -220,24 +222,37 @@ const Panel = ({ test }: { test: Test }) => {
 
     if (singleQuestion?.success) {
       setQuestions(singleQuestion?.data?.questions);
+      setNewQuestion(newQuestionDataTemplate);
     }
     setLoading(false);
   };
 
   const addQuestion = async () => {
-    // check fi all fields of new question are present
+    // check if all fields of new question are present
     if (
       !newQuestion ||
       !newQuestion.options ||
-      newQuestion.options.length !== 4 ||
-      !newQuestion.options.some((o) => o.is_correct)
+      newQuestion.options.length !== 4
     ) {
+      alert("Please fill all the fields");
       return;
     }
 
+    // check if one of the options is marked as correct
+    if (!newQuestion.options.some((o) => o.is_correct)) {
+      alert("Please select one correct option");
+      return;
+    }
+
+    const newQuestionParsed = {
+      ...newQuestion,
+      subject_id: subject,
+      index: questionIndex,
+    };
+
     const { data }: { data: ApiResponse } = await api.post(
       "/api/v1/test-series/test/question",
-      newQuestion,
+      newQuestionParsed,
       {
         headers: {
           Authorization: `Bearer ${getTokenClient()}`,
@@ -248,20 +263,28 @@ const Panel = ({ test }: { test: Test }) => {
     if (data?.success) {
       setQuestions(data?.data?.questions);
     }
+
     console.log(data);
   };
 
   useEffect(() => {
+    setQuestionIndex(0);
+    getQuestions();
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
+    console.log(subject);
     getQuestions();
     setLoading(false);
   }, [subject]);
 
-  console.log(questions);
+  console.log("Qs", questions);
+  console.log("Q", question);
 
   return (
-    <div className="w-full flex bg-fuchsia-100">
-      <div className="min-h-dvh w-[250px] bg-fuchsia-200 p-2 space-y-4">
+    <div className="w-full flex flex-col md:flex-row">
+      <div className="md:min-h-dvh md:w-[250px] space-y-4">
         <Select
           defaultValue={subject?.toString()}
           onValueChange={(val) => setSubject(Number(val))}
@@ -271,8 +294,8 @@ const Panel = ({ test }: { test: Test }) => {
           </SelectTrigger>
           <SelectContent>
             {subjects.map((s) => (
-              <SelectItem key={s.subject_id} value={s?.subject_id.toString()}>
-                {s.label}
+              <SelectItem key={s?.subject_id} value={s?.subject_id.toString()}>
+                {s?.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -335,7 +358,7 @@ const Panel = ({ test }: { test: Test }) => {
         <hr />
 
         {loading ? (
-          <div>Loading...</div>
+          <LoaderComponent />
         ) : (
           <div>
             {/* show question if the question index is present in questions */}
@@ -444,102 +467,15 @@ const Panel = ({ test }: { test: Test }) => {
                 </Button>
               </div>
             ) : (
-              <div>
-                <div>
-                  Question:
-                  <ReactQuillComponent
-                    value={newQuestion?.question ?? ""}
-                    setValue={(val) =>
-                      setNewQuestion({ ...newQuestion, question: val })
-                    }
-                  />
-                  Options:
-                  <div>
-                    {/* add 4 options spaces with recact quill and give checkboxed to sleect if thats's the correct option
-                     */}
-                    {newQuestion?.options?.map((option, index) => (
-                      <div key={option?.optionId ?? index}>
-                        <ReactQuillComponent
-                          value={option?.option}
-                          setValue={(val) =>
-                            setNewQuestion({
-                              ...newQuestion,
-                              options: newQuestion?.options.map((o, i) =>
-                                i === index ? { ...o, option: val } : o
-                              ),
-                            })
-                          }
-                        />
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            checked={option?.is_correct}
-                            onCheckedChange={() => {
-                              const updatedOptions = newQuestion?.options.map(
-                                (o, i) => ({
-                                  ...o,
-                                  is_correct: i === index,
-                                })
-                              );
-                              setNewQuestion({
-                                ...newQuestion,
-                                options: updatedOptions,
-                              });
-                            }}
-                          />
-                          <Label>This is the correct option</Label>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  Solution:
-                  <ReactQuillComponent
-                    value={newQuestion?.solution}
-                    setValue={(val) =>
-                      setNewQuestion({ ...newQuestion, solution: val })
-                    }
-                  />
-                </div>
-                <div>
-                  <div>
-                    Question:
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: newQuestion?.question,
-                      }}
-                    ></div>
-                  </div>
-                  <div>Options:</div>
-                  <div>
-                    {newQuestion?.options?.map((option) => (
-                      <Fragment key={option?.optionId}>
-                        <div
-                          dangerouslySetInnerHTML={{ __html: option?.option }}
-                        ></div>
-                        <span>
-                          {" "}
-                          {option?.is_correct ? "Correct" : "Incorrect"}
-                        </span>
-                      </Fragment>
-                    ))}
-                  </div>
-
-                  <div>
-                    Solution:
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: newQuestion?.solution,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => {
-                    addQuestion();
-                  }}
-                >
-                  Save Question
-                </Button>
-              </div>
+              <AddQComp
+                id={`${subject}-${questionIndex}`}
+                key={`${subject}-${questionIndex}`}
+                addQuestion={addQuestion}
+                newQuestion={newQuestion}
+                questionIndex={questionIndex}
+                setNewQuestion={setNewQuestion}
+                newQuestionDataTemplate={newQuestionDataTemplate}
+              />
             )}
           </div>
         )}

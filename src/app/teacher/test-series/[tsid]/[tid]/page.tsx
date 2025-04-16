@@ -15,6 +15,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 interface Subject {
   label: string;
@@ -84,79 +86,89 @@ const Page = async ({
     // console.log(data);
 
     return (
-      <div>
+      <div className="p-2 lg:p-4">
         <div className="flex justify-between items-center">
-          <h1>{data?.data[0]?.title}</h1>
+          <h1 className="text-xl font-medium">{data?.data[0]?.title}</h1>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">Rename</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <form
-                action={async (e) => {
-                  "use server";
+          <div className="flex gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">Rename Test</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <form
+                  action={async (e) => {
+                    "use server";
 
-                  const formData = Object.fromEntries(e.entries());
-                  const newTestName = formData["new_test_name"] as string;
-                  console.log(newTestName);
+                    const formData = Object.fromEntries(e.entries());
+                    const newTestName = formData["new_test_name"] as string;
+                    console.log(newTestName);
 
-                  try {
-                    const response = await api.put(
-                      `/api/v1/test-series/test/${tid}`,
-                      {
-                        title: newTestName,
-                      },
-                      {
-                        headers: {
-                          Authorization: `Bearer ${await getToken()}`,
+                    try {
+                      const response = await api.put(
+                        `/api/v1/test-series/test/${tid}`,
+                        {
+                          title: newTestName,
                         },
-                      }
-                    );
+                        {
+                          headers: {
+                            Authorization: `Bearer ${await getToken()}`,
+                          },
+                        }
+                      );
 
-                    if (response?.data?.success) {
-                      console.log("Test renamed successfully");
-                      revalidatePath(`/teacher/test-series/${tsid}/${tid}`);
+                      if (response?.data?.success) {
+                        console.log("Test renamed successfully");
+                        revalidatePath(`/teacher/test-series/${tsid}/${tid}`);
+                      }
+                    } catch (error) {
+                      console.log(error);
                     }
-                  } catch (error) {
-                    console.log(error);
-                  }
-                }}
-              >
-                <DialogHeader>
-                  <DialogTitle>Rename Test</DialogTitle>
-                  <DialogDescription hidden>Rename Test</DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <Label htmlFor="new_test_name">New Test Name</Label>
-                  <Input
-                    id="new_test_name"
-                    name="new_test_name"
-                    defaultValue={data?.data[0]?.title}
-                  />
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button type="submit">Save changes</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  }}
+                >
+                  <DialogHeader>
+                    <DialogTitle>Rename Test</DialogTitle>
+                    <DialogDescription hidden>Rename Test</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <Label htmlFor="new_test_name">New Test Name</Label>
+                    <Input
+                      id="new_test_name"
+                      name="new_test_name"
+                      defaultValue={data?.data[0]?.title}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            <Button asChild>
+              <Link href={`/teacher/test-series/${tsid}/${tid}/import`}>
+                Import Questions
+              </Link>
+            </Button>
+          </div>
         </div>
-        <div>
+        <div className="text-sm text-muted-foreground">
           Test Series ID: {tsid}, Test ID: {tid}
           <br />
-          <h2>Subjects</h2>
-          <p>
-            {subjects.map((subject) => (
+          <div>
+            <span>Subjects: </span>
+            {subjects.map((subject, index) => (
               <span key={subject.subject_id}>
                 {subject.label} ({subject.question_count} /{" "}
-                {subject.total_questions}),{" "}
+                {subject.total_questions})
+                {index < subjects.length - 1 ? ", " : ""}
               </span>
             ))}
-          </p>
+          </div>
         </div>
+        <Separator className="my-2 lg:my-4 border-primary border-1" />
         <div>
           <Panel test={data?.data[0]} />
         </div>

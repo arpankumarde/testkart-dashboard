@@ -3,6 +3,7 @@ import getToken from "@/lib/getToken";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import TTable from "./TTable";
+import { Separator } from "@/components/ui/separator";
 
 interface ApiResponse {
   success: boolean;
@@ -122,19 +123,26 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
     );
 
     return (
-      <div className="space-y-4 p-4">
-        <div className="font-bold mb-4 flex justify-between items-center">
-          <div>
-            <h3>{data?.data?.title}</h3>
+      <div className="p-2 lg:p-4">
+        <div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <div>
+              <h1 className="text-xl font-medium">{data?.data?.title}</h1>
+            </div>
+            <div>
+              <Button asChild>
+                <Link href={`/teacher/test-series/${tsid}/create`}>
+                  Add New Test
+                </Link>
+              </Button>
+            </div>
           </div>
-          <div>
-            <Button asChild>
-              <Link href={`/teacher/test-series/${tsid}/create`}>
-                Add New Test
-              </Link>
-            </Button>
+          <div className="text-sm text-muted-foreground">
+            Test Series ID: {tsid}
           </div>
         </div>
+
+        <Separator className="my-2 lg:my-4 border-primary border-1" />
 
         <TTable data={data2?.data} />
       </div>

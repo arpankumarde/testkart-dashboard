@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_BASE,
   headers: {
     "Content-Type": "application/json",
-    user_type: "TEACHER",
+    "user-type": "TEACHER",
   },
 });
 

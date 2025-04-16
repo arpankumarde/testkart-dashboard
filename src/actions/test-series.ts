@@ -55,7 +55,7 @@ export async function createTestSeries(payload: {
     return { success: true, data };
   } catch (error) {
     console.log(error);
-    return { success: false, error };
+    return { success: false };
   }
 }
 
@@ -112,7 +112,7 @@ export async function editTestSeries(
     return { success: true, data };
   } catch (error) {
     console.log(error);
-    return { success: false, error };
+    return { success: false };
   }
 }
 
@@ -128,6 +128,6 @@ export async function deleteTestSeries(tsid: number) {
     return { success: true };
   } catch (error) {
     console.log(error);
-    return { success: false, error };
+    return { success: false };
   }
 }
