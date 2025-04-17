@@ -118,11 +118,13 @@ export async function editTestSeries(
 
 export async function deleteTestSeries(tsid: number) {
   try {
-    await api.delete(`/api/v1/test-series/${tsid}`, {
+    const res = await api.delete(`/api/v1/test-series/${tsid}`, {
       headers: {
         Authorization: `Bearer ${await getToken()}`,
       },
     });
+
+    console.log(res.data);
 
     revalidatePath("/teacher/test-series");
     return { success: true };

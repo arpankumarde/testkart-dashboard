@@ -54,7 +54,7 @@ interface Test {
   test_sery: TestSeries;
 }
 
-interface ApiResponse {
+export interface ApiResponse {
   success: boolean;
   message: string;
   data: Test[];

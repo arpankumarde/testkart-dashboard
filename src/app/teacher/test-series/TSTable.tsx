@@ -78,7 +78,7 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[60px] font-bold">#</TableHead>
+          <TableHead className="w-[60px] font-semibold">#</TableHead>
           <TableHead className="max-w-60 font-semibold">
             Test Series Name
           </TableHead>
@@ -86,8 +86,8 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
           <TableHead className="font-semibold">Students</TableHead>
           <TableHead className="font-semibold">Price</TableHead>
           <TableHead className="font-semibold">Ratings</TableHead>
-          <TableHead className="font-semibold">Status</TableHead>
-          <TableHead className="font-semibold">Actions</TableHead>
+          <TableHead className="font-semibold text-center">Status</TableHead>
+          <TableHead className="font-semibold text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

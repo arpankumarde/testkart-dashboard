@@ -119,18 +119,14 @@ const TTable = ({ data }: { data: Test[] }) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[60px] font-bold">#</TableHead>
-          <TableHead className="font-bold text-xl">Test Name</TableHead>
-          <TableHead className="font-bold text-xl">Subjects</TableHead>
-          <TableHead className="font-bold text-xl text-center">
-            Metadata
-          </TableHead>
-          <TableHead className="font-bold text-xl text-center">Free?</TableHead>
-          <TableHead className="font-bold text-xl text-center">
-            Schedule
-          </TableHead>
-          <TableHead className="font-bold text-xl">Status</TableHead>
-          <TableHead className="font-bold text-xl">Actions</TableHead>
+          <TableHead className="w-[60px] font-semibold">#</TableHead>
+          <TableHead className="font-semibold">Test Name</TableHead>
+          <TableHead className="font-semibold">Subjects</TableHead>
+          <TableHead className="font-semibold text-center">Metadata</TableHead>
+          <TableHead className="font-semibold text-center">Free?</TableHead>
+          <TableHead className="font-semibold text-center">Schedule</TableHead>
+          <TableHead className="font-semibold text-center">Status</TableHead>
+          <TableHead className="font-semibold text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -313,6 +309,16 @@ const TTable = ({ data }: { data: Test[] }) => {
                       View Reports
                     </Link>
                   </DropdownMenuItem>
+
+                  {ts?.data?.status == 0 ? (
+                    <DropdownMenuItem>
+                      <Link
+                        href={`/teacher/test-series/${ts?.data?.test_series_id}/${ts?.data?.test_id}/import`}
+                      >
+                        Import Questions
+                      </Link>
+                    </DropdownMenuItem>
+                  ) : null}
 
                   <DropdownMenuSeparator />
 
