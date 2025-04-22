@@ -16,6 +16,15 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { deleteCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Users,
+  BarChart3,
+  Building2,
+  UserCog,
+  LogOut,
+} from "lucide-react";
 
 const AppSidebar = () => {
   const router = useRouter();
@@ -36,14 +45,26 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/dashboard">Dashboard</Link>
+                  <Link
+                    href="/teacher/dashboard"
+                    className="flex items-center gap-2"
+                  >
+                    <LayoutDashboard size={18} />
+                    Dashboard
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/test-series">Test Series</Link>
+                  <Link
+                    href="/teacher/test-series"
+                    className="flex items-center gap-2"
+                  >
+                    <BookOpen size={18} />
+                    Test Series
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -56,14 +77,26 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/students">Students</Link>
+                  <Link
+                    href="/teacher/students"
+                    className="flex items-center gap-2"
+                  >
+                    <Users size={18} />
+                    Students
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/reports">Reports</Link>
+                  <Link
+                    href="/teacher/reports"
+                    className="flex items-center gap-2"
+                  >
+                    <BarChart3 size={18} />
+                    Reports
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -76,14 +109,26 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/edit-academy">Edit Academy</Link>
+                  <Link
+                    href="/teacher/edit-academy"
+                    className="flex items-center gap-2"
+                  >
+                    <Building2 size={18} />
+                    Edit Academy
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/teacher/edit-profile">Edit Profile</Link>
+                  <Link
+                    href="/teacher/edit-profile"
+                    className="flex items-center gap-2"
+                  >
+                    <UserCog size={18} />
+                    Edit Profile
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -94,7 +139,12 @@ const AppSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Button variant={"destructive"} onClick={logout}>
+              <Button
+                variant={"destructive"}
+                onClick={logout}
+                className="flex items-center gap-2"
+              >
+                <LogOut size={16} />
                 Logout
               </Button>
             </SidebarMenuButton>
