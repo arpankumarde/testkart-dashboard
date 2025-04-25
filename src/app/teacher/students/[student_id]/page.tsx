@@ -22,6 +22,9 @@ interface PurchaseData {
   test_series_id: number;
   purchase_time: string;
   test_sery: TestSeries;
+  user_student: {
+    name: string;
+  };
 }
 
 interface ApiResponse {
@@ -63,13 +66,15 @@ const Page = async ({
               <ChevronLeft className="h-4 w-4 mr-1" /> Back to Students
             </Link>
             <h1 className="text-2xl font-semibold text-gray-800">
-              Student ID: {student_id}
+              {data?.data?.[0]?.user_student?.name || "Unnamed Student"}
             </h1>
-            <p className="text-gray-500 mt-1">Purchase History</p>
+            <p className="text-gray-500 mt-1">
+              Student ID: {student_id} • Purchase History
+            </p>
           </div>
-          <div className="bg-blue-50 px-4 py-2 rounded-lg">
-            <p className="text-sm text-gray-600">Total Spent</p>
-            <p className="text-xl font-semibold text-blue-700">
+          <div className="bg-primary/10 px-4 py-2 rounded-lg">
+            <p className="text-sm text-gray-800">Total Spent</p>
+            <p className="text-xl font-semibold text-primary">
               ₹ {totalSpent.toFixed(2)}
             </p>
           </div>
@@ -101,7 +106,6 @@ const Page = async ({
                 </TableRow>
               ) : (
                 data?.data?.map((purchase, index) => {
-                  // Format the purchase time with native JS
                   let formattedTime;
                   try {
                     const purchaseDate = new Date(purchase.purchase_time);
@@ -177,16 +181,9 @@ const Page = async ({
             Failed to load student data. Please try again later.
           </p>
           <div className="mt-4 space-x-3">
-            <Button
-              variant="outline"
-              className="bg-white"
-              onClick={() => window.location.reload()}
-            >
-              Retry
-            </Button>
             <Link href="/teacher/students">
               <Button variant="outline" className="bg-white">
-                Return to Students
+                Return to All Students
               </Button>
             </Link>
           </div>
