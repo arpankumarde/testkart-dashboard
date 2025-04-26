@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -119,4 +120,16 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.ql-container {
+  @apply rounded-b-md;
+}
+
+.ql-toolbar {
+  @apply rounded-t-md;
+}
+
+.ql-editor {
+  @apply min-h-20;
 }
