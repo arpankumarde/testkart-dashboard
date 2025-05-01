@@ -36,7 +36,7 @@ const AppSidebar = () => {
   };
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
