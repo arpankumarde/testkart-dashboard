@@ -56,7 +56,7 @@ interface Exam {
   updatedAt: string;
 }
 
-const Page = async ({ params }: { params: Promise<{ tsid: number }> }) => {
+const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
   const { tsid } = await params;
   const { data }: { data: ApiResponse } = await api.get(
     `/api/v1/test-series/${tsid}`,
@@ -70,11 +70,46 @@ const Page = async ({ params }: { params: Promise<{ tsid: number }> }) => {
   console.log(data);
 
   return (
-    <div className="p-4">
-      <h1>Edit Test Series: {data?.data?.title}</h1>
-      <p>Please make your changes below: </p>
+    <div className="container max-w-6xl mx-auto p-4">
+      <div className="space-y-2 mb-8">
+        <nav className="flex items-center text-sm text-muted-foreground">
+          <ol className="flex items-center space-x-2">
+            <li>
+              <a href="/teacher" className="hover:text-primary">
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <span>/</span>
+            </li>
+            <li>
+              <a href="/teacher/test-series" className="hover:text-primary">
+                Test Series
+              </a>
+            </li>
+            <li>
+              <span>/</span>
+            </li>
+            <li>
+              <span className="text-foreground font-medium">Edit</span>
+            </li>
+          </ol>
+        </nav>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {data?.data?.title}
+        </h1>
+        <p className="text-muted-foreground">
+          Update your test series details and configuration below
+        </p>
+      </div>
 
-      <TSEditForm data={data?.data} tsid={tsid} />
+      <div className="grid gap-6">
+        <div className="rounded-lg border bg-card text-card-foreground shadow">
+          <div className="p-6">
+            <TSEditForm data={data?.data} tsid={tsid} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
