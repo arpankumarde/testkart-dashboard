@@ -217,7 +217,7 @@ const Panel = ({ test }: { test: Test }) => {
         options: question.options,
         question_type: question.question_type,
         question: question.question,
-        solution: question.solution || "",
+        solution: question.options.find((o) => o.is_correct)?.option || "",
         subject_id: question.subject_id,
         test_id: question.test_id,
       };
@@ -283,6 +283,11 @@ const Panel = ({ test }: { test: Test }) => {
 
       if (data?.success) {
         setQuestions(data?.data?.questions);
+        // Reset the form after successful submission
+        // setNewQuestion({
+        //   ...newQuestionDataTemplate,
+        //   index: questionIndex || 0,
+        // });
         alert("Question added successfully!");
       } else {
         alert("Failed to add question. Please try again.");
@@ -350,6 +355,13 @@ const Panel = ({ test }: { test: Test }) => {
                     getQuestion(existingQuestion?.question_id);
                   } else {
                     setQuestion(null);
+                    // Reset the form with fresh template data when selecting a blank question
+                    setNewQuestion({
+                      ...newQuestionDataTemplate,
+                      index: i,
+                      subject_id: subject,
+                      test_id: test?.test_id,
+                    });
                   }
                 }}
               >
@@ -573,7 +585,7 @@ const Panel = ({ test }: { test: Test }) => {
             ) : (
               <AddQComp
                 id={`${subject}-${questionIndex}`}
-                key={`${subject}-${questionIndex}`}
+                key={`add-q-${subject}-${questionIndex}`}
                 addQuestion={addQuestion}
                 newQuestion={newQuestion}
                 questionIndex={questionIndex}
