@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -83,6 +84,9 @@ const AddTestForm = ({ data }: AddTestFormProps) => {
     ? (JSON.parse(userCookie as string) as AuthResponse["data"])
     : null;
   const router = useRouter();
+  const [selectedSubjects, setSelectedSubjects] = useState<number[]>(
+    data.exam.default_pattern.subjects.map((subject) => subject.subject_id)
+  );
 
   const addTest = async (payload: Payload) => {
     try {
@@ -101,6 +105,7 @@ const AddTestForm = ({ data }: AddTestFormProps) => {
   return (
     <div>
       <form
+        className="space-y-6"
         onSubmit={async (e) => {
           e.preventDefault();
           const form = e.target as HTMLFormElement;
@@ -117,12 +122,24 @@ const AddTestForm = ({ data }: AddTestFormProps) => {
             })
           );
 
-          const selectedSubjects = subjects.filter(
+          if (selectedSubjects.length === 0) {
+            alert("Please select at least one subject.");
+            return;
+          }
+
+          const filteredSubjects = subjects.filter(
             (subject) => subject.inclued
           );
 
-          if (selectedSubjects.length === 0) {
-            alert("Please select at least one subject.");
+          const totalQuestions = filteredSubjects.reduce(
+            (sum, subject) => sum + subject.total_questions,
+            0
+          );
+
+          if (totalQuestions <= 0) {
+            alert(
+              "Total questions for included subjects must be greater than zero."
+            );
             return;
           }
 
@@ -132,59 +149,139 @@ const AddTestForm = ({ data }: AddTestFormProps) => {
             title: String(formData.get("title") || ""),
             duration: Number(formData.get("duration") || 0),
             academy_id: user?.user?.academy?.academy_id ?? 0,
-            subjects: selectedSubjects,
+            subjects: filteredSubjects,
           };
 
           await addTest(payload);
         }}
       >
-        <Label htmlFor="title">Test Title</Label>
-        <Input
-          id="title"
-          name="title"
-          placeholder="Enter test title"
-          required
-        />
-
-        <Label htmlFor="duration">Duration</Label>
-        <Input
-          id="duration"
-          name="duration"
-          type="number"
-          placeholder="Enter duration in minutes"
-          defaultValue={data.exam.default_pattern.exam_duration}
-          required
-        />
-
-        <h2>Select which subjects you wanted to be included in this test</h2>
-        {data.exam.default_pattern.subjects.map((subject) => (
-          <div
-            key={subject.subject_id}
-            className="flex justify-between items-center gap-2"
-          >
-            <div className="flex gap-3 items-center">
-              <Checkbox
-                id={`subject-${subject.subject_id}`}
-                name={`subject-${subject.subject_id}`}
-                defaultChecked={true}
-              />
-              <Label htmlFor={`subject-${subject.subject_id}`}>
-                {subject.subject}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Test Basic Information */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-base font-medium">
+                Test Title
               </Label>
+              <Input
+                id="title"
+                name="title"
+                placeholder="Enter test title"
+                className="w-full"
+                maxLength={60}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Give your test a descriptive title
+              </p>
             </div>
-            <Input
-              id={`questions-${subject.subject_id}`}
-              name={`questions-${subject.subject_id}`}
-              type="number"
-              defaultValue={subject.questions}
-              placeholder="Enter number of questions"
-              className="w-24"
-            />
-          </div>
-        ))}
 
-        <div className="text-right mt-4">
-          <Button type="submit">Create Test</Button>
+            <div className="space-y-2">
+              <Label htmlFor="duration" className="text-base font-medium">
+                Duration (minutes)
+              </Label>
+              <Input
+                id="duration"
+                name="duration"
+                type="number"
+                placeholder="Enter duration in minutes"
+                defaultValue={data.exam.default_pattern.exam_duration}
+                className="w-full"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Time allowed for students to complete the test
+              </p>
+            </div>
+          </div>
+
+          {/* Test Information */}
+          <div className="bg-muted/30 p-4 rounded-lg space-y-2">
+            <h3 className="font-medium">Test Series Information</h3>
+            <div className="text-sm space-y-1">
+              <p>
+                <span className="font-medium">Series:</span> {data.title}
+              </p>
+              <p>
+                <span className="font-medium">Exam:</span> {data.exam.exam}
+              </p>
+              <p>
+                <span className="font-medium">Default Duration:</span>{" "}
+                {data.exam.default_pattern.exam_duration} minutes
+              </p>
+              <p>
+                <span className="font-medium">Marking Scheme:</span> +
+                {data.exam.default_pattern.positive_marks} / -
+                {data.exam.default_pattern.negative_marks}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-lg font-medium mb-4">Subject Selection</h2>
+          <div className="bg-muted/20 md:p-4 rounded-lg">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b">
+                <div className="font-medium">Subject</div>
+                <div className="font-medium">Questions</div>
+              </div>
+
+              {data.exam.default_pattern.subjects.map((subject) => (
+                <div
+                  key={subject.subject_id}
+                  className="flex justify-between items-center gap-2 py-2 border-b border-muted-foreground/20"
+                >
+                  <div className="flex gap-3 items-center">
+                    <Checkbox
+                      id={`subject-${subject.subject_id}`}
+                      name={`subject-${subject.subject_id}`}
+                      defaultChecked={true}
+                      className="h-5 w-5"
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedSubjects((prev) => [
+                            ...prev,
+                            subject.subject_id,
+                          ]);
+                        } else {
+                          setSelectedSubjects((prev) =>
+                            prev.filter((id) => id !== subject.subject_id)
+                          );
+                        }
+                      }}
+                    />
+                    <Label
+                      htmlFor={`subject-${subject.subject_id}`}
+                      className="text-base cursor-pointer"
+                    >
+                      {subject.subject}
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id={`questions-${subject.subject_id}`}
+                      name={`questions-${subject.subject_id}`}
+                      type="number"
+                      min={0}
+                      defaultValue={subject.questions || 0}
+                      placeholder="Questions"
+                      className="w-24"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-4">
+              Select the subjects to include in this test and specify the number
+              of questions for each subject
+            </p>
+          </div>
+        </div>
+
+        <div className="flex justify-end mt-6">
+          <Button type="submit" className="px-8">
+            Create Test
+          </Button>
         </div>
       </form>
     </div>
