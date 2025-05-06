@@ -21,6 +21,15 @@ import { createTestSeries } from "@/actions/test-series";
 import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next/client";
 import { AuthResponse } from "@/actions/auth";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { BookOpen, PlusCircle } from "lucide-react";
 
 interface Subject {
   subject_id: number;
@@ -77,7 +86,7 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
 
   return (
     <form
-      className="flex flex-col md:flex-row gap-8"
+      className="space-y-6"
       action={async (e) => {
         console.log(e);
         const formData = Object.fromEntries(e.entries());
@@ -96,170 +105,247 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
           discountType: "flat",
         };
 
+        if (!selectedExam?.exam_id) {
+          alert("Please select an exam");
+          return;
+        }
+
         const { data, success } = await createTestSeries(payload);
         if (success) {
           router.push(`/teacher/test-series/${data?.data?.test_series_id}`);
         }
       }}
     >
-      {/* Left Column */}
-      <div className="flex-1">
-        <div>
-          <Label htmlFor="exam">Select an exam to proceed</Label>
-          <Select
-            name="exam"
-            onValueChange={(value) => {
-              const exam = data.find(
-                (exam) => exam.exam_id.toString() === value
-              );
-              setSelectedExam(exam || null);
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select an exam" />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from(
-                new Map(data.map((exam) => [exam.category, exam])).keys()
-              ).map((category) => (
-                <SelectGroup key={category}>
-                  <SelectLabel>{category}</SelectLabel>
-                  {data
-                    .filter((exam) => exam.category === category)
-                    .map((exam) => (
-                      <SelectItem
-                        key={exam.exam_id}
-                        value={exam.exam_id.toString()}
-                      >
-                        {exam.exam}
-                      </SelectItem>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Exam Selection */}
+        <div className="lg:col-span-1">
+          <Card className="h-full border-l-4 border-l-primary pt-0">
+            <CardHeader className="bg-primary/5 py-4">
+              <CardTitle className="flex items-center text-primary">
+                <BookOpen className="mr-2 h-5 w-5" />
+                Exam Selection
+              </CardTitle>
+              <CardDescription>
+                Choose the exam for your test series
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="exam">Select an exam to proceed</Label>
+                <Select
+                  name="exam"
+                  onValueChange={(value) => {
+                    const exam = data?.find(
+                      (exam) => exam.exam_id.toString() === value
+                    );
+                    setSelectedExam(exam || null);
+                  }}
+                  required
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select an exam" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from(
+                      new Map(data.map((exam) => [exam.category, exam])).keys()
+                    ).map((category) => (
+                      <SelectGroup key={category}>
+                        <SelectLabel>{category}</SelectLabel>
+                        {data
+                          .filter((exam) => exam.category === category)
+                          .map((exam) => (
+                            <SelectItem
+                              key={exam.exam_id}
+                              value={exam.exam_id.toString()}
+                            >
+                              {exam.exam}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
                     ))}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {selectedExam && (
+                <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                  <h3 className="font-medium mb-2">Included Subjects:</h3>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedExam.default_pattern.subjects.map((subject) => (
+                      <span
+                        key={subject.subject_id}
+                        className="px-2 py-1 bg-primary/10 text-primary text-sm rounded-md"
+                      >
+                        {subject.subject}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
-        {selectedExam && (
-          <div>
-            <h2>Subjects: </h2>
-            <p>
-              {selectedExam.default_pattern.subjects
-                .map((subject) => subject.subject)
-                .join(", ")}
-            </p>
-          </div>
-        )}
-      </div>
+        {/* Right Column - Test Series Details */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border-l-4 border-l-primary pt-0">
+            <CardHeader className="bg-primary/5 py-4">
+              <CardTitle className="text-primary">
+                Test Series Details
+              </CardTitle>
+              <CardDescription>
+                Enter the basic information for your test series
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  maxLength={100}
+                  className="w-full"
+                  placeholder="Enter test series title"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Title must be 100 characters or less.
+                </p>
+              </div>
 
-      {/* Right Column */}
-      <div className="flex-1">
-        <div>
-          <Label htmlFor="title">Title</Label>
-          <Input id="title" name="title" maxLength={100} />
-          <p className="text-sm text-muted-foreground">
-            Title must be 100 characters or less.
-          </p>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  className="w-full resize-none"
+                  placeholder="Enter test series description"
+                />
+              </div>
 
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" />
-        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="space-y-2">
+                  <Label htmlFor="difficulty">Difficulty</Label>
+                  <Select name="difficulty" required>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select difficulty" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {difficulty.map((level) => (
+                        <SelectItem key={level} value={level}>
+                          {level}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <Label htmlFor="difficulty">Difficulty</Label>
-            <Select name="difficulty" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select difficulty" />
-              </SelectTrigger>
-              <SelectContent>
-                {difficulty.map((level) => (
-                  <SelectItem key={level} value={level}>
-                    {level}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                <div className="space-y-2">
+                  <Label htmlFor="language">Language</Label>
+                  <Select name="language" required>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languages.map((lang) => (
+                        <SelectItem key={lang} value={lang}>
+                          {lang}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="flex-1">
-            <Label htmlFor="language">Language</Label>
-            <Select name="language" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                {languages.map((lang) => (
-                  <SelectItem key={lang} value={lang}>
-                    {lang}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+          <Card className="border-l-4 border-l-primary pt-0">
+            <CardHeader className="bg-primary/5 py-4">
+              <CardTitle className="text-primary">Pricing Options</CardTitle>
+              <CardDescription>
+                Set pricing for your test series
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <Label htmlFor="pricing">Pricing Type</Label>
+                <RadioGroup
+                  name="pricing"
+                  onValueChange={(value) => setIsPaid(value === "paid")}
+                  required
+                  className="flex flex-col space-y-1"
+                  defaultValue="free"
+                >
+                  <div className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50">
+                    <RadioGroupItem id="pricing-free" value="free" />
+                    <Label
+                      htmlFor="pricing-free"
+                      className="flex-1 cursor-pointer"
+                    >
+                      Free
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50">
+                    <RadioGroupItem id="pricing-paid" value="paid" />
+                    <Label
+                      htmlFor="pricing-paid"
+                      className="flex-1 cursor-pointer"
+                    >
+                      Paid
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
 
-        <div>
-          <Label htmlFor="pricing">Pricing</Label>
-          <RadioGroup
-            name="pricing"
-            onValueChange={(value) => setIsPaid(value === "paid")}
-            required
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem id="pricing-free" value="free" />
-              <Label htmlFor="pricing-free">Free</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem id="pricing-paid" value="paid" />
-              <Label htmlFor="pricing-paid">Paid</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {isPaid && (
-          <div className="flex gap-2 items-center justify-between">
-            <div>
-              <Label htmlFor="price_before_discount">
-                Price Before Discount
-              </Label>
-              <Input
-                id="price_before_discount"
-                name="price_before_discount"
-                type="number"
-                value={priceBeforeDiscount}
-                onChange={(e) => setPriceBeforeDiscount(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                name="price"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="final_price">Final Price</Label>
-              <Input
-                id="final_price"
-                name="final_price"
-                type="number"
-                value={priceBeforeDiscount - price}
-                readOnly
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="text-right">
-          <Button type="submit" className="mt-4">
-            Create Test Series
-          </Button>
+              {isPaid && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price_before_discount">
+                      Original Price
+                    </Label>
+                    <Input
+                      id="price_before_discount"
+                      name="price_before_discount"
+                      type="number"
+                      value={priceBeforeDiscount}
+                      onChange={(e) =>
+                        setPriceBeforeDiscount(Number(e.target.value))
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Discounted Price</Label>
+                    <Input
+                      id="price"
+                      name="price"
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="final_price">Discount Amount</Label>
+                    <Input
+                      id="final_price"
+                      name="final_price"
+                      type="number"
+                      value={priceBeforeDiscount - price}
+                      readOnly
+                      className="w-full bg-muted/50"
+                    />
+                  </div>
+                </div>
+              )}
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button type="submit" className="w-full md:w-auto" size="lg">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create Test Series
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </form>
