@@ -11,6 +11,7 @@ const fontInter = Inter({
 
 export const metadata: Metadata = {
   title: "Teacher's App | TestKart",
+  icons: ["/static/logo.png"],
 };
 
 export default function RootLayout({
