@@ -76,7 +76,10 @@ const Page = () => {
 
   // Filter to only show test series with tests
   const filteredData = data
-    .filter((testSeries) => (testSeries.total_tests || 0) > 0)
+    .filter(
+      (testSeries) =>
+        (testSeries.total_tests || 0) > 0 && testSeries.status !== 0
+    )
     .sort((a, b) => {
       // Sort by status priority: 1 (Live) first, then 2 (Unlisted), then others
       if (a.status === 1 && b.status !== 1) return -1;

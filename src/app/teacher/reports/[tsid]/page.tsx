@@ -43,6 +43,7 @@ interface ApiResponse {
 const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
   const { tsid } = await params;
   const token = await getToken();
+
   try {
     const { data }: { data: ApiResponse } = await api.get(
       `/api/v1/studio/academy/test-report-detail/${tsid}`,
@@ -166,7 +167,7 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
                                 </td>
                                 <td className="px-4 py-3">
                                   <Link
-                                    href={`/teacher/reports/test-session/${student.test_session_id}`}
+                                    href={`/teacher/reports/test-session/${student.test_session_id}?student_id=${student.student_id}`}
                                     className="text-primary hover:text-primary-dark font-medium flex items-center"
                                   >
                                     View Details
