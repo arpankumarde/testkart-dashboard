@@ -24,6 +24,7 @@ import {
   Building2,
   UserCog,
   LogOut,
+  Star,
 } from "lucide-react";
 
 const AppSidebar = () => {
@@ -96,6 +97,19 @@ const AppSidebar = () => {
                   >
                     <BarChart3 size={18} />
                     Reports
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    href="/teacher/reviews"
+                    className="flex items-center gap-2"
+                  >
+                    <Star size={18} />
+                    Reviews
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
