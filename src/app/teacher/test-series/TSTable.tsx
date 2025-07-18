@@ -54,6 +54,9 @@ interface TestSeries {
   is_purchased: number;
   is_deleted: number;
   average_rating: number | null;
+  students_joined: number;
+  unique_attempts: number;
+  attempting_students: [];
   createdAt: string;
   updatedAt: string;
 }
@@ -103,9 +106,9 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
               </Link>
             </TableCell>
             <TableCell>{ts?.total_tests ?? 0}</TableCell>
-            <TableCell></TableCell>
+            <TableCell>{ts?.students_joined || 0}</TableCell>
             <TableCell>{ts?.price}</TableCell>
-            <TableCell>{ts?.average_rating}</TableCell>
+            <TableCell>{ts?.average_rating || "NA"}</TableCell>
             <TableCell className="text-center">
               {renderStatusBadge(ts?.status)}
             </TableCell>
@@ -144,10 +147,28 @@ const TSTable = ({ data }: { data: TestSeries[] }) => {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
+                    className={ts?.status === 0 ? "" : "hidden"}
+                  >
+                    <Link href={`/teacher/listing/${ts?.test_series_id}`}>
+                      Verify for Listing
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
                     className={ts?.status === 2 ? "" : "hidden"}
                   >
-                    <Link href={`/teacher/reviews/${ts?.test_series_id}`}>
+                    <Link
+                      href={`/teacher/listing/${ts?.test_series_id}?publish=true`}
+                    >
                       List Test Series
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className={ts?.status === 1 ? "" : "hidden"}
+                  >
+                    <Link href={`/teacher/listing/${ts?.test_series_id}`}>
+                      Unlist Test Series
                     </Link>
                   </DropdownMenuItem>
 
