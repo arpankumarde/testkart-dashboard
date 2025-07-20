@@ -11,10 +11,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { deleteCookie } from "cookies-next/client";
+import { deleteCookie, getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -26,9 +27,24 @@ import {
   LogOut,
   Star,
 } from "lucide-react";
+import Image from "next/image";
+import { AuthResponse } from "@/actions/auth";
+import { useEffect, useState } from "react";
 
 const AppSidebar = () => {
+  const [user, setUser] = useState<AuthResponse["data"] | null>(null);
   const router = useRouter();
+  const { state } = useSidebar();
+
+  useEffect(() => {
+    const userCookie = getCookie("tkuser");
+    const userLocal = userCookie
+      ? (JSON.parse(userCookie as string) as AuthResponse["data"])
+      : null;
+
+    setUser(userLocal);
+  }, []);
+
   const logout = () => {
     deleteCookie("tktoken");
     deleteCookie("tkuser");
@@ -38,7 +54,20 @@ const AppSidebar = () => {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader />
+      <SidebarHeader>
+        <Image
+          src={
+            state === "expanded"
+              ? "/static/app-logo-full.png"
+              : "/static/logo.png"
+          }
+          alt="Testkart Logo"
+          width={900}
+          height={300}
+          className="h-16 object-contain"
+        />
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -133,7 +162,7 @@ const AppSidebar = () => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
-            <SidebarMenu>
+            {/* <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link
@@ -145,12 +174,19 @@ const AppSidebar = () => {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarMenu>
+            </SidebarMenu> */}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem className="flex flex-col p-2 bg-gray-100 rounded-lg">
+            <span className="text-xs">Logged In as</span>
+            <span className="text-base font-medium">
+              {user?.user?.academy?.academy_name || ""}
+            </span>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Button
