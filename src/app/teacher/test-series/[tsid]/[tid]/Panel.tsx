@@ -27,7 +27,7 @@ import {
 import api from "@/lib/api";
 import getTokenClient from "@/lib/getTokenClient";
 import { FaCircle } from "react-icons/fa";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddQComp from "./_components/AddQComp";
 import LoaderComponent from "@/components/blocks/LoaderComponent";
 

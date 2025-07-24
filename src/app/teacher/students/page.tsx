@@ -118,7 +118,7 @@ const Page = async () => {
           <Button
             variant="outline"
             className="mt-4"
-            onClick={() => window.location.reload()}
+            // onClick={() => window.location.reload()}
           >
             Retry
           </Button>

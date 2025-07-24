@@ -34,6 +34,9 @@ interface TestSeries {
   is_purchased: number;
   is_deleted: number;
   average_rating: number | null;
+  students_joined: number;
+  unique_attempts: number;
+  attempting_students: [];
   createdAt: string;
   updatedAt: string;
 }
