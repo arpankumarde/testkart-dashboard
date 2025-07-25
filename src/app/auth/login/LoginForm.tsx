@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { setCookie } from "cookies-next";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -24,9 +25,10 @@ const LoginForm = () => {
           password: formData["password"] as string,
         });
 
-        if (error) {
+        if (error || data?.error !== undefined) {
+          toast.error(data?.error || "Login failed. Please try again.");
           return;
-        } else {
+        } else if (data?.data && data?.data?.token) {
           setCookie("tkuser", data?.data, {
             maxAge: 30 * 24 * 60 * 60,
           });

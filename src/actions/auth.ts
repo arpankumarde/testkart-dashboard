@@ -35,12 +35,13 @@ interface User {
 
 export type AuthResponse = {
   success: boolean;
-  message: string;
+  message?: string;
   data: {
     type: "TEACHER";
     token: string;
     user: User;
   };
+  error?: string;
 };
 
 export interface SignupPayload {
@@ -54,9 +55,10 @@ export interface SignupPayload {
   confirm_password: string;
 }
 
-interface SignupResponse {
+export interface SignupResponse {
   success: boolean;
   data: object;
+  error?: string;
 }
 
 export async function login(payload: { email: string; password: string }) {

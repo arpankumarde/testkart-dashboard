@@ -1,14 +1,43 @@
 "use client";
 
-import { signup, SignupPayload } from "@/actions/auth";
+import { SignupPayload, SignupResponse } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import api from "@/lib/api";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const SignupForm = () => {
   const router = useRouter();
+
+  const signup = async (payload: SignupPayload) => {
+    try {
+      const { data }: { data: SignupResponse } = await api.post(
+        "/api/v1/studio/academy/register",
+        payload
+      );
+
+      if (data?.success === false) {
+        toast.error(data?.error || "An error occurred. Please try again.");
+        return;
+      } else {
+        toast.success("Account created! Please verify your email to continue.");
+        router.push(`/auth/signup/verify?email=${payload.email}`);
+      }
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.error || "An error occurred. Please try again."
+        );
+      } else {
+        toast.error("An error occurred. Please try again.");
+      }
+    }
+  };
 
   return (
     <form
@@ -33,15 +62,7 @@ const SignupForm = () => {
           academy_phone: (formData["academy_phone"] as string).trim(),
         };
 
-        const { data } = await signup(payload);
-
-        if (data?.success === false) {
-          alert("An error occurred. Please try again.");
-          return;
-        } else {
-          alert("Account created! Please verify your email to continue.");
-          router.push(`/auth/signup/verify?email=${payload.email}`);
-        }
+        await signup(payload);
       }}
     >
       <div className="flex flex-col items-center gap-2 text-center">
@@ -77,7 +98,13 @@ const SignupForm = () => {
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input id="password" name="password" type="password" required />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            minLength={6}
+            required
+          />
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
@@ -87,6 +114,7 @@ const SignupForm = () => {
             id="confirm_password"
             name="confirm_password"
             type="password"
+            minLength={6}
             required
           />
         </div>
