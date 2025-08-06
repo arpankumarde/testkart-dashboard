@@ -100,7 +100,7 @@ interface Payload {
 const TSEditForm = ({ data, tsid }: TSEditFormProps & { tsid: string }) => {
   const router = useRouter();
   const [isPaid, setIsPaid] = useState(data?.is_paid);
-  const [price, setPrice] = useState(data?.price);
+  const [finalPrice, setFinalPrice] = useState(data?.price);
   const [priceBeforeDiscount, setPriceBeforeDiscount] = useState(
     data?.price_before_discount
   );
@@ -126,8 +126,8 @@ const TSEditForm = ({ data, tsid }: TSEditFormProps & { tsid: string }) => {
           difficulty_level: formData["difficulty"] as string,
           is_paid: isPaid ? 1 : 0,
           price_before_discount: priceBeforeDiscount,
-          discount: priceBeforeDiscount - price,
-          price: price,
+          discount: priceBeforeDiscount - finalPrice,
+          price: finalPrice,
           discountType: "flat",
         };
 
@@ -248,10 +248,7 @@ const TSEditForm = ({ data, tsid }: TSEditFormProps & { tsid: string }) => {
               </div>
 
               {isPaid ? (
-                <div className="mt-4 space-y-4 p-4 bg-primary/5 rounded-md border border-primary/20">
-                  <h4 className="text-sm font-medium text-primary">
-                    Pricing Details
-                  </h4>
+                <div className="mt-4 space-y-4">
                   <Separator className="bg-primary/10" />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
@@ -269,24 +266,24 @@ const TSEditForm = ({ data, tsid }: TSEditFormProps & { tsid: string }) => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="price">Discount (₹)</Label>
+                      <Label htmlFor="final_price">Final Price (₹)</Label>
                       <Input
-                        id="price"
-                        name="price"
+                        id="final_price"
+                        name="final_price"
                         type="number"
-                        value={price}
-                        onChange={(e) => setPrice(Number(e.target.value))}
+                        value={finalPrice}
+                        onChange={(e) => setFinalPrice(Number(e.target.value))}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="final_price">Final Price (₹)</Label>
+                      <Label htmlFor="discount_amount">Discount (₹)</Label>
                       <div className="relative">
                         <Input
-                          id="final_price"
-                          name="final_price"
+                          id="discount_amount"
+                          name="discount_amount"
                           type="number"
-                          value={priceBeforeDiscount - price}
-                          readOnly
+                          value={priceBeforeDiscount - finalPrice}
+                          disabled
                           className="bg-muted"
                         />
                       </div>
@@ -328,13 +325,13 @@ const TSEditForm = ({ data, tsid }: TSEditFormProps & { tsid: string }) => {
                 <h4 className="font-medium">Test Series Details:</h4>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <span>Exam:</span>
-                  <span className="font-medium">{data?.exam?.exam}</span>
+                  <span className="font-medium">{data?.exam?.exam ?? ""}</span>
 
                   <span>Total Tests:</span>
-                  <span className="font-medium">{data?.total_tests}</span>
+                  <span className="font-medium">{data?.total_tests || 0}</span>
 
                   <span>Free Tests:</span>
-                  <span className="font-medium">{data?.free_tests}</span>
+                  <span className="font-medium">{data?.free_tests || 0}</span>
                 </div>
               </div>
             </CardFooter>

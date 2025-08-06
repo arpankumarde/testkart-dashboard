@@ -76,7 +76,7 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
   const router = useRouter();
   const [selectedExam, setSelectedExam] = useState<ExamData | null>(null);
   const [isPaid, setIsPaid] = useState(false);
-  const [price, setPrice] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
   const [priceBeforeDiscount, setPriceBeforeDiscount] = useState(0);
   const userCookie = getCookie("tkuser");
   const academyId = userCookie
@@ -100,8 +100,8 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
           difficulty_level: formData["difficulty"] as string,
           is_paid: isPaid ? 1 : 0,
           price_before_discount: priceBeforeDiscount,
-          discount: priceBeforeDiscount - price,
-          price: price,
+          discount: priceBeforeDiscount - finalPrice,
+          price: finalPrice,
           discountType: "flat",
         };
 
@@ -273,10 +273,10 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
                   name="pricing"
                   onValueChange={(value) => setIsPaid(value === "paid")}
                   required
-                  className="flex flex-col space-y-1"
+                  className="flex flex-row space-y-1"
                   defaultValue="free"
                 >
-                  <div className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50">
+                  <div className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50 h-full">
                     <RadioGroupItem id="pricing-free" value="free" />
                     <Label
                       htmlFor="pricing-free"
@@ -285,7 +285,7 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
                       Free
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50">
+                  <div className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50 h-full">
                     <RadioGroupItem id="pricing-paid" value="paid" />
                     <Label
                       htmlFor="pricing-paid"
@@ -315,24 +315,24 @@ const TSCreateForm = ({ data }: TSCreateFormProps) => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price">Discounted Price</Label>
-                    <Input
-                      id="price"
-                      name="price"
-                      type="number"
-                      value={price}
-                      onChange={(e) => setPrice(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="final_price">Discount Amount</Label>
+                    <Label htmlFor="final_price">Final Price</Label>
                     <Input
                       id="final_price"
                       name="final_price"
                       type="number"
-                      value={priceBeforeDiscount - price}
-                      readOnly
+                      value={finalPrice}
+                      onChange={(e) => setFinalPrice(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="discount_amount">Discount Amount</Label>
+                    <Input
+                      id="discount_amount"
+                      name="discount_amount"
+                      type="number"
+                      value={priceBeforeDiscount - finalPrice}
+                      disabled
                       className="w-full bg-muted/50"
                     />
                   </div>
