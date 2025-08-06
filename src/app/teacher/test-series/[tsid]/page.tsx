@@ -129,7 +129,15 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
             <div>
               <h1 className="text-xl font-medium">{data?.data?.title}</h1>
             </div>
-            <div>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant={"outline"}>
+                <Link href={`/teacher/test-series/${tsid}/edit`}>
+                  Edit Test Series
+                </Link>
+              </Button>
+              <Button asChild variant={"secondary"}>
+                <Link href={`/teacher/listing/${tsid}`}>Listing Status</Link>
+              </Button>
               <Button asChild>
                 <Link href={`/teacher/test-series/${tsid}/create`}>
                   Add New Test
