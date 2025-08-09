@@ -27,6 +27,7 @@ import {
   LogOut,
   Star,
 } from "lucide-react";
+import { LuVideo } from "react-icons/lu";
 import Image from "next/image";
 import { AuthResponse } from "@/actions/auth";
 import { useEffect, useState } from "react";
@@ -94,6 +95,19 @@ const AppSidebar = () => {
                   >
                     <BookOpen size={18} />
                     Test Series
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    href="/teacher/courses"
+                    className="flex items-center gap-2"
+                  >
+                    <LuVideo size={18} />
+                    Courses
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
