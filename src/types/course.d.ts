@@ -14,4 +14,6 @@ export interface Course {
   module_based: boolean;
   created_at: string;
   updated_at: string;
+  modules: any[];
+  content: any[];
 }
