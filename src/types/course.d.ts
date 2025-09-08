@@ -14,6 +14,24 @@ export interface Course {
   module_based: boolean;
   created_at: string;
   updated_at: string;
+  contents: Content[];
   modules: any[];
-  content: any[];
+}
+
+export interface Content {
+  id: number;
+  course_id: number;
+  module_id: number | null;
+  title: string;
+  slug: string;
+  description: string;
+  video_url: string;
+  pdf_url: string | null;
+  duration_seconds: number;
+  order_index: number;
+  is_free_preview: boolean;
+  created_at: string;
+  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }

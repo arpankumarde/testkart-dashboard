@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import getTokenClient from "@/lib/getTokenClient";
@@ -17,46 +17,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import {
   Video,
   FileText,
-  Upload,
   Clock,
-  ArrowLeft,
   Loader2,
   Link as LinkIcon,
-  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
 interface FormData {
   title: string;
   description: string;
-  content_type: string;
   video_url: string;
   pdf_url: string;
   duration_minutes: number;
   order_index: number;
   is_free_preview: boolean;
-}
-
-interface FormErrors {
-  title?: string;
-  description?: string;
-  content_type?: string;
-  video_url?: string;
-  pdf_url?: string;
-  duration_minutes?: string;
-  order_index?: string;
 }
 
 interface AddContentFormProps {
@@ -69,15 +47,12 @@ const AddContentForm = ({
   existingContentCount = 0,
 }: AddContentFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
 
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
-    content_type: "video",
     video_url: "",
     pdf_url: "",
     duration_minutes: 0,
@@ -85,64 +60,54 @@ const AddContentForm = ({
     is_free_preview: false,
   });
 
-  // Validation functions
-  const validateUrl = (url: string): boolean => {
-    if (!url) return true; // Optional field
-    try {
-      new URL(url);
-      return true;
-    } catch {
+  // Simple validation function
+  const validateForm = (): boolean => {
+    if (!formData.title.trim()) {
+      toast.error("Title is required");
       return false;
     }
-  };
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    // Title validation
-    if (!formData.title.trim()) {
-      newErrors.title = "Title is required";
-    } else if (formData.title.length > 200) {
-      newErrors.title = "Title must be less than 200 characters";
+    if (!formData.video_url.trim()) {
+      toast.error("Video URL is required");
+      return false;
     }
 
-    // Content type validation
-    if (!formData.content_type) {
-      newErrors.content_type = "Content type is required";
+    try {
+      new URL(formData.video_url);
+    } catch {
+      toast.error("Please enter a valid video URL");
+      return false;
     }
 
-    // URL validations
-    if (formData.video_url && !validateUrl(formData.video_url)) {
-      newErrors.video_url = "Please enter a valid URL";
+    if (formData.pdf_url && formData.pdf_url.trim()) {
+      try {
+        new URL(formData.pdf_url);
+      } catch {
+        toast.error("Please enter a valid PDF URL");
+        return false;
+      }
     }
 
-    if (formData.pdf_url && !validateUrl(formData.pdf_url)) {
-      newErrors.pdf_url = "Please enter a valid URL";
-    }
-
-    // Duration validation
     if (formData.duration_minutes < 0) {
-      newErrors.duration_minutes = "Duration must be positive";
-    } else if (formData.duration_minutes > 1440) {
-      newErrors.duration_minutes = "Duration cannot exceed 24 hours";
+      toast.error("Duration must be positive");
+      return false;
     }
 
-    // Order validation
+    if (formData.duration_minutes > 1440) {
+      toast.error("Duration cannot exceed 24 hours");
+      return false;
+    }
+
     if (formData.order_index < 1) {
-      newErrors.order_index = "Order must be at least 1";
+      toast.error("Order must be at least 1");
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleInputChange = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
-    // Clear error for this field when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -153,15 +118,13 @@ const AddContentForm = ({
     }
 
     setIsLoading(true);
-    setError(null);
 
     try {
-      // Convert minutes to seconds for API
       const payload = {
         course_id: data?.id,
         title: formData.title.trim(),
         description: formData.description.trim() || "",
-        video_url: formData.video_url || undefined,
+        video_url: formData.video_url,
         pdf_url: formData.pdf_url || undefined,
         duration_seconds: formData.duration_minutes * 60,
         order_index: formData.order_index,
@@ -175,6 +138,7 @@ const AddContentForm = ({
       });
 
       if (response.status === 200 || response.status === 201) {
+        toast.success("Content created successfully!");
         setSuccess(true);
         setTimeout(() => {
           router.push(`/teacher/courses/${data.id}`);
@@ -182,31 +146,14 @@ const AddContentForm = ({
       }
     } catch (err: any) {
       console.error("Error creating content:", err);
-      toast.error(
+      const errorMessage =
         err.response?.data?.message ||
-          err.message ||
-          "Failed to create content. Please try again."
-      );
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to create content. Please try again."
-      );
+        err.message ||
+        "Failed to create content. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const getContentTypeIcon = (type: string) => {
-    const icons = {
-      video: <Video className="h-4 w-4" />,
-      document: <FileText className="h-4 w-4" />,
-      quiz: <FileText className="h-4 w-4" />,
-      assignment: <FileText className="h-4 w-4" />,
-    };
-    return (
-      icons[type as keyof typeof icons] || <FileText className="h-4 w-4" />
-    );
   };
 
   const formatDuration = (minutes: number) => {
@@ -254,13 +201,6 @@ const AddContentForm = ({
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       <form onSubmit={onSubmit} className="space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -279,78 +219,23 @@ const AddContentForm = ({
                     placeholder="Enter content title"
                     value={formData.title}
                     onChange={(e) => handleInputChange("title", e.target.value)}
-                    className={errors.title ? "border-red-500" : ""}
                   />
-                  {errors.title && (
-                    <p className="text-sm text-red-600">{errors.title}</p>
-                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    placeholder="Enter content description (optional)"
+                    placeholder="Enter content description"
                     rows={4}
                     value={formData.description}
                     onChange={(e) =>
                       handleInputChange("description", e.target.value)
                     }
-                    className={errors.description ? "border-red-500" : ""}
                   />
                   <p className="text-sm text-gray-500">
                     Brief description of what students will learn
                   </p>
-                  {errors.description && (
-                    <p className="text-sm text-red-600">{errors.description}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="content_type">Content Type *</Label>
-                  <Select
-                    value={formData.content_type}
-                    onValueChange={(value) =>
-                      handleInputChange("content_type", value)
-                    }
-                  >
-                    <SelectTrigger
-                      className={errors.content_type ? "border-red-500" : ""}
-                    >
-                      <SelectValue placeholder="Select content type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="video">
-                        <div className="flex items-center gap-2">
-                          <Video className="h-4 w-4" />
-                          Video Lesson
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="document">
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          Document/PDF
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="quiz">
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          Quiz
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="assignment">
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          Assignment
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.content_type && (
-                    <p className="text-sm text-red-600">
-                      {errors.content_type}
-                    </p>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -367,7 +252,7 @@ const AddContentForm = ({
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="video_url">Video URL</Label>
+                  <Label htmlFor="video_url">Video URL *</Label>
                   <Input
                     id="video_url"
                     type="url"
@@ -376,14 +261,10 @@ const AddContentForm = ({
                     onChange={(e) =>
                       handleInputChange("video_url", e.target.value)
                     }
-                    className={errors.video_url ? "border-red-500" : ""}
                   />
                   <p className="text-sm text-gray-500">
                     Direct link to video file or streaming URL
                   </p>
-                  {errors.video_url && (
-                    <p className="text-sm text-red-600">{errors.video_url}</p>
-                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -396,14 +277,10 @@ const AddContentForm = ({
                     onChange={(e) =>
                       handleInputChange("pdf_url", e.target.value)
                     }
-                    className={errors.pdf_url ? "border-red-500" : ""}
                   />
                   <p className="text-sm text-gray-500">
                     Direct link to PDF or document file
                   </p>
-                  {errors.pdf_url && (
-                    <p className="text-sm text-red-600">{errors.pdf_url}</p>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -419,7 +296,7 @@ const AddContentForm = ({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="duration_minutes">Duration (minutes) *</Label>
+                  <Label htmlFor="duration_minutes">Duration (minutes)</Label>
                   <Input
                     id="duration_minutes"
                     type="number"
@@ -433,22 +310,16 @@ const AddContentForm = ({
                         parseInt(e.target.value) || 0
                       )
                     }
-                    className={errors.duration_minutes ? "border-red-500" : ""}
                   />
                   {formData.duration_minutes > 0 && (
                     <p className="text-sm font-medium text-gray-600">
                       {formatDuration(formData.duration_minutes)}
                     </p>
                   )}
-                  {errors.duration_minutes && (
-                    <p className="text-sm text-red-600">
-                      {errors.duration_minutes}
-                    </p>
-                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="order_index">Position in Course *</Label>
+                  <Label htmlFor="order_index">Position in Course</Label>
                   <Input
                     id="order_index"
                     type="number"
@@ -461,14 +332,10 @@ const AddContentForm = ({
                         parseInt(e.target.value) || 1
                       )
                     }
-                    className={errors.order_index ? "border-red-500" : ""}
                   />
                   <p className="text-sm text-gray-500">
                     Order in which this content appears
                   </p>
-                  {errors.order_index && (
-                    <p className="text-sm text-red-600">{errors.order_index}</p>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -483,7 +350,7 @@ const AddContentForm = ({
                     id="is_free_preview"
                     checked={formData.is_free_preview}
                     onCheckedChange={(checked) =>
-                      handleInputChange("is_free_preview", checked)
+                      handleInputChange("is_free_preview", Boolean(checked))
                     }
                   />
                   <div className="space-y-1 leading-none">
@@ -502,11 +369,6 @@ const AddContentForm = ({
                 <CardTitle>Preview</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  {getContentTypeIcon(formData.content_type)}
-                  <span className="capitalize">{formData.content_type}</span>
-                </div>
-
                 {formData.title && (
                   <div>
                     <p className="font-medium truncate">{formData.title}</p>

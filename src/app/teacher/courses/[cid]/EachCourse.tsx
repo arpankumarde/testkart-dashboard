@@ -52,52 +52,20 @@ import {
   Download,
   Clock,
   Users,
+  ChartNoAxesCombined,
 } from "lucide-react";
-
-interface ContentData {
-  content_id: number;
-  course_id: number;
-  title: string;
-  description?: string;
-  content_type: "video" | "document" | "quiz" | "assignment";
-  duration?: number; // in minutes
-  order_index: number;
-  is_published: number;
-  is_free: number;
-  file_url?: string;
-  thumbnail_url?: string;
-  view_count?: number;
-  completion_rate?: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ContentMeta {
-  total_duration: number;
-  completion_count: number;
-  enrolled_students: number;
-  avg_rating: number | null;
-}
-
-interface Content {
-  data: ContentData;
-  meta: ContentMeta;
-}
-
-interface Course {
-  course_id: number;
-  title: string;
-  description?: string;
-}
+import { Content, Course } from "@/types/course";
 
 const EachCourse = ({
   cid,
   course,
 }: {
   cid: string;
-  course: Course & { contents: any[] };
+  course: Course & { contents: Content[] };
 }) => {
   const [loading, setLoading] = useState(false);
+
+  console.log(course);
 
   const renderContentTypeBadge = (type: string) => {
     const badges = {
@@ -121,8 +89,8 @@ const EachCourse = ({
     return badges[type as keyof typeof badges] || <Badge>{type}</Badge>;
   };
 
-  const renderStatusBadge = (is_published: number) => {
-    return is_published === 1 ? (
+  const renderStatusBadge = (isPublished: boolean) => {
+    return isPublished ? (
       <Badge variant="default">Published</Badge>
     ) : (
       <Badge variant="secondary">Draft</Badge>
@@ -146,18 +114,25 @@ const EachCourse = ({
     setLoading(false);
   };
 
-  const formatDuration = (minutes?: number) => {
-    if (!minutes) return "N/A";
+  const formatDuration = (seconds?: number) => {
+    if (!seconds) return "N/A";
+    const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
+    const remainingMinutes = minutes % 60;
     if (hours > 0) {
-      return `${hours}h ${mins}m`;
+      return `${hours}h ${remainingMinutes}m`;
     }
-    return `${mins}m`;
+    return `${remainingMinutes}m`;
   };
 
   const formatCompletionRate = (rate?: number) => {
     return rate ? `${Math.round(rate)}%` : "N/A";
+  };
+
+  const getContentType = (content: Content) => {
+    if (content.video_url) return "video";
+    if (content.pdf_url) return "document";
+    return "content";
   };
 
   return (
@@ -172,10 +147,6 @@ const EachCourse = ({
               <TableHead className="font-semibold text-center">
                 Duration
               </TableHead>
-              <TableHead className="font-semibold text-center">Views</TableHead>
-              <TableHead className="font-semibold text-center">
-                Completion
-              </TableHead>
               <TableHead className="font-semibold text-center">Free?</TableHead>
               <TableHead className="font-semibold text-center">Order</TableHead>
               <TableHead className="font-semibold text-center">
@@ -188,49 +159,37 @@ const EachCourse = ({
           </TableHeader>
           <TableBody>
             {course.contents?.map((content, index) => (
-              <TableRow key={content.data.content_id}>
-                <TableCell>{content.data.order_index || index + 1}</TableCell>
+              <TableRow key={content.id}>
+                <TableCell>{content.order_index || index + 1}</TableCell>
                 <TableCell>
                   <div className="flex flex-col">
                     <Link
                       className="text-blue-600 hover:text-blue-700 underline underline-offset-4 font-medium"
-                      href={`/teacher/courses/${cid}/content/${content.data.content_id}`}
+                      href={`/teacher/courses/${cid}/content/${content.id}`}
                     >
-                      {content.data.title}
+                      {content.title}
                     </Link>
-                    {content.data.description && (
+                    {content.description && (
                       <p className="text-xs text-gray-500 mt-1 truncate max-w-xs">
-                        {content.data.description}
+                        {content.description}
                       </p>
                     )}
                   </div>
                 </TableCell>
                 <TableCell className="text-center">
-                  {renderContentTypeBadge(content.data.content_type)}
+                  {renderContentTypeBadge(getContentType(content))}
                 </TableCell>
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-1">
                     <Clock size={12} />
-                    {formatDuration(content.data.duration)}
+                    {formatDuration(content.duration_seconds)}
                   </div>
-                </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <Eye size={12} />
-                    {content.data.view_count || 0}
-                  </div>
-                </TableCell>
-                <TableCell className="text-center">
-                  {formatCompletionRate(content.data.completion_rate)}
                 </TableCell>
                 <TableCell className="text-center">
                   <Checkbox
-                    checked={content.data.is_free === 1}
+                    checked={content.is_free_preview}
                     onCheckedChange={async (checked) =>
-                      handleFreeStatusChange(
-                        content.data.content_id,
-                        Boolean(checked)
-                      )
+                      handleFreeStatusChange(content.id, Boolean(checked))
                     }
                     disabled={loading}
                   />
@@ -252,7 +211,7 @@ const EachCourse = ({
                             new_order: string;
                           };
                           await handleOrderUpdate(
-                            content.data.content_id,
+                            content.id,
                             parseInt(new_order)
                           );
                         }}
@@ -264,7 +223,7 @@ const EachCourse = ({
                           <Input
                             type="number"
                             name="new_order"
-                            defaultValue={content.data.order_index}
+                            defaultValue={content.order_index}
                             min={1}
                             max={course.contents?.length || 1}
                             disabled={loading}
@@ -283,9 +242,9 @@ const EachCourse = ({
                   </Popover>
                 </TableCell>
                 <TableCell className="text-center">
-                  {renderStatusBadge(content.data.is_published)}
+                  {renderStatusBadge(course.is_published)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="flex justify-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="p-0 m-0">
@@ -295,27 +254,38 @@ const EachCourse = ({
                     <DropdownMenuContent>
                       <DropdownMenuItem>
                         <Link
-                          href={`/teacher/courses/${cid}/content/${content.data.content_id}`}
+                          href={`/teacher/courses/${cid}/content/${content.id}`}
                           className="flex items-center gap-2"
                         >
                           <Eye size={16} />
-                          View/Edit Content
+                          View Content
                         </Link>
                       </DropdownMenuItem>
 
                       <DropdownMenuItem>
                         <Link
-                          href={`/teacher/courses/${cid}/content/${content.data.content_id}/analytics`}
+                          href={`/teacher/courses/${cid}/content/${content.id}`}
                           className="flex items-center gap-2"
                         >
+                          <Pencil size={16} />
+                          Edit Content
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem>
+                        <Link
+                          href={`/teacher/courses/${cid}/content/${content.id}/analytics`}
+                          className="flex items-center gap-2"
+                        >
+                          <ChartNoAxesCombined size={16} />
                           Analytics
                         </Link>
                       </DropdownMenuItem>
 
-                      {content.data.file_url && (
+                      {(content.pdf_url || content.video_url) && (
                         <DropdownMenuItem>
                           <a
-                            href={content.data.file_url}
+                            href={content.pdf_url || content.video_url}
                             download
                             className="flex items-center gap-2"
                           >
@@ -349,7 +319,7 @@ const EachCourse = ({
                               <form
                                 action={async () => {
                                   //   await deleteContent(
-                                  //     content.data.content_id,
+                                  //     content.id,
                                   //     parseInt(cid)
                                   //   );
                                 }}
