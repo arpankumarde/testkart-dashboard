@@ -132,6 +132,7 @@ const Page = async ({
 
                     formattedTime = `${day} ${month} ${year}, ${hours}:${minutes} ${ampm}`;
                   } catch (e) {
+                    console.log(e);
                     formattedTime = purchase.purchase_time;
                   }
 

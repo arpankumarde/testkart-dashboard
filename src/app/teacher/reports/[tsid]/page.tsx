@@ -206,7 +206,7 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
             Error Loading Report
           </h2>
           <p className="text-gray-600 mb-6">
-            We couldn't fetch the requested test report data.
+            We couldn{`'`}t fetch the requested test report data.
           </p>
           <Link href="/teacher/reports">
             <Button>Return to Reports</Button>

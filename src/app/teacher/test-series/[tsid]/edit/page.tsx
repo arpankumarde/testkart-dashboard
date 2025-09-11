@@ -1,6 +1,7 @@
 import api from "@/lib/api";
 import getToken from "@/lib/getToken";
 import TSEditForm from "./TSEditForm";
+import Link from "next/link";
 
 interface ApiResponse {
   success: boolean;
@@ -83,9 +84,9 @@ const Page = async ({ params }: { params: Promise<{ tsid: string }> }) => {
               <span>/</span>
             </li>
             <li>
-              <a href="/teacher/test-series" className="hover:text-primary">
+              <Link href="/teacher/test-series" className="hover:text-primary">
                 Test Series
-              </a>
+              </Link>
             </li>
             <li>
               <span>/</span>
