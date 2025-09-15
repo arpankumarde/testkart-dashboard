@@ -49,7 +49,7 @@ const Page = async () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" asChild className="h-8 w-8">
-              <Link href="/teacher/test-series">
+              <Link href="/teacher/courses">
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>

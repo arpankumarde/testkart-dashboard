@@ -18,14 +18,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Video,
-  FileText,
-  Clock,
-  Loader2,
-  Link as LinkIcon,
-} from "lucide-react";
+import { Clock, Loader2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
+import { CheckIcon } from "@phosphor-icons/react/dist/ssr";
+import axios from "axios";
 
 interface FormData {
   title: string;
@@ -40,6 +36,44 @@ interface FormData {
 interface AddContentFormProps {
   data: Course;
   existingContentCount?: number;
+}
+
+interface UploadResponse {
+  success: boolean;
+  message: string;
+  data: {
+    uploadUrl: string;
+    s3Key: string;
+    videoFileName: string;
+    metadata: {
+      courseId: number;
+      contentTitle: string;
+      description: string;
+      originalFilename: string;
+    };
+    expiresIn: number;
+  };
+}
+
+interface CreateContentResponse {
+  success: true;
+  message: string;
+  data?: {
+    content: {
+      id: number;
+      title: string;
+      description: string;
+      slug: string;
+      video_url: string;
+      pdf_url: string;
+      duration_seconds: number;
+      order_index: number;
+      is_free_preview: boolean;
+      course_id: number;
+      createdAt: string;
+      updatedAt: string;
+    };
+  };
 }
 
 const AddContentForm = ({
@@ -59,23 +93,82 @@ const AddContentForm = ({
     order_index: existingContentCount + 1,
     is_free_preview: false,
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  // Simple validation function
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    if (selectedFile.type !== "video/mp4") {
+      toast.error("Only MP4 videos are allowed");
+      return;
+    }
+
+    setFile(selectedFile);
+
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.src = URL.createObjectURL(selectedFile);
+
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src);
+      const durationInMinutes = Math.round((video.duration / 60) * 100) / 100;
+      console.log(durationInMinutes);
+      setFormData((prev) => ({
+        ...prev,
+        duration_minutes: durationInMinutes,
+      }));
+    };
+  };
+
+  const handleUpload = async ({
+    title,
+    description,
+  }: {
+    title: string;
+    description: string;
+  }) => {
+    if (!file) return toast.error("Please select a file first");
+
+    setIsUploading(true);
+    try {
+      const presignRes = await api.post<UploadResponse>(
+        "/api/v1/contents/video-upload-url",
+        {
+          filename: file.name,
+          contentType: file.type,
+          courseId: data.id,
+          contentTitle: title,
+          description: description,
+        },
+        {
+          headers: { Authorization: `Bearer ${getTokenClient()}` },
+        }
+      );
+
+      const { uploadUrl } = presignRes.data.data;
+
+      await axios.put(uploadUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      toast.success("Video uploaded successfully!");
+
+      return uploadUrl;
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const validateForm = (): boolean => {
     if (!formData.title.trim()) {
       toast.error("Title is required");
-      return false;
-    }
-
-    if (!formData.video_url.trim()) {
-      toast.error("Video URL is required");
-      return false;
-    }
-
-    try {
-      new URL(formData.video_url);
-    } catch {
-      toast.error("Please enter a valid video URL");
       return false;
     }
 
@@ -120,24 +213,33 @@ const AddContentForm = ({
     setIsLoading(true);
 
     try {
+      const url = await handleUpload({
+        title: formData.title.trim(),
+        description: formData.description.trim() || "",
+      });
+
       const payload = {
         course_id: data?.id,
         title: formData.title.trim(),
         description: formData.description.trim() || "",
-        video_url: formData.video_url,
+        video_url: url,
         pdf_url: formData.pdf_url || undefined,
         duration_seconds: formData.duration_minutes * 60,
         order_index: formData.order_index,
         is_free_preview: formData.is_free_preview,
       };
 
-      const response = await api.post("/api/v1/contents", payload, {
-        headers: {
-          Authorization: `Bearer ${getTokenClient()}`,
-        },
-      });
+      const response = await api.post<CreateContentResponse>(
+        "/api/v1/contents",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${getTokenClient()}`,
+          },
+        }
+      );
 
-      if (response.status === 200 || response.status === 201) {
+      if (response.data.success === true) {
         toast.success("Content created successfully!");
         setSuccess(true);
         setTimeout(() => {
@@ -172,19 +274,7 @@ const AddContentForm = ({
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
               <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+                <CheckIcon size={32} />
               </div>
               <h3 className="text-lg font-semibold text-green-900">
                 Content Created Successfully!
@@ -244,15 +334,25 @@ const AddContentForm = ({
               <CardHeader className="bg-primary/5 py-4">
                 <CardTitle className="flex items-center gap-2">
                   <LinkIcon className="h-5 w-5" />
-                  Content URLs
+                  Content
                 </CardTitle>
                 <CardDescription>
-                  Add links to your video and document resources
+                  Add your video and document resources
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="video_url">Video URL *</Label>
+                  <Label htmlFor="video_file">Choose Video *</Label>
+                  <Input
+                    id="video_file"
+                    type="file"
+                    accept="video/mp4"
+                    onChange={handleFileChange}
+                    disabled={isUploading}
+                    required
+                  />
+
+                  {/* <Label htmlFor="video_url">Video URL *</Label>
                   <Input
                     id="video_url"
                     type="url"
@@ -264,7 +364,7 @@ const AddContentForm = ({
                   />
                   <p className="text-sm text-gray-500">
                     Direct link to video file or streaming URL
-                  </p>
+                  </p> */}
                 </div>
 
                 <div className="space-y-2">
@@ -291,7 +391,7 @@ const AddContentForm = ({
               <CardHeader className="bg-primary/5 py-4">
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5" />
-                  Duration & Order
+                  Metadata
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -302,14 +402,14 @@ const AddContentForm = ({
                     type="number"
                     min="0"
                     max="1440"
-                    placeholder="60"
                     value={formData.duration_minutes || ""}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "duration_minutes",
-                        parseInt(e.target.value) || 0
-                      )
-                    }
+                    // onChange={(e) =>
+                    //   handleInputChange(
+                    //     "duration_minutes",
+                    //     parseInt(e.target.value) || 0
+                    //   )
+                    // }
+                    readOnly
                   />
                   {formData.duration_minutes > 0 && (
                     <p className="text-sm font-medium text-gray-600">
@@ -318,7 +418,7 @@ const AddContentForm = ({
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 hidden">
                   <Label htmlFor="order_index">Position in Course</Label>
                   <Input
                     id="order_index"

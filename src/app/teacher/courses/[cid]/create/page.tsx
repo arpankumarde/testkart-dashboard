@@ -4,13 +4,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Course } from "@/types/course";
 import AddContentForm from "./AddContentForm";
 
@@ -57,7 +50,10 @@ const Page = async ({ params }: { params: Promise<{ cid: string }> }) => {
 
       <Separator className="my-2 lg:my-4" />
 
-      <AddContentForm data={data?.data?.course} />
+      <AddContentForm
+        data={data?.data?.course}
+        existingContentCount={data?.data?.course?.contents.length}
+      />
     </div>
   );
 };
