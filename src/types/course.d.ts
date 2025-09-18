@@ -8,7 +8,7 @@ export interface Course {
   thumbnail: string | null;
   price: number;
   discount: number;
-  discount_type: string | null;
+  discount_type: "flat" | "percentage" | null;
   original_price: number | null;
   is_published: boolean;
   module_based: boolean;

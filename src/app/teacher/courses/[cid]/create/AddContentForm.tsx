@@ -147,7 +147,7 @@ const AddContentForm = ({
         }
       );
 
-      const { uploadUrl } = presignRes.data.data;
+      const { uploadUrl, s3Key } = presignRes.data.data;
 
       await axios.put(uploadUrl, file, {
         headers: {
@@ -157,7 +157,7 @@ const AddContentForm = ({
 
       toast.success("Video uploaded successfully!");
 
-      return uploadUrl;
+      return s3Key;
     } catch (err: any) {
       console.error(err);
       toast.error(err.response?.data?.message || "Upload failed");
